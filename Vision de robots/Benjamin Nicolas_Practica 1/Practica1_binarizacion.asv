@@ -1,0 +1,155 @@
+% 1.Sustracción y binarización
+% Antes de realizar el análisis de una imagen casi siempre conviene 
+% acondicionarlamediante diversas operaciones de procesamiento de imágenes. 
+% Aquí, mediante la sustracción del fondo se pretende compensar una
+% iluminación deficiente que produce un gradiente de brillo espacial que 
+% se traduce en zonas de contraste no homogéneo que impide a su vez la 
+% binarización con base en un umbral global.
+
+clc
+clear
+close all
+
+[X,cmap]        = imread('son1.gif');
+im_1            = ind2rgb(X,cmap);
+im_1            = uint8(im_1*256);
+grayIm_1        = rgb2gray(im_1);
+
+[X_2,cmap_2]        = imread('son2.gif');
+im_2            = ind2rgb(X_2,cmap_2);
+im_2            = uint8(im_2*256);
+grayIm_2        = rgb2gray(im_2);
+
+%% 
+% i)Obtener el histograma de la imagen (son1), escoger un umbral y binarizar la imagen.
+
+% BWI1            = im2bw(grayIm_1, 100/255);
+% 
+% figure('name','Resultado')
+% subplot(1,2,1), imshow(BWI1);
+% subplot(1,2,2), imhist(grayIm_1);
+
+%%
+% ii)Restarle a la imagen original (son1) la imagen del fondo (son2).
+
+% img           = imcomplement(imsubtract(im_2, im_1))
+% 
+% figure('name','Resultado')
+% subplot(1,3,1), imshow(im_1);
+% subplot(1,3,2), imshow(im_2);
+% subplot(1,3,3), imshow(img);
+
+
+%%
+% 
+% iii)Obtener el histograma de la imagen de diferencia, escoger un umbral y binarizar
+
+img             = imcomplement(imsubtract(im_2, im_1))
+gIm_3           = rgb2gray(im_2);
+BWI3            = im2bw(gIm_3, 100/255);
+
+figure('name','Resultado')
+subplot(1,3,1), imshow(img);
+subplot(1,3,2), imhist(grayIm_1);
+subplot(1,3,3), imshow(BWI3);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+% % 
+% clc
+% clear all
+% close all
+% 
+% [X,cmap] = imread('son1.gif');
+% figure('name','gif');
+% imshow(X,cmap);
+% % 
+% rgbImage = ind2rgb(X,cmap);
+% figure('name','RGB');
+% imshow(rgbImage);
+% % 
+% % grayImage = rgb2gray(rgbImage);
+% % figure('name','Escala de grises');
+% % imshow(grayImage);
+% % 
+% % 
+% % umbral = graythresh(grayImage);
+% % 
+% % figure('name','Histograma');
+% % imhist(grayImage);
+% % 
+% % 
+% % BWImage = im2bw(grayImage,umbral)
+% % figure('name','binaria');
+% % imshow(BWImage);
+% % 
+% % 
+% % 
+% % 
+% % 
+% % 
+% % 
+% % 
+% 
+% [X_2,cmap_2] = imread('son2.gif');
+% figure('name','gif_2');
+% imshow(X_2,cmap_2);
+% 
+% rgbImage_2 = ind2rgb(X_2,cmap_2);
+% figure('name','RGB_2');
+% imshow(rgbImage_2);
+% 
+% grayImage_2 = rgb2gray(rgbImage_2);
+% figure('name','Escala de grises 2');
+% imshow(grayImage_2);
+% % 
+% % 
+% resultImage = imcomplement(abs(imsubtract(rgbImage,rgbImage_2)))
+% figure('name','Imagen resultante');
+% imshow(resultImage);
+% 
+% 
+% 
+% 
+% 
+% 
+% grayResImage = rgb2gray(resultImage);
+% figure('name','Escala de grises Im Resultante');
+% imshow(grayResImage);
+% 
+% 
+% umbralRes = graythresh(grayResImage);
+% 
+% figure('name','Histograma Im Resultante');
+% imhist(grayResImage);
+% 
+% 
+% BWResImage = im2bw(grayResImage,umbralRes)
+% figure('name','binaria Im Resultante');
+% imshow(BWResImage );
+% 
+% 
+% 
+% 
+% 
+% 

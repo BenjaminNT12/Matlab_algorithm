@@ -1,0 +1,56 @@
+clc
+clear all
+close all
+
+fq = 0; % entrada de control para altura Z
+tauT = 0; % entrada de control para theta
+T = 0.01;
+
+t= [0:T:5];
+m = 1;
+g =9.81;
+Iyy = 0.1
+
+zd = 2; % referencia a donde queremos la altura Z
+k1z = 2; % ganancias del control en z 
+k2z = 2; % ganancias del control en z
+
+td = 0; % referencias a donde queremos la posicion theta
+k1t = 0.4; % ganancias del control en theta 
+k2t = 0.6; % ganancias del control en theta
+
+x = [0 0 0.2 0 0 0]; % condiciones iniciales
+% x1 = x
+% x2 = z
+% x3 = \theta
+% x4 = x punto
+% x5 = z punto 
+% x6 = \theta punto 
+
+%1.- Medir las variables a controlar
+for i=1:length(t)-1
+    [tt,xx] = ode45(@modeloPVTOL2,[t(i) t(i+1)],x(i,:),[],fq(i),tauT(i));
+    x(i+1,:) = xx(end,:);    
+%2.- Calcular la ley de control    
+    ez = x(i+1,2) - zd;
+    ezp = x(i+1,5); % esto porque la derivada de zd que es fija su derivada es cero
+    fq(i+1) = m/cos(x(i+1,3)) * (-k1z*ezp - k2z*ez + g);
+    
+    et = x(i+1,3) - td;
+    etp = x(i+1,6); % esto porque la derivada de zd que es fija su derivada es cero
+    tauT(i+1) = Iyy*(-k1t*etp - k2t*et);
+end
+
+figure(1)
+subplot(411)
+plot(t,x(:,2))
+legend('Z')
+subplot(412)
+plot(t,x(:,1))
+legend('X')
+subplot(413)
+plot(t,x(:,3))
+legend('\theta')
+subplot(414)
+plot(t,fq)
+legend('fq')

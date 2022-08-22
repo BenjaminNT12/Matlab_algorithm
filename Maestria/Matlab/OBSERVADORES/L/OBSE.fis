@@ -1,0 +1,70 @@
+[System]
+Name='OBSE'
+Type='mamdani'
+Version=2.0
+NumInputs=2
+NumOutputs=2
+NumRules=24
+AndMethod='min'
+OrMethod='max'
+ImpMethod='min'
+AggMethod='max'
+DefuzzMethod='centroid'
+
+[Input1]
+Name='input1'
+Range=[0 2]
+NumMFs=3
+MF1='X1P':'trimf',[-0.8 0 0.8]
+MF2='X1M':'trimf',[0.2 1 1.8]
+MF3='X1G':'trimf',[1.2 2 2.8]
+
+[Input2]
+Name='input2'
+Range=[0 2]
+NumMFs=3
+MF1='X2P':'trimf',[-0.8 0 0.8]
+MF2='X2M':'trimf',[0.2 1 1.8]
+MF3='X2G':'trimf',[1.2 2 2.8]
+
+[Output1]
+Name='output1'
+Range=[0.2 2]
+NumMFs=3
+MF1='PSIP':'trimf',[-0.52 0.2 0.92]
+MF2='PSIM':'trimf',[0.38 1.1 1.82]
+MF3='PSIG':'trimf',[1.28 2 2.72]
+
+[Output2]
+Name='output2'
+Range=[-8 -0.1]
+NumMFs=3
+MF1='WNG':'trimf',[-11.16 -8 -4.84]
+MF2='WNM':'trimf',[-7.21 -4.05 -0.89]
+MF3='WNP':'trimf',[-3.26 -0.1 3.06]
+
+[Rules]
+1 1, 1 3 (1) : 1
+1 1, 2 3 (1) : 1
+1 1, 1 3 (1) : 1
+1 2, 1 2 (1) : 1
+1 2, 2 2 (1) : 1
+1 2, 3 2 (1) : 1
+1 3, 3 1 (1) : 1
+1 3, 2 1 (1) : 1
+1 3, 1 1 (1) : 1
+2 1, 1 2 (1) : 1
+2 2, 2 2 (1) : 1
+2 2, 3 2 (1) : 1
+2 3, 1 2 (1) : 1
+2 3, 2 2 (1) : 1
+2 3, 3 2 (1) : 1
+3 1, 1 1 (1) : 1
+3 1, 2 1 (1) : 1
+3 1, 3 1 (1) : 1
+3 2, 1 1 (1) : 1
+3 2, 2 1 (1) : 1
+3 2, 3 1 (1) : 1
+3 3, 1 1 (1) : 1
+3 3, 2 1 (1) : 1
+3 3, 3 1 (1) : 1

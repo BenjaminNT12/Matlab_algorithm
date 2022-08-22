@@ -1,0 +1,319 @@
+% % calculo de la matriz de Rigidez
+% 
+% clc
+% close all
+% clear
+% 
+% kv = 1;
+% delt = 1;
+% 
+% T = 0.001;
+% m = 3
+% n = 5
+% l = 7
+% t = T: T :1;
+% 
+% s1 = sin(2*pi/5);
+% s2 = sin(4*pi/5);
+% c1 = cos(2*pi/5);
+% c2 = cos(pi/5);
+% 
+% % PUNTOS DESEADOS DE LA FORMACION
+% qd1 = [0,     1, 0];
+% qd2 = [-s1,  c1, 0];
+% qd3 = [-s2, -c2, 0];
+% qd4 = [s2,  -c2, 0];
+% qd5 = [s1,   c1, 0];
+% 
+% qd = [qd1, qd2, qd3, qd4, qd5];
+% 
+% % "EDGE" DE LA FORMACION (UNIONES)
+% E1 = [1 2];
+% E2 = [1 3];
+% E3 = [1 4];
+% E4 = [1 5];
+% E5 = [2 3];
+% E6 = [3 4];
+% E7 = [4 5];
+%  
+% E = [E1; E2; E3; E4; E5; E6; E7];
+% 
+% %CONDICIONES INICIALES DE LOS PUNTOS DE INICIO DE LA FORMACION
+% q1 = qd1 + delt*(rand(1,m)-0.5);
+% q2 = qd2 + delt*(rand(1,m)-0.5);
+% q3 = qd3 + delt*(rand(1,m)-0.5);
+% q4 = qd4 + delt*(rand(1,m)-0.5);
+% q5 = qd5 + delt*(rand(1,m)-0.5);
+% 
+% q = [q1, q2, q3, q4, q5];
+% 
+% qt = zeros(length(E),m);
+% e = zeros(length(t),length(E));
+% z = zeros(length(E),1);
+% d = zeros(length(E),1);
+% 
+% 
+% for i = 1:length(q)/m
+%     plot3(q(i*m-2), q(i*m-1), q(i*m),"x");
+%     hold on;
+% end
+% 
+% % DISTANCIA DESEADA DISTANCIA ENTRE LOS PUNTOS OBJETIVOS
+% for i = 1:length(E)
+%     d(i) = norm(qd(E(i,1)*m-2:E(i,1)*m) - qd(E(i,2)*m-2:E(i,2)*m));
+% end
+% 
+% % ALGORITMO CONTROL U = -KV*R*Z
+% 
+% for k = 1:length(t)
+%     for i = 1:length(E)
+%         qt(i,:) = q(k ,E(i,1)*3-2:E(i,1)*3) - q(k,E(i,2)*3-2:E(i,2)*3);
+%         e(k,i) = norm(qt(i,:)) - d(i);
+%         z(i) = e(k,i)*(e(k,i) + 2*d(i));
+%     end
+% % MATRIZ DE RIGIDEZ DEBE CAMBIARSE DEPENDIENDO DE LA FORMACION DESEADA    
+%     R1 = [ (q(k, 1*m-2:1*m) - q(k, 2*m-2:2*m)), -(q(k, 1*m-2:1*m) - q(k, 2*m-2:2*m)),                            zeros(1,m),                            zeros(1,m),                            zeros(1,m)];
+%     R2 = [ (q(k, 1*m-2:1*m) - q(k, 3*m-2:3*m)),                           zeros(1,m),  -(q(k, 1*m-2:1*m) - q(k, 3*m-2:3*m)),                            zeros(1,m),                            zeros(1,m)];
+%     R3 = [ (q(k, 1*m-2:1*m) - q(k, 4*m-2:4*m)),                           zeros(1,m),                            zeros(1,m),  -(q(k, 1*m-2:1*m) - q(k, 4*m-2:4*m)),                            zeros(1,m)];
+%     R4 = [ (q(k, 1*m-2:1*m) - q(k, 5*m-2:5*m)),                           zeros(1,m),                            zeros(1,m),                            zeros(1,m),  -(q(k, 1*m-2:1*m) - q(k, 5*m-2:5*m))];
+%     R5 = [                          zeros(1,m),  (q(k, 2*m-2:2*m) - q(k, 3*m-2:3*m)),  -(q(k, 2*m-2:2*m) - q(k, 3*m-2:3*m)),                            zeros(1,m),                            zeros(1,m)];
+%     R6 = [                          zeros(1,m),                           zeros(1,m),   (q(k, 3*m-2:3*m) - q(k, 4*m-2:4*m)),  -(q(k, 3*m-2:3*m) - q(k, 4*m-2:4*m)),                            zeros(1,m)];
+%     R7 = [                          zeros(1,m),                           zeros(1,m),                            zeros(1,m),   (q(k, 4*m-2:4*m) - q(k, 5*m-2:5*m)),  -(q(k, 4*m-2:4*m) - q(k, 5*m-2:5*m))];
+% 
+%     R = [R1; R2; R3; R4; R5; R6; R7];
+%     
+%     u = -kv*R'*z;
+%     
+% % INTEGRAL qP = u
+%     for i = 1: n*m
+%         q(k+1,i) = q(k,i)+u(i)*T;
+%     end
+% 
+%     for i = 1:length(q(end,:))/3
+%         P(k,i,:) = [q(end, i*3-2), q(end, i*3-1) , q(end, i*3)];
+%     end
+%     Wp(k) = z'*R*u;
+%     
+%     W(k) = (1/4)*z'*z;
+%     
+% end
+% 
+% 
+% %%% PLOTEA Y GRAFICA TODAS LAS GRAFICAS DE ERROR Y LA TRAYECTORIA DE FORMACION 
+% 
+% figure(1)
+% 
+% Framework3Dplot(q(end,:),E);
+% xlim([-2 2])
+% ylim([-2 2])
+% zlim([-2 2])
+% hold on
+% 
+% % GRAFICA LA TRAYECTORIA DE TODOS LOS AGENTES
+% for i = 1: length(P(1,:,1))
+%     plot3(P(:,i,1),P(:,i,2),P(:,i,3));
+%     hold on
+% end
+% 
+% figure(2)
+% 
+% for i = 1:length(E)
+%     plot(t,e(:,i))
+%     hold on
+% end
+% 
+% figure(3)
+% 
+% % for i = 1:length(E)
+%     plot(t,Wp)
+%     hold on
+% % end
+% 
+% figure(4)
+% 
+% % for i = 1:length(E)
+%     plot(t,W)
+%     hold on
+% % end
+
+
+
+
+% calculo de la matriz de Rigidez
+
+clc
+close all
+clear
+
+kv = 0.01;
+delt = 1;
+
+T = 0.01;
+m = 3;
+n = 4;
+l = 6;
+t = T: T :10;
+
+s1 = sin(2*pi/5);
+s2 = sin(4*pi/5);
+c1 = cos(2*pi/5);
+c2 = cos(pi/5);
+
+% PUNTOS DESEADOS DE LA FORMACION
+qd1 = [0,       0,     0];
+qd2 = [5,       0,     0];
+qd3 = [2.5, 4.330,     0];
+qd4 = [2.5,   2.5, 4.330];
+
+
+qd = [qd1, qd2, qd3, qd4];
+
+% "EDGE" DE LA FORMACION (UNIONES)
+E1 = [1 2];
+E2 = [1 3];
+E3 = [1 4];
+E4 = [2 3];
+E5 = [2 4];
+E6 = [3 4];
+
+ 
+E = [E1; E2; E3; E4; E5; E6];
+
+%CONDICIONES INICIALES DE LOS PUNTOS DE INICIO DE LA FORMACION a + (b-a).*rand(N,1).
+q1 = qd1 + delt*(rand(1,m)*(5+5) - 5);
+q2 = qd2 + delt*(rand(1,m)*(5+5) - 5);
+q3 = qd3 + delt*(rand(1,m)*(5+5) - 5);
+q4 = qd4 + delt*(rand(1,m)*(5+5) - 5);
+
+q = [q1, q2, q3, q4];
+
+qt = zeros(length(E),m);
+e = zeros(length(t),length(E));
+z = zeros(length(E),1);
+d = zeros(length(E),1);
+
+
+for i = 1:length(q)/m
+    plot3(q(i*m-2), q(i*m-1), q(i*m),"x");
+    hold on;
+end
+
+% DISTANCIA DESEADA DISTANCIA ENTRE LOS PUNTOS OBJETIVOS
+for i = 1:length(E)
+    d(i) = norm(qd(E(i,1)*m-2:E(i,1)*m) - qd(E(i,2)*m-2:E(i,2)*m));
+end
+
+
+% ALGORITMO CONTROL U = -KV*R*Z
+
+for k = 1:length(t)
+    for i = 1:length(E)
+        qt(i,:) = q(k ,E(i,1)*3-2:E(i,1)*3) - q(k,E(i,2)*3-2:E(i,2)*3);
+        e(k,i) = norm(qt(i,:)) - d(i);
+        z(i) = e(k,i)*(e(k,i) + 2*d(i));
+    end
+% MATRIZ DE RIGIDEZ DEBE CAMBIARSE DEPENDIENDO DE LA FORMACION DESEADA    
+    R1 = [ (q(k, 1*m-2:1*m) - q(k, 2*m-2:2*m)), -(q(k, 1*m-2:1*m) - q(k, 2*m-2:2*m)),                            zeros(1,m),                            zeros(1,m)];
+    R2 = [ (q(k, 1*m-2:1*m) - q(k, 3*m-2:3*m)),                           zeros(1,m),  -(q(k, 1*m-2:1*m) - q(k, 3*m-2:3*m)),                            zeros(1,m)];
+    R3 = [ (q(k, 1*m-2:1*m) - q(k, 4*m-2:4*m)),                           zeros(1,m),                            zeros(1,m),  -(q(k, 1*m-2:1*m) - q(k, 4*m-2:4*m))];
+    R4 = [                          zeros(1,m),  (q(k, 2*m-2:2*m) - q(k, 3*m-2:3*m)),  -(q(k, 2*m-2:2*m) - q(k, 3*m-2:3*m)),                            zeros(1,m)];
+    R5 = [                          zeros(1,m),  (q(k, 2*m-2:2*m) - q(k, 4*m-2:4*m)),                            zeros(1,m),  -(q(k, 2*m-2:2*m) - q(k, 4*m-2:4*m))];
+    R6 = [                          zeros(1,m),                           zeros(1,m),   (q(k, 3*m-2:3*m) - q(k, 4*m-2:4*m)),  -(q(k, 3*m-2:3*m) - q(k, 4*m-2:4*m))];
+
+    R = [R1; R2; R3; R4; R5; R6];
+    
+    u(k,:) = -kv*R'*z;
+    
+% INTEGRAL qP = u
+    for i = 1: n*m
+        q(k+1,i) = q(k,i)+u(k,i)*T;
+    end
+
+    for i = 1:length(q(end,:))/3
+        P(k,i,:) = [q(end, i*3-2), q(end, i*3-1) , q(end, i*3)];
+    end
+    Wp(k) = z'*R*u(k,:)';
+    W(k) = (1/4)*z'*z;
+    
+end
+
+%%% PLOTEA Y GRAFICA TODAS LAS GRAFICAS DE ERROR Y LA TRAYECTORIA DE FORMACION 
+
+figure(1)
+grid on
+Framework3Dplot(q(end,:),E);
+
+hold on
+
+figure(1)
+% GRAFICA LA TRAYECTORIA DE TODOS LOS AGENTES
+for i = 1: length(P(1,:,1))
+    plot3(P(:,i,1),P(:,i,2),P(:,i,3),'-.',"Linewidth",2);
+    hold on
+end
+title('Pirámide triangular')
+xlabel('Eje-X')
+ylabel('Eje-Y')
+zlabel('Eje-Z')
+legend({'','','','','','','','','','','','','','','$q_{1}$','$q_{2}$','$q_{3}$','$q_{4}$'},'Interpreter','latex','Location','northeast')
+
+figure(2)
+
+for i = 1:length(E)
+    plot(t,e(:,i),"Linewidth",2)
+    hold on
+end
+title('Errores de distancia entre agentes')
+xlabel('Segundos')
+ylabel('Distancia')
+legend({'$error_{1}$','$error_{2}$','$error_{3}$','$error_{4}$','$error_{5}$','$error_{6}$'},'Interpreter','latex','Location','northeast')
+figure(3)
+
+for i = 1:length(u(1,:))/m
+    plot(t,u(:,i*m-2),"Linewidth",2)
+    hold on
+end
+title('Entrada de control eje X')
+xlabel('Segundos')
+ylabel('Control')
+legend({'$u1_{X}$','$u2_{X}$','$u3_{X}$','$u4_{X}$'},'Interpreter','latex','Location','northeast')
+figure(4)
+
+for i = 1:length(u(1,:))/m
+    plot(t,u(:,i*m-1),"Linewidth",2)
+%     legend({'$u1_{X}$','$u2_{X}$','$u3_{X}$','$u4_{X}$'},'Interpreter','latex','Location','southwest')
+    hold on
+end
+title('Entrada de control eje Y')
+xlabel('Segundos')
+ylabel('Control')
+legend({'$u1_{Y}$','$u2_{Y}$','$u3_{Y}$','$u4_{Y}$'},'Interpreter','latex','Location','northeast')
+figure(5)
+
+for i = 1:length(u(1,:))/m
+    plot(t,u(:,i*m),"Linewidth",2)
+    hold on
+end
+title('Entrada de control eje Z')
+xlabel('Segundos')
+ylabel('Control')
+legend({'$u1_{Z}$','$u2_{Z}$','$u3_{Z}$','$u4_{Z}$'},'Interpreter','latex','Location','northeast')
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

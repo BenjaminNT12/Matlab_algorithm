@@ -1,0 +1,46 @@
+[System]
+Name='gain_ctrl_obs'
+Type='mamdani'
+Version=2.0
+NumInputs=2
+NumOutputs=2
+NumRules=4
+AndMethod='min'
+OrMethod='max'
+ImpMethod='min'
+AggMethod='max'
+DefuzzMethod='centroid'
+
+[Input1]
+Name='X1g'
+Range=[0 3.142]
+NumMFs=2
+MF1='X1_C':'trapmf',[-2.827 -0.3142 0.3142 2.827]
+MF2='X1_L':'trapmf',[0.3142 2.827 3.456 5.97]
+
+[Input2]
+Name='X2g'
+Range=[0 1.5707963267949]
+NumMFs=2
+MF1='X2_C':'trapmf',[-1.414 -0.1571 0.1571 1.414]
+MF2='X2_L':'trapmf',[0.1571 1.414 1.728 2.985]
+
+[Output1]
+Name='Xi'
+Range=[0 1]
+NumMFs=2
+MF1='Xi_p':'trapmf',[-0.9 -0.1 0.1 0.9]
+MF2='Xi_g':'trapmf',[0.1 0.9 1.1 1.9]
+
+[Output2]
+Name='Wn'
+Range=[1 10]
+NumMFs=2
+MF1='Wn_p':'trapmf',[-7.1 0.1 1.9 9.1]
+MF2='Wn_g':'trapmf',[1.9 9.1 10.9 18.1]
+
+[Rules]
+1 1, 1 1 (1) : 1
+1 2, 2 1 (1) : 1
+2 1, 1 2 (1) : 1
+2 2, 2 2 (1) : 1

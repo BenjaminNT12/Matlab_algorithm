@@ -1,0 +1,64 @@
+[System]
+Name='M_carro_pendulo'
+Type='mamdani'
+Version=2.0
+NumInputs=3
+NumOutputs=3
+NumRules=8
+AndMethod='min'
+OrMethod='max'
+ImpMethod='min'
+AggMethod='max'
+DefuzzMethod='centroid'
+
+[Input1]
+Name='Error'
+Range=[0 3.142]
+NumMFs=2
+MF1='ep_P':'trapmf',[-2.827 -0.3142 0.3142 2.827]
+MF2='ep_G':'trapmf',[0.3142 2.827 3.456 5.97]
+
+[Input2]
+Name='Derivada_del_error'
+Range=[0 4.712]
+NumMFs=2
+MF1='ev_P':'trapmf',[-4.241 -0.4712 0.4712 4.241]
+MF2='ev_G':'trapmf',[0.4712 4.241 5.183 8.953]
+
+[Input3]
+Name='Integrada_del_error'
+Range=[0 3.142]
+NumMFs=2
+MF1='ei_P':'trapmf',[-2.827 -0.3142 0.3142 2.827]
+MF2='ei_G':'trapmf',[0.3142 2.827 3.456 5.97]
+
+[Output1]
+Name='Polo'
+Range=[1 8]
+NumMFs=2
+MF1='Polo_p':'trapmf',[-5.3 0.3 1.7 7.3]
+MF2='Polo_G':'trapmf',[1.7 7.3 8.7 14.3]
+
+[Output2]
+Name='psi'
+Range=[0.2 1.2]
+NumMFs=2
+MF1='psi_P':'trapmf',[-0.7 0.1 0.3 1.1]
+MF2='psi_G':'trapmf',[0.303 1.103 1.303 2.103]
+
+[Output3]
+Name='wn'
+Range=[1 3]
+NumMFs=2
+MF1='wn_P':'trapmf',[-0.8 0.8 1.2 2.8]
+MF2='wn_G':'trapmf',[1.2 2.8 3.2 4.8]
+
+[Rules]
+0 1 1, 2 2 2 (1) : 1
+0 1 2, 1 2 2 (1) : 1
+0 2 1, 1 2 1 (1) : 1
+0 2 2, 1 2 2 (1) : 1
+0 1 1, 2 2 1 (1) : 1
+0 1 2, 1 2 2 (1) : 1
+0 2 1, 2 2 1 (1) : 1
+0 2 2, 1 2 1 (1) : 1

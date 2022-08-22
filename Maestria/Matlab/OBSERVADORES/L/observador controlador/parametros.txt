@@ -1,0 +1,3 @@
+m=0.5; g = 9.81; l=0.23;k =0.02; psi=0.8; wn=4; psiL=1; wnL=18;
+k1=-wn*wn*m*l + m*g ; k2= -2*psi*wn*m*l + k;
+L1 = 2*psiL*wnL - (k/m*l); L2 = wnL*wnL - ((L1*k)/m*l) + (g/l);

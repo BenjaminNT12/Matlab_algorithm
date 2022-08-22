@@ -1,0 +1,30 @@
+clc 
+clear all
+close all
+
+T = 0.01;
+t = [0: T :10];
+
+K(1)  = 0;
+Xh = [8 7];
+P(1)  = 1;
+y(1) = 1;
+
+noise = rand(length(t),1); 
+
+I = 1;
+
+H = [1 0.99];
+R = 0.01;
+% 
+for(i = 1: 10)
+
+%     y(i+1) = x(i) + 0.99*x(i+1)+
+    K(i) = P(i-1)*H(i)'*inv(R);
+
+%     H(i+1) = H(i)*Xh(i) + H(i+1)*Xh(i+1);
+    Xh(i) = Xh(i-1)+K(i)*(y(i)-H(i)*Xh(i-1));
+
+    P(i) = (I-K(i)*H(i))*P(i-1);    
+end
+

@@ -1,0 +1,63 @@
+[System]
+Name='T_S'
+Type='sugeno'
+Version=2.0
+NumInputs=4
+NumOutputs=1
+NumRules=0
+AndMethod='prod'
+OrMethod='probor'
+ImpMethod='prod'
+AggMethod='sum'
+DefuzzMethod='wtaver'
+
+[Input1]
+Name='input1'
+Range=[-0.3 0.3]
+NumMFs=2
+MF1='mf1':'gbellmf',[0.3 2.5 -0.3]
+MF2='mf2':'gbellmf',[0.3 2.5 0.3]
+
+[Input2]
+Name='input2'
+Range=[-1 1]
+NumMFs=2
+MF1='mf1':'gbellmf',[1 2.5 -1]
+MF2='mf2':'gbellmf',[1 2.5 1]
+
+[Input3]
+Name='input3'
+Range=[-3 3]
+NumMFs=2
+MF1='mf1':'gbellmf',[3 2.5 -3]
+MF2='mf2':'gbellmf',[3 2.5 3]
+
+[Input4]
+Name='input4'
+Range=[-3 3]
+NumMFs=2
+MF1='mf1':'gbellmf',[3 2.5 -3]
+MF2='mf2':'gbellmf',[3 2.5 3]
+
+[Output1]
+Name='output1'
+Range=[0 1]
+NumMFs=16
+MF1='mf1':'linear',[40.37 10.03 3.162 4.288 0.3386]
+MF2='mf2':'linear',[40.41 10.05 3.162 4.288 0.2068]
+MF3='mf3':'linear',[41.47 10.03 3.02 4.288 0]
+MF4='mf4':'linear',[38 0 3.162 4.288 0.2068]
+MF5='mf5':'linear',[38.56 10.18 3.182 4.288 -0.4893]
+MF6='mf6':'linear',[37.6 10.15 3.162 4.288 -0.1807]
+MF7='mf7':'linear',[30.56 10.18 3.162 4.288 0]
+MF8='mf8':'linear',[37.6 10.15 3.162 4.288 -0.1807]
+MF9='mf9':'linear',[0 0 0 0 0.875]
+MF10='mf10':'linear',[0 0 0 0 1]
+MF11='mf11':'linear',[0 0 0 0 0]
+MF12='mf12':'linear',[0 0 0 0 0.2]
+MF13='mf13':'linear',[0 0 0 0 0.4]
+MF14='mf14':'linear',[0 0 0 0 0.6]
+MF15='mf15':'linear',[0 0 0 0 0.8]
+MF16='mf16':'linear',[0 0 0 0 1]
+
+[Rules]

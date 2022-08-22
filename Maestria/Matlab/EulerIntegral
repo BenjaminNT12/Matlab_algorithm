@@ -1,0 +1,19 @@
+% metodo de euler-(heun)
+syms x;
+clc;
+clear all;
+
+VInitX = 0;
+VInitY = 1;
+h = 0.5
+VEndX = 4;
+VEndY = 0;
+VEndY
+f = (-2*x^3+12*x^2-20*x+8.5);
+
+for i = VInitX:h:VEndX
+    VEndY = VEndY + subs(f,VInitX)*h
+end
+
+
+VEndY

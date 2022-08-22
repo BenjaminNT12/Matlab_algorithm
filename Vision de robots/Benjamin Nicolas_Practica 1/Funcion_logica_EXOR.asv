@@ -1,0 +1,55 @@
+%%
+% 4) Funcione logica EXOR
+%
+% Obtener la imagen de los elementos que no sufren modificación en su ubicación, 
+% o bien de los que cambian, mediante las operaciones lógicas AND y EXOR. 
+% Primero hacerlo sobre las imágenes multinivel (no son binarias), es decir, 
+% aplicando la función lógica sobre palabras de ocho bits y luego sobre imágenes 
+% binarizadas por umbralización.
+
+clc
+clear
+close all
+
+[X,cmap]        = imread('scr3.gif');
+im_1            = ind2rgb(X,cmap);
+im_1            = uint8(im_1*256)
+grayIm_1        = rgb2gray(im_1);
+% figure(1), imshow(grayIm_1)
+
+
+[X_2,cmap_2]    = imread('scr4.gif');
+im_2            = ind2rgb(X_2,cmap_2);
+im_2            = uint8(im_2*256)
+grayIm_2        = rgb2gray(im_2);
+% figure(2), imshow(grayIm_2);
+
+
+%% 
+% i) Aplicar la función lógica AND a las imágenes (pap1) y (pap2)
+ 
+% andIm           =  bitand(grayIm_1, grayIm_2);
+% figure(4), imshow(andIm)
+
+%% 
+% ii) Aplicar la función lógica EXOR a las imágenes (pap1) y (pap2)
+
+andIm           =  bitxor(grayIm_1, grayIm_2);
+% figure(4), imshow(andIm)
+
+[fila, col]= size(grayIm_2)
+
+for i = 1:filas
+    for j = 1:col
+        if(grayIm_1(i,j) == grayIm_2(i,j))
+           im_new(i,j) = grayIm_1(i,j);
+        else
+            im_new(i,j) = 0;
+            e
+    end
+end
+
+subplot(1,4,1), imshow(grayIm_1)
+subplot(1,4,2), imshow(grayIm_2)
+subplot(1,4,3), imshow(andIm)
+subplot(1,4,3), imshow(im_new)
