@@ -122,7 +122,7 @@ for k = 1:length(t)-1
     end
 
 % CALCULO DE U
-
+    
     u = R_plus*(-kv*z+dv(k,:)');
 
     for i = 1: length(u)/3
