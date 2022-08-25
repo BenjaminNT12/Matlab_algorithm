@@ -1,0 +1,34 @@
+clear
+clc
+iterations = 200;
+inertia = 1.0;
+correction_factor = 2.0;
+swarms = 80;
+
+% ---- initial swarm position -----
+swarm=zeros(swarms,7);
+step = 1;
+for i = 1 : swarms
+    swarm(step, 1:7) = i;
+    step = step + 1;
+end
+
+swarm(:, 7) = 1000;       % Greater than maximum possible value
+swarm(:, 5) = 0;          % initial velocity
+swarm(:, 6) = 0;          % initial velocity
+
+%-- position of Swarms ---
+for i = 1 : swarms
+    swarm(i, 1) = swarm(i, 1) + swarm(i, 5)/1.2  ;  %update u position
+    swarm(i, 2) = swarm(i, 2) + swarm(i, 6)/1.2 ;    %update v position
+    u = swarm(i, 1);
+    v = swarm(i, 2);
+    
+    value = (u - 20)^2 + (v - 10)^2;          %Objective function
+    
+    if value < swarm(i, 7)           % Always True
+        swarm(i, 3) = swarm(i, 1);    % update best position of u,
+        swarm(i, 4) = swarm(i, 2);    % update best postions of v,
+        swarm(i, 7) = value;          % best updated minimum value
+    end
+end
