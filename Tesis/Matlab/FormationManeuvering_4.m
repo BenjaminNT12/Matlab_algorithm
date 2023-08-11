@@ -141,7 +141,7 @@ hold on
 
 % GRAFICA LA TRAYECTORIA DE TODOS LOS AGENTES
 for i = 1: length(P(1,:,1))
-    plot3(P(:,i,1),P(:,i,2),P(:,i,3),"Linewidth",1.3);
+    comet3(P(:,i,1),P(:,i,2),P(:,i,3));
     hold on
 end
 

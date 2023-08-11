@@ -256,7 +256,7 @@ xlabel('Eje-X')
 ylabel('Eje-Y')
 zlabel('Eje-Z')
 legend({'','','','','','','','','','','','','','','$q_{1}$','$q_{2}$','$q_{3}$','$q_{4}$'},'Interpreter','latex','Location','northeast')
-
+grid on
 figure(2)
 
 for i = 1:length(E)
@@ -267,6 +267,7 @@ title('Errores de distancia entre agentes')
 xlabel('Segundos')
 ylabel('Distancia')
 legend({'$error_{1}$','$error_{2}$','$error_{3}$','$error_{4}$','$error_{5}$','$error_{6}$'},'Interpreter','latex','Location','northeast')
+grid on
 figure(3)
 
 for i = 1:length(u(1,:))/m
@@ -277,6 +278,7 @@ title('Entrada de control eje X')
 xlabel('Segundos')
 ylabel('Control')
 legend({'$u1_{X}$','$u2_{X}$','$u3_{X}$','$u4_{X}$'},'Interpreter','latex','Location','northeast')
+grid on
 figure(4)
 
 for i = 1:length(u(1,:))/m
@@ -288,6 +290,8 @@ title('Entrada de control eje Y')
 xlabel('Segundos')
 ylabel('Control')
 legend({'$u1_{Y}$','$u2_{Y}$','$u3_{Y}$','$u4_{Y}$'},'Interpreter','latex','Location','northeast')
+grid on
+
 figure(5)
 
 for i = 1:length(u(1,:))/m
@@ -298,7 +302,7 @@ title('Entrada de control eje Z')
 xlabel('Segundos')
 ylabel('Control')
 legend({'$u1_{Z}$','$u2_{Z}$','$u3_{Z}$','$u4_{Z}$'},'Interpreter','latex','Location','northeast')
-
+grid on
 
 
 

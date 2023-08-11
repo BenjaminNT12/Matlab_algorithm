@@ -26,24 +26,31 @@ qd5 = [s1,   c1];
 qd = [qd1, qd2, qd3, qd4, qd5];
 
 % "EDGE" DE LA FORMACION (UNIONES)
-E1 = [1 2];
-E2 = [1 3];
-E3 = [1 4];
-E4 = [1 5];
-E5 = [2 3];
-E6 = [3 4];
+E1  = [1 2];
+E2  = [1 3];
+E3  = [1 4];
+E4  = [1 5];
+E5  = [2 3];
+E6  = [3 4];
 E7 = [4 5];
+
  
 E = [E1; E2; E3; E4; E5; E6; E7];
 
 %CONDICIONES INICIALES DE LOS PUNTOS DE INICIO DE LA FORMACION
-q1 = qd1 + delt*(rand(1,2)-0.5);
-q2 = qd2 + delt*(rand(1,2)-0.5);
-q3 = qd3 + delt*(rand(1,2)-0.5);
-q4 = qd4 + delt*(rand(1,2)-0.5);
-q5 = qd5 + delt*(rand(1,2)-0.5);
+q1 = qd1 + delt*(rand(1,2)-0.01);
+q2 = qd2 + delt*(rand(1,2)-0.01);
+q3 = qd3 + delt*(rand(1,2)-0.01);
+q4 = qd4 + delt*(rand(1,2)-0.01);
+q5 = qd5 + delt*(rand(1,2)-0.01) ;
 
 q = [q1, q2, q3, q4, q5];
+
+figure(1)
+xlim([-2 2])
+ylim([-2 2])
+framework(q(end,:),E);
+hold on
 
 qt = zeros(length(E),2);
 e = zeros(length(t),length(E));
@@ -77,6 +84,8 @@ for k = 1:length(t)
     R5 = [                          zeros(1,2),  (q(k, 2*2-1:2*2) - q(k, 3*2-1:3*2)),  -(q(k, 2*2-1:2*2) - q(k, 3*2-1:3*2)),                            zeros(1,2),                            zeros(1,2)];
     R6 = [                          zeros(1,2),                           zeros(1,2),   (q(k, 3*2-1:3*2) - q(k, 4*2-1:4*2)),  -(q(k, 3*2-1:3*2) - q(k, 4*2-1:4*2)),                            zeros(1,2)];
     R7 = [                          zeros(1,2),                           zeros(1,2),                            zeros(1,2),   (q(k, 4*2-1:4*2) - q(k, 5*2-1:5*2)),  -(q(k, 4*2-1:4*2) - q(k, 5*2-1:5*2))];
+   
+
 
     R = [R1; R2; R3; R4; R5; R6; R7];
     
@@ -93,10 +102,11 @@ for k = 1:length(t)
     
 end
 
-
+rangoR = rank(R)
+gaussJR = rref(R)
 %%% PLOTEA Y GRAFICA TODAS LAS GRAFICAS DE ERROR Y LA TRAYECTORIA DE FORMACION 
 
-figure(1)
+figure(2)
 
 framework(q(end,:),E);
 xlim([-2 2])
@@ -108,7 +118,7 @@ for i = 1: length(P(1,:,1))
     hold on
 end
 
-figure(2)
+figure(3)
 
 for i = 1:length(E)
     plot(t,e(:,i))

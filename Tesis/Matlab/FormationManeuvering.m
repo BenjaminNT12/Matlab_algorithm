@@ -124,7 +124,7 @@ for k = 1:length(t)
         ud(i*3-2: i*3,1) = (v0(k, :) + cross(w0(k, :), qtin(i,:)))';
     end
     
-    u = ua + ud;
+    u(k,:) = ua + ud;
 
 % INTEGRAL qP = u
     for i = 1: length(u)

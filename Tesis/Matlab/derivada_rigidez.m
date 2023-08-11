@@ -6,17 +6,17 @@ clear
 
 syms p1 p2 p3 p4 p5 p6 p7 p8 p9;
 
-P = [p1 p2 p3 p4];
+P = [p1 p2 p3 p4 p5 p6 p7 p8 p9];
 
 % "EDGE" DE LA FORMACION (UNIONES)
-E1 = [1 2];
-E2 = [1 3];
-E3 = [1 4];
-E4 = [2 3];
-E5 = [2 4];
-E6 = [3 4];
+E1   = [1 2];
+E2   = [1 3];
+E3   = [1 4];
+E4   = [2 3];
+E5   = [2 4];
+E6   = [3 4];
 
-
+ 
 E = [E1; E2; E3; E4; E5; E6];
 
 for i = 1: length(E(:,1))
@@ -24,11 +24,6 @@ for i = 1: length(E(:,1))
 end
 
 R = (1/2)*jacobian(Phi,P)
-
-
-
-
-
 
 
 
