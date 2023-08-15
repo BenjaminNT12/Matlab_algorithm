@@ -18,7 +18,7 @@ T = 0.01;
 m = 3;
 n = 5;
 l = 7;
-fin = 0.32
+fin = 0.8
 t = 0: T :fin;
 
 % PUNTOS DESEADOS DE LA FORMACION
@@ -73,17 +73,17 @@ end
 %%%%%%%%%%%%%% PPC %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 DELTA_UP = 1;
 DELTA_DOWN = 1;
-GAMMA = 2.1;
-v = 0.1;
+GAMMA = 1.1;
+v = 0.4;
 CHI_ZERO = 1;
-CHI_INF = 0.03;
+CHI_INF = 1;
 % chi = (CHI_ZERO-CHI_INF)*exp(-GAMMA*t)+CHI_INF;
 % chiP = (CHI_ZERO-CHI_INF)*exp(-GAMMA*t)+CHI_INF;
 
 chi  = coth(GAMMA*t + v) - 1 + CHI_INF;
 chip = -GAMMA*csch(GAMMA*t + v).^2;
 
-V = (1*(rand(1,m*n)))';
+V = (0.5*(rand(1,m*n)))';
 % chi2p = 2*GAMMA^2*(csch(GAMMA*t + v).^2).*coth(GAMMA*t + v);
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -118,17 +118,26 @@ for i = 1:length(t)-1
     R = matrizR(q(:,i),m);
     
     rho = eye(l).*((1/(2*chi(i)))*(1./(varphi(:,i)+DELTA_DOWN) - 1./(varphi(:,i)-DELTA_UP)));
-    rhop = diff(rho)./T;
+    % rhop = diff(rho)./T;
+
+    % CALCULO DE VF PUNTO DERIVADA DE VF    
+    if i == 1
+        rhop = rho/T;
+        temp = rho;
+    else
+        rhop = (rho - temp)/T;
+        temp = rho;
+    end
 
     Vf(:,i) = -kv*R'*rho*Ez(:,i);
     Rp = matrizR(Vf(:,i),m);
     Zp = 2*R*Vf(:,i);
 
     % for k=1:l
-    Ezp = rho*(Zp-chip(i)*varphi(:,i));
+    Ezp(:,i) = rho*(Zp-chip(i)*varphi(:,i));
     % end
 
-    Vfp(:,i) = -kv*Rp'*rho*Ez - kv*R'*rhop*Ez - kv*R'*rho*Ezp;
+    Vfp(:,i) = -kv*Rp'*rho*Ez(:,i) - kv*R'*rhop*Ez(:,i) - kv*R'*rho*Ezp(:,i);
     
     S = V(:,i) - Vf(:,i);
     u = -ks*S + Vfp(:,i) - R'*rho*Ez;
@@ -142,11 +151,13 @@ end
 
 % e(1, end + 1) = 0;
 figure(2);
-plot(t(1:length(e(1,:))),e(1,:));
-hold on
+for i = 1:l
+    plot(t(1:length(e(i,:))), e(i,:));
+    hold on
+end
 plot(t(1:length(e(1,:))),chi(1:length(e(1,:))));
 hold on
-plot(t(1:length(e(1,:))),chip(1:length(e(1,:))));
+plot(t(1:length(e(1,:))),-chi(1:length(e(1,:))));
 figure(1)
 Framework3Dplot(q(1:15,end), E);
 % figure(2);
