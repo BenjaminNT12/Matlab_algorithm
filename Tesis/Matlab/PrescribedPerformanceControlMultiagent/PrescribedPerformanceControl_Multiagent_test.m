@@ -18,10 +18,8 @@ clear;
 close all;
 clc;
 
-
-
-kv = 2.0;
-ks = 0.8;
+kv = 0.2;
+ks = 0.02;
 delt = 1;
 
 T = 0.01;
@@ -29,7 +27,7 @@ m = 3;
 n = 8;
 l = 18;
 c = 2.1;
-fin = 0.02;
+fin = 1.5;
 t = 0: T :fin;
 
 DELTA_UP = 1;
@@ -38,17 +36,23 @@ DELTA_DOWN = 1;
 CHI_ZERO = 1;
 CHI_INF = 0.03;
 
+qd1 = [-1, -1, -1];
+qd2 = [ 1, -1, -1];
+qd3 = [ 1,  1, -1];
+qd4 = [-1,  1, -1];
+qd5 = [-1, -1,  1];
+qd6 = [ 1, -1,  1];
+qd7 = [ 1,  1,  1];
+qd8 = [-1,  1,  1];
 
-qd1 = [-1,       -1,     -1];
-qd2 = [ 1,       -1,     -1];
-qd3 = [ 1,        1,     -1];
-qd4 = [-1,        1,     -1];
-qd5 = [-1,       -1,      1];
-qd6 = [ 1,       -1,      1];
-qd7 = [ 1,        1,      1];
-qd8 = [-1,        1,      1];
-
-qd = [qd1'; qd2'; qd3'; qd4'; qd5'; qd6'; qd7'; qd8'];
+qd = [qd1';
+      qd2'; 
+      qd3'; 
+      qd4'; 
+      qd5'; 
+      qd6'; 
+      qd7'; 
+      qd8'];
 
 E1   = [1 2];
 E2   = [1 3];
@@ -69,35 +73,56 @@ E16  = [6 7];
 E17  = [6 8];
 E18  = [7 8];
 
-E = [E1; E2; E3; E4; E5; E6; E7; E8; E9; E10; E11; E12; E13; E14; E15; E16; E17; E18];
+E = [E1; 
+     E2;
+     E3; 
+     E4; 
+     E5; 
+     E6; 
+     E7; 
+     E8; 
+     E9; 
+     E10; 
+     E11; 
+     E12; 
+     E13; 
+     E14; 
+     E15; 
+     E16; 
+     E17; 
+     E18];
 
-q1 = qd1 + delt*(rand(1,m) - 0.5);
-q2 = qd2 + delt*(rand(1,m) - 0.5);
-q3 = qd3 + delt*(rand(1,m) - 0.5);
-q4 = qd4 + delt*(rand(1,m) - 0.5);
-q5 = qd5 + delt*(rand(1,m) - 0.5);
-q6 = qd6 + delt*(rand(1,m) - 0.5);
-q7 = qd7 + delt*(rand(1,m) - 0.5);
-q8 = qd8 + delt*(rand(1,m) - 0.5);
+q1 = qd1 + delt*(rand(1,m) - 0.85);
+q2 = qd2 + delt*(rand(1,m) - 0.85);
+q3 = qd3 + delt*(rand(1,m) - 0.85);
+q4 = qd4 + delt*(rand(1,m) - 0.85);
+q5 = qd5 + delt*(rand(1,m) - 0.85);
+q6 = qd6 + delt*(rand(1,m) - 0.85);
+q7 = qd7 + delt*(rand(1,m) - 0.85);
+q8 = qd8 + delt*(rand(1,m) - 0.85);
 
-q = [q1'; q2'; q3'; q4'; q5'; q6'; q7'; q8'];
+q = [q1';
+     q2'; 
+     q3'; 
+     q4'; 
+     q5'; 
+     q6'; 
+     q7'; 
+     q8'];
+
+figure(1)
+for i = 1:n
+    plot3(q(i*m-2), q(i*m-1), q(i*m),"x",'LineWidth',2,'MarkerSize',15);
+    hold on;
+end
 
 for i = 1:l
     d(i,1) = norm(qd(E(i,1)*m-2:E(i,1)*m) - qd(E(i,2)*m-2:E(i,2)*m));
 end
 
-d1(:,1) = norm(qd(E(:,1)*m-2:E(:,1)*m) - qd(E(:,2)*m-2:E(:,2)*m)) 
-
-figure(1)
-for i = 1:length(q)/m
-    plot3(q(i*m-2), q(i*m-1), q(i*m),"x",'LineWidth',2,'MarkerSize',15);
-    hold on;
-end
-
-
 chi  = (CHI_ZERO-CHI_INF)*exp(-c*t)+CHI_INF;
 chip = -c*(CHI_ZERO-CHI_INF)*exp(-c*t);
-V = (0.05*(rand(1,m*n)))';
+V = (0*(rand(1,m*n)))';
 
 X = [q; V];
 
@@ -111,7 +136,7 @@ for i = 1:length(t)-1
     end
     
     R = matrizR(q(:,i),m);
-    
+
     rho = eye(l).*((1/(2*chi(i)))*(1./(varphi(:,i)+DELTA_DOWN) - 1./(varphi(:,i)-DELTA_UP)));
     
     if i == 1
@@ -123,12 +148,19 @@ for i = 1:length(t)-1
     end
     
     Vf(:,i) = -kv*R'*rho*Ez(:,i);
-    Zp = 2*R*Vf(:,i);
-    Rp = matrizR(Vf(:,i),m);
+    Zp = 2*R*V(:,i);
+    Rp = matrizR(V(:,i),m);
     S = V(:,i) - Vf(:,i);
     
     Ezp(:,i) = rho*(Zp-chip(i)*varphi(:,i));
-    Vfp(:,i) = -kv*(Rp'*rho*Ez(:,i) + R'*rhop*Ez(:,i) + R'*rho*Ezp(:,i));
+    Vfp2(:,i) = -kv*(Rp'*rho*Ez(:,i) + R'*rhop*Ez(:,i) + R'*rho*Ezp(:,i));
+    % CALCULO DE VF PUNTO DERIVADA DE VF    
+    
+    if i == 1
+        Vfp(:,i) = Vf(:,i)/T;
+    else
+        Vfp(:,i) = (Vf(:,i) - Vf(:,i-1))/T;
+    end
     
     u = -ks*S + Vfp(:,i) - R'*rho*Ez;
     
@@ -141,29 +173,6 @@ for i = 1:length(t)-1
         P(i,j,:) = [q(j*3-2, end), q(j*3-1, end) , q(j*3, end)];
     end
 end
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -274,3 +283,12 @@ for i = 1: length(P(:,1,1))
     end
 end
 
+figure(3)
+% for i = 1:n*m
+%     plot(Vfp(i,:))                                                                                                             
+%     hold on
+%     plot(Vfp2(i,:))
+% end
+plot(Vfp(2,:))                                                                                                             
+hold on
+plot(Vfp2(2,:))
