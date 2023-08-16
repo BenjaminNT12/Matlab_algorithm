@@ -1,4 +1,4 @@
-function R = matrizR(q, m)
+function R = matrizRCubo8Agent(q, m)
     
     R1  = [ (q(1*m-2:1*m, 1) - q(2*m-2:2*m, 1))', -(q(1*m-2:1*m, 1) - q(2*m-2:2*m, 1))',                           zeros(m,1)',                           zeros(m,1)',                           zeros(m,1)',                           zeros(m,1)',                           zeros(m,1)',                          zeros(m,1)'];
     R2  = [ (q(1*m-2:1*m, 1) - q(3*m-2:3*m, 1))',                          zeros(m, 1)', -(q(1*m-2:1*m, 1) - q(3*m-2:3*m, 1))',                           zeros(m,1)',                           zeros(m,1)',                           zeros(m,1)',                           zeros(m,1)',                          zeros(m,1)'];

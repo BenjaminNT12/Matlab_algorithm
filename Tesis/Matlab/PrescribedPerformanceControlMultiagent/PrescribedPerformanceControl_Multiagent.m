@@ -141,7 +141,7 @@ for i = 1:length(t)-1
         Ez(k,i) = 1/2 * log((DELTA_LIMITE_SUPERIOR*varphi(k,i) + DELTA_LIMITE_INFERIOR*DELTA_LIMITE_SUPERIOR)/(DELTA_LIMITE_SUPERIOR*DELTA_LIMITE_INFERIOR-DELTA_LIMITE_INFERIOR*varphi(k,i)));
     end
     
-    R = matrizR(q(:,i),m);
+    R = matrizRCubo8Agent(q(:,i),m);
 
     rho = eye(l).*((1/(2*ppf(i)))*(1./(varphi(:,i)+DELTA_LIMITE_INFERIOR) - 1./(varphi(:,i)-DELTA_LIMITE_SUPERIOR)));
     
@@ -155,7 +155,7 @@ for i = 1:length(t)-1
     
     Vf(:,i) = -KV*R'*rho*Ez(:,i);
     Zp = 2*R*V(:,i);
-    Rp = matrizR(V(:,i),m);
+    Rp = matrizRCubo8Agent(V(:,i),m);
     S = V(:,i) - Vf(:,i);
     
     Ezp(:,i) = rho*(Zp-ppfp(i)*varphi(:,i));
