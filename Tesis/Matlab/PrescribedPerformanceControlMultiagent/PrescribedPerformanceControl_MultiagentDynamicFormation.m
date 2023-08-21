@@ -37,15 +37,15 @@ fin = 15;
 t = 0: T :fin;
 
 
-qd1 = [-1,       -1,     -1];
-qd2 = [ 1,       -1,     -1];
-qd3 = [ 1,        1,     -1];
-qd4 = [-1,        1,     -1];
-qd5 = [-1,       -1,      1];
-qd6 = [ 1,       -1,      1];
-qd7 = [ 1,        1,      1];
-qd8 = [-1,        1,      1];
-qd9 = [ 0,        0,      0];
+qd1 = [-1, -1, -1];
+qd2 = [ 1, -1, -1];
+qd3 = [ 1,  1, -1];
+qd4 = [-1,  1, -1];
+qd5 = [-1, -1,  1];
+qd6 = [ 1, -1,  1];
+qd7 = [ 1,  1,  1];
+qd8 = [-1,  1,  1];
+qd9 = [ 0,  0,  0];
 
 qd = [qd1'; qd2'; qd3'; qd4'; qd5'; qd6'; qd7'; qd8'; qd9'];
 
@@ -85,7 +85,6 @@ q9 = qd9 + MAX_ERROR_INICIAL*(rand(1,m) - 0.85);
 
 q = [q1'; q2'; q3'; q4'; q5'; q6'; q7'; q8'; q9'];
 
-
 figure(1)
 
 for i = 1:n
@@ -102,10 +101,21 @@ ppfp = -c*(PPF_INICIO-PPF_FIN)*exp(-c*t);
 
 V = (0.0*(rand(1,m*n)))';
 
-v0 = [ones(length(t),1),         (cos(t))', zeros(length(t),1)]'; % trayectoria
+v0 = [(sin(t))',         (cos(t))', zeros(length(t),1)]'; % trayectoria
 w0 = [zeros(length(t),1), zeros(length(t),1),  zeros(length(t),1)]';
 
 X = [q; V];
+
+
+
+
+
+
+
+
+
+
+
 
 for i = 1:length(t)-1
     for k = 1:l
@@ -135,12 +145,12 @@ for i = 1:length(t)-1
     end
     
     Vf(:,i) = -KV*R'*rho*Ez(:,i) + vd(:,1);
-    % Zp = 2*R*V(:,i);
-    % Rp = matrizRCubo9AgentWithLeader(V(:,i),m);
+    Zp = 2*R*V(:,i);
+    Rp = matrizRCubo9AgentWithLeader(V(:,i),m);
     S = V(:,i) - Vf(:,i);
     
-    % Ezp(:,i) = rho*(Zp-ppfp(i)*varphi(:,i));
-    % Vfp2(:,i) = -KV*(Rp'*rho*Ez(:,i) + R'*rhop*Ez(:,i) + R'*rho*Ezp(:,i)); 
+    Ezp(:,i) = rho*(Zp-ppfp(i)*varphi(:,i));
+    Vfp2(:,i) = -KV*(Rp'*rho*Ez(:,i) + R'*rhop*Ez(:,i) + R'*rho*Ezp(:,i)); 
     
     if i == 1
         Vfp(:,i) = Vf(:,i)/T;
