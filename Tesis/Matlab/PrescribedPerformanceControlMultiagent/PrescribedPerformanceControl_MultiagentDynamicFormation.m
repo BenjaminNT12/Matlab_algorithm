@@ -101,17 +101,10 @@ ppfp = -c*(PPF_INICIO-PPF_FIN)*exp(-c*t);
 
 V = (0.0*(rand(1,m*n)))';
 
-v0 = [(sin(t))',         (cos(t))', zeros(length(t),1)]'; % trayectoria
+v0 = [ones(length(t),1),         (cos(t))', zeros(length(t),1)]'; % trayectoria
 w0 = [zeros(length(t),1), zeros(length(t),1),  zeros(length(t),1)]';
 
 X = [q; V];
-
-
-
-
-
-
-
 
 
 
