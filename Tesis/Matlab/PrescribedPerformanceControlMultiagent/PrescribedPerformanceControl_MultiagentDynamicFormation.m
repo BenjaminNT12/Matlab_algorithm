@@ -18,22 +18,22 @@ clear;
 close all;
 clc;
 
-KV = 0.5;
-KS = 0.2;
-MAX_ERROR_INICIAL = 0.9;
+KV = 0.2;
+KS = 0.5;
+MAX_ERROR_INICIAL = 1;
 
-DELTA_LIMITE_SUPERIOR = 1;
-DELTA_LIMITE_INFERIOR = 1;
+DELTA_LIMITE_SUPERIOR = 1.2;
+DELTA_LIMITE_INFERIOR = 0.7;
 
 PPF_INICIO = 1;
-PPF_FIN = 0.2;
+PPF_FIN = 0.17;
 
 T = 0.01;
 m = 3;
 n = 9;
 l = 21;
 c = 2.1;
-fin = 15;
+fin = 10;
 t = 0: T :fin;
 
 
@@ -73,17 +73,48 @@ E21  = [8 9];
 
 E = [E1; E2; E3; E4; E5; E6; E7; E8; E9; E10; E11; E12; E13; E14; E15; E16; E17; E18; E19; E20; E21];
 
-q1 = qd1 + MAX_ERROR_INICIAL*(rand(1,m) - 0.85);
-q2 = qd2 + MAX_ERROR_INICIAL*(rand(1,m) - 0.85);
-q3 = qd3 + MAX_ERROR_INICIAL*(rand(1,m) - 0.85);
-q4 = qd4 + MAX_ERROR_INICIAL*(rand(1,m) - 0.85);
-q5 = qd5 + MAX_ERROR_INICIAL*(rand(1,m) - 0.85);
-q6 = qd6 + MAX_ERROR_INICIAL*(rand(1,m) - 0.85);
-q7 = qd7 + MAX_ERROR_INICIAL*(rand(1,m) - 0.85);
-q8 = qd8 + MAX_ERROR_INICIAL*(rand(1,m) - 0.85);
-q9 = qd9 + MAX_ERROR_INICIAL*(rand(1,m) - 0.85);
+q1 = qd1 + MAX_ERROR_INICIAL*(rand(1,m) - 1.05);
+q2 = qd2 + MAX_ERROR_INICIAL*(rand(1,m) - 1.05);
+q3 = qd3 + MAX_ERROR_INICIAL*(rand(1,m) - 1.05);
+q4 = qd4 + MAX_ERROR_INICIAL*(rand(1,m) - 1.05);
+q5 = qd5 + MAX_ERROR_INICIAL*(rand(1,m) - 1.05);
+q6 = qd6 + MAX_ERROR_INICIAL*(rand(1,m) - 1.05);
+q7 = qd7 + MAX_ERROR_INICIAL*(rand(1,m) - 1.05);
+q8 = qd8 + MAX_ERROR_INICIAL*(rand(1,m) - 1.05);
+q9 = qd9 + MAX_ERROR_INICIAL*(rand(1,m) - 1.05);
 
-q = [q1'; q2'; q3'; q4'; q5'; q6'; q7'; q8'; q9'];
+% q = [q1'; q2'; q3'; q4'; q5'; q6'; q7'; q8'; q9'];
+
+
+
+q = [   1.0579+1;
+        1.2313+1;
+        0.0123;
+        1.5815+1;
+        1.3371+1;
+        0.1681;
+        2.0201+1;
+        3.3460+1;
+        0.2113;
+        0.1792+1;
+        2.7710+1;
+        0.5225;
+        0.8085+1;
+        0.8848+1;
+        2.2038;
+        2.7998+1;
+        1.3196+1;
+        2.0627;
+        2.4380+1;
+        3.1536+1;
+        2.3853;
+        0.3991+1;
+        3.1141+1;
+        2.1780;
+        1.4800;
+        2.3256;
+        1.2323];
+
 
 figure(1)
 
@@ -99,9 +130,9 @@ end
 ppf  = (PPF_INICIO-PPF_FIN)*exp(-c*t)+PPF_FIN;
 ppfp = -c*(PPF_INICIO-PPF_FIN)*exp(-c*t);
 
-V = (0.0*(rand(1,m*n)))';
+V = (1.8*(rand(1,m*n)))';
 
-v0 = [ones(length(t),1),         (cos(t))', zeros(length(t),1)]'; % trayectoria
+v0 = [2*sin(t)',         2*(cos(t))', ones(length(t),1)]'; % trayectoria
 w0 = [zeros(length(t),1), zeros(length(t),1),  zeros(length(t),1)]';
 
 X = [q; V];
@@ -137,7 +168,8 @@ for i = 1:length(t)-1
         temp = rho;
     end
     
-    Vf(:,i) = -KV*R'*rho*Ez(:,i) + vd(:,1);
+    % Vf(:,i) = -KV*R'*rho*Ez(:,i) + vd(:,1); %%%%%%%%%%%%% control con PPC
+    Vf(:,i) = -KV*R'*e(:,i) + vd(:,1);  %%%%%%%%%%%%% control sin PPC
     Zp = 2*R*V(:,i);
     Rp = matrizRCubo9AgentWithLeader(V(:,i),m);
     S = V(:,i) - Vf(:,i);
@@ -151,7 +183,9 @@ for i = 1:length(t)-1
         Vfp(:,i) = (Vf(:,i) - Vf(:,i-1))/T;
     end
     
-    u = -KS*S - R'*rho*Ez + Vfp(:,i);
+    % u = -KS*S - R'*rho*Ez + Vfp(:,i); %%%%%%%%%%%%% control con PPC
+    u = -KS*S + Vfp(:,i) - R'*e; %%%%%%%%%%%%% control sin PPC
+
     
     [tt, xx] = ode45(@systemDoubleIntegrator, [t(i) t(i+1)], X(:,i), [], u(:,i), m, n);
     X(:, i+1) = xx(end, :)';
@@ -193,27 +227,27 @@ end
 figure(1)
 
 grid on
-axis([-4 20 -4 4 -4 4])
+% axis([-2 5 -4 3 -2 12])
 
-h1 = animatedline('LineStyle',"-.",'Color','#0072BD','LineWidth',1.5);
-h2 = animatedline('LineStyle',"-.",'Color','#D95319','LineWidth',1.5);
-h3 = animatedline('LineStyle',"-.",'Color','#EDB120','LineWidth',1.5);
-h4 = animatedline('LineStyle',"-.",'Color','#7E2F8E','LineWidth',1.5);
-h5 = animatedline('LineStyle',"-.",'Color','#77AC30','LineWidth',1.5);
-h6 = animatedline('LineStyle',"-.",'Color','#4DBEEE','LineWidth',1.5);
-h7 = animatedline('LineStyle',"-.",'Color','#A2142F','LineWidth',1.5);
-h8 = animatedline('LineStyle',"-.",'Color','#FF0000','LineWidth',1.5);
+% h1 = animatedline('LineStyle',"-.",'Color','#0072BD','LineWidth',1.5);
+% h2 = animatedline('LineStyle',"-.",'Color','#D95319','LineWidth',1.5);
+% h3 = animatedline('LineStyle',"-.",'Color','#EDB120','LineWidth',1.5);
+% h4 = animatedline('LineStyle',"-.",'Color','#7E2F8E','LineWidth',1.5);
+% h5 = animatedline('LineStyle',"-.",'Color','#77AC30','LineWidth',1.5);
+% h6 = animatedline('LineStyle',"-.",'Color','#4DBEEE','LineWidth',1.5);
+% h7 = animatedline('LineStyle',"-.",'Color','#A2142F','LineWidth',1.5);
+% h8 = animatedline('LineStyle',"-.",'Color','#FF0000','LineWidth',1.5);
 h9 = animatedline('LineStyle',"-.",'Color','#072a16','LineWidth',1.5);
 
 for i = 1: length(P(:,1,1))
-    addpoints(h1, P(i,1,1), P(i,1,2), P(i,1,3));
-    addpoints(h2, P(i,2,1), P(i,2,2), P(i,2,3));
-    addpoints(h3, P(i,3,1), P(i,3,2), P(i,3,3));
-    addpoints(h4, P(i,4,1), P(i,4,2), P(i,4,3));
-    addpoints(h5, P(i,5,1), P(i,5,2), P(i,5,3));
-    addpoints(h6, P(i,6,1), P(i,6,2), P(i,6,3));
-    addpoints(h7, P(i,7,1), P(i,7,2), P(i,7,3));
-    addpoints(h8, P(i,8,1), P(i,8,2), P(i,8,3));
+    % addpoints(h1, P(i,1,1), P(i,1,2), P(i,1,3));
+    % addpoints(h2, P(i,2,1), P(i,2,2), P(i,2,3));
+    % addpoints(h3, P(i,3,1), P(i,3,2), P(i,3,3));
+    % addpoints(h4, P(i,4,1), P(i,4,2), P(i,4,3));
+    % addpoints(h5, P(i,5,1), P(i,5,2), P(i,5,3));
+    % addpoints(h6, P(i,6,1), P(i,6,2), P(i,6,3));
+    % addpoints(h7, P(i,7,1), P(i,7,2), P(i,7,3));
+    % addpoints(h8, P(i,8,1), P(i,8,2), P(i,8,3));
     addpoints(h9, P(i,9,1), P(i,9,2), P(i,9,3));
     
     [grf, points] = Framework3Dplot(q(:,i), E);
@@ -231,252 +265,299 @@ ylabel('Eje-Y','FontSize',14)
 zlabel('Eje-Z','FontSize',14)
 
 
-grid on
-
-
+% grid on
 
 figure(2)
-grid on
-axis([0 fin min(-ppf(:)) max(ppf(:))]);
 
-title('Error de distancia de agentes, acotado por la función de rendimiento','FontSize',14)
-xlabel('Tiempo','FontSize',14)
-ylabel('Error','FontSize',14)
-
-h1 = animatedline('Color','#0072BD',"Linewidth",2);
-h2 = animatedline('Color','#D95319','LineWidth',2);
-h3 = animatedline('Color','#EDB120','LineWidth',2);
-h4 = animatedline('Color','#7E2F8E','LineWidth',2);
-h5 = animatedline('Color','#77AC30','LineWidth',2);
-h6 = animatedline('Color','#4DBEEE','LineWidth',2);
-h7 = animatedline('Color','#A2142F','LineWidth',2);
-h8 = animatedline('Color','#FF0000','LineWidth',2);
-
-h9 = animatedline('Color','#0072BD',"Linewidth",2);
-h10 = animatedline('Color','#D95319','LineWidth',2);
-h11 = animatedline('Color','#EDB120','LineWidth',2);
-h12 = animatedline('Color','#7E2F8E','LineWidth',2);
-h13 = animatedline('Color','#77AC30','LineWidth',2);
-h14 = animatedline('Color','#4DBEEE','LineWidth',2);
-h15 = animatedline('Color','#A2142F','LineWidth',2);
-h16 = animatedline('Color','#FF0000','LineWidth',2);
-
-h17 = animatedline('Color','#7E2F8E','LineWidth',2);
-h18 = animatedline('Color','#77AC30','LineWidth',2);
-
-h19 = animatedline('Color','r','LineWidth',2,'LineStyle','--');
-h20 = animatedline('Color','r','LineWidth',2,'LineStyle','--');
-
-for i = 1: length(e(1,:))
-    addpoints(h1, t(i),e(1,i));
-    addpoints(h2, t(i),e(2,i));
-    addpoints(h3, t(i),e(3,i));
-    addpoints(h4, t(i),e(4,i));
-    addpoints(h5, t(i),e(5,i));
-    addpoints(h6, t(i),e(6,i));
-    addpoints(h7, t(i),e(7,i));
-    addpoints(h8, t(i),e(8,i));
-    
-    addpoints(h9,  t(i),e(9, i));
-    addpoints(h10, t(i),e(10, i));
-    addpoints(h11, t(i),e(11, i));
-    addpoints(h12, t(i),e(12, i));
-    addpoints(h13, t(i),e(13, i));
-    addpoints(h14, t(i),e(14, i));
-    addpoints(h15, t(i),e(15, i));
-    addpoints(h16, t(i),e(16, i));
-    
-    addpoints(h17, t(i),e(17, i));
-    addpoints(h18, t(i),e(18, i));
-    
-    addpoints(h19, t(i),DELTA_LIMITE_SUPERIOR*ppf(i));
-    addpoints(h20, t(i),-DELTA_LIMITE_INFERIOR*ppf(i));
-    
-    [grf1] = line(t(i),e(:,1));
-    drawnow;
-    frames(i) = getframe();
-    if i < length(P(:,1,1))
-        delete(grf1);
-    end
+for i = 1:l
+    plot(t(1:end-1),e(i,:),"Linewidth",2)
+    hold on
 end
-
-
-
-
-
-
-
-
-%%% PLOTEA Y GRAFICA TODAS LAS GRAFICAS DE ERROR
-
+plot(t(1:end-1),DELTA_LIMITE_SUPERIOR*ppf(1:end-1),'Color','r','LineWidth',2,'LineStyle','--')
+hold on
+plot(t(1:end-1),-DELTA_LIMITE_INFERIOR*ppf(1:end-1),'Color','r','LineWidth',2,'LineStyle','--')
+hold on
+grid on
+title('Errores de distancia entre agentes')
+xlabel('Segundos')
+ylabel('Distancia')
 
 figure(3)
-grid on
 
-max_x = 0;
 ax = 2;
-
-for i = 1: n
-    if max_x < u(m*i-ax, 1)
-        max_x = u(m*i-ax, 1);
-    end
+for i = 1:n
+    plot(t(1:end-1),u(m*i-ax, :),"Linewidth",2)
+    hold on
 end
-
-min_x = 0;
-
-for i = 1: n
-    if min_x > u(m*i-ax, 1)
-        min_x = u(m*i-ax, 1);
-    end
-end 
-
-
-axis([0 fin min_x max_x])
-
-title('Entrada de control en eje X','FontSize',14)
-xlabel('Tiempo','FontSize',14) 
-ylabel('Control X','FontSize',14) 
-
-h1 = animatedline('Color','#0072BD',"Linewidth",2);
-h2 = animatedline('Color','#D95319','LineWidth',2);
-h3 = animatedline('Color','#EDB120','LineWidth',2);
-h4 = animatedline('Color','#7E2F8E','LineWidth',2);
-h5 = animatedline('Color','#77AC30','LineWidth',2);
-h6 = animatedline('Color','#4DBEEE','LineWidth',2);
-h7 = animatedline('Color','#A2142F','LineWidth',2);
-h8 = animatedline('Color','#FF0000','LineWidth',2);
-
-
-for i = 1: length(u(1, :))
-    addpoints(h1, t(i),u(m*1-ax, i));
-    addpoints(h2, t(i),u(m*2-ax, i));
-    addpoints(h3, t(i),u(m*3-ax, i));
-    addpoints(h4, t(i),u(m*4-ax, i));
-    addpoints(h5, t(i),u(m*5-ax, i));
-    addpoints(h6, t(i),u(m*6-ax, i));
-    addpoints(h7, t(i),u(m*7-ax, i));
-    addpoints(h8, t(i),u(m*8-ax, i));    
-    
-    [grf1] = line(t(i),u(:,1));
-    drawnow;
-    frames(i) = getframe();
-    if i < length(t)
-        delete(grf1);
-    end
-end
-
-
-
-figure(4)
-
 grid on
-max_y = 0;
+title('Entrada de control eje X')
+xlabel('Segundos')
+ylabel('Control')
+% legend({'$u1_{X}$','$u2_{X}$','$u3_{X}$','$u4_{X}$'},'Interpreter','latex','Location','northeast')
+figure(4)
 ay = 1;
-
-for i = 1: n
-    if max_y < u(m*i-ay, 1)
-        max_y = u(m*i-ay, 1);
-    end
+for i = 1:n
+    plot(t(1:end-1),u(m*i-ay, :),"Linewidth",2)
+%     legend({'$u1_{X}$','$u2_{X}$','$u3_{X}$','$u4_{X}$'},'Interpreter','latex','Location','southwest')
+    hold on
 end
-
-min_y = 0;
-
-for i = 1: n
-    if min_y > u(m*i-ay, 1)
-        min_y = u(m*i-ay, 1);
-    end
-end 
-
-
-axis([0 fin min_y max_y])
-
-title('Entrada de control en eje Y','FontSize',14)
-xlabel('Tiempo','FontSize',14) 
-ylabel('Control Y','FontSize',14) 
-
-h1 = animatedline('Color','#0072BD',"Linewidth",2);
-h2 = animatedline('Color','#D95319','LineWidth',2);
-h3 = animatedline('Color','#EDB120','LineWidth',2);
-h4 = animatedline('Color','#7E2F8E','LineWidth',2);
-h5 = animatedline('Color','#77AC30','LineWidth',2);
-h6 = animatedline('Color','#4DBEEE','LineWidth',2);
-h7 = animatedline('Color','#A2142F','LineWidth',2);
-h8 = animatedline('Color','#FF0000','LineWidth',2);
-
-for i = 1: length(u(1, :))
-    addpoints(h1, t(i),u(m*1-ay, i));
-    addpoints(h2, t(i),u(m*2-ay, i));
-    addpoints(h3, t(i),u(m*3-ay, i));
-    addpoints(h4, t(i),u(m*4-ay, i));
-    addpoints(h5, t(i),u(m*5-ay, i));
-    addpoints(h6, t(i),u(m*6-ay, i));
-    addpoints(h7, t(i),u(m*7-ay, i));
-    addpoints(h8, t(i),u(m*8-ay, i));    
-    
-    [grf1] = line(t(i),u(:,1));
-    drawnow;
-    frames(i) = getframe();
-    if i < length(t)
-        delete(grf1);
-    end
-end
-
-
-
+grid on
+title('Entrada de control eje Y')
+xlabel('Segundos')
+ylabel('Control')
+% legend({'$u1_{Y}$','$u2_{Y}$','$u3_{Y}$','$u4_{Y}$'},'Interpreter','latex','Location','northeast')
 figure(5)
 
-
+for i = 1:n
+    plot(t(1:end-1),u(m*i, :),"Linewidth",2)
+    hold on
+end
 grid on
-max_z = 0;
+title('Entrada de control eje Z')
+xlabel('Segundos')
+ylabel('Control')
+% figure(2)
+% grid on
+% axis([0 fin min(-ppf(:)) max(ppf(:))]);
 
-for i = 1: n
-    if max_z < u(m*i, 1)
-        max_z = u(m*i, 1);
-    end
-end
+% title('Error de distancia de agentes, acotado por la función de rendimiento','FontSize',14)
+% xlabel('Tiempo','FontSize',14)
+% ylabel('Error','FontSize',14)
 
-min_z = 0;
+% h1 = animatedline('Color','#0072BD',"Linewidth",2);
+% h2 = animatedline('Color','#D95319','LineWidth',2);
+% h3 = animatedline('Color','#EDB120','LineWidth',2);
+% h4 = animatedline('Color','#7E2F8E','LineWidth',2);
+% h5 = animatedline('Color','#77AC30','LineWidth',2);
+% h6 = animatedline('Color','#4DBEEE','LineWidth',2);
+% h7 = animatedline('Color','#A2142F','LineWidth',2);
+% h8 = animatedline('Color','#FF0000','LineWidth',2);
 
-for i = 1: n
-    if min_z > u(m*i, 1)
-        min_z = u(m*i, 1);
-    end
-end 
+% h9 = animatedline('Color','#0072BD',"Linewidth",2);
+% h10 = animatedline('Color','#D95319','LineWidth',2);
+% h11 = animatedline('Color','#EDB120','LineWidth',2);
+% h12 = animatedline('Color','#7E2F8E','LineWidth',2);
+% h13 = animatedline('Color','#77AC30','LineWidth',2);
+% h14 = animatedline('Color','#4DBEEE','LineWidth',2);
+% h15 = animatedline('Color','#A2142F','LineWidth',2);
+% h16 = animatedline('Color','#FF0000','LineWidth',2);
 
+% h17 = animatedline('Color','#7E2F8E','LineWidth',2);
+% h18 = animatedline('Color','#77AC30','LineWidth',2);
 
-axis([0 fin min_z max_z])
+% h19 = animatedline('Color','r','LineWidth',2,'LineStyle','--');
+% h20 = animatedline('Color','r','LineWidth',2,'LineStyle','--');
 
-title('Entrada de control en eje Z','FontSize',14)
-xlabel('Tiempo','FontSize',14) 
-ylabel('Control Z','FontSize',14) 
-
-h1 = animatedline('Color','#0072BD',"Linewidth",2);
-h2 = animatedline('Color','#D95319','LineWidth',2);
-h3 = animatedline('Color','#EDB120','LineWidth',2);
-h4 = animatedline('Color','#7E2F8E','LineWidth',2);
-h5 = animatedline('Color','#77AC30','LineWidth',2);
-h6 = animatedline('Color','#4DBEEE','LineWidth',2);
-h7 = animatedline('Color','#A2142F','LineWidth',2);
-h8 = animatedline('Color','#FF0000','LineWidth',2);
-
-
-for i = 1: length(u(1, :))
-    addpoints(h1, t(i),u(m*1, i));
-    addpoints(h2, t(i),u(m*2, i));
-    addpoints(h3, t(i),u(m*3, i));
-    addpoints(h4, t(i),u(m*4, i));
-    addpoints(h5, t(i),u(m*5, i));
-    addpoints(h6, t(i),u(m*6, i));
-    addpoints(h7, t(i),u(m*7, i));
-    addpoints(h8, t(i),u(m*8, i));    
+% for i = 1: length(e(1,:))
+%     addpoints(h1, t(i),e(1,i));
+%     addpoints(h2, t(i),e(2,i));
+%     addpoints(h3, t(i),e(3,i));
+%     addpoints(h4, t(i),e(4,i));
+%     addpoints(h5, t(i),e(5,i));
+%     addpoints(h6, t(i),e(6,i));
+%     addpoints(h7, t(i),e(7,i));
+%     addpoints(h8, t(i),e(8,i));
     
-    [grf1] = line(t(i),u(:,1));
-    drawnow;
-    frames(i) = getframe();
-    if i < length(t)
-        delete(grf1);
-    end
-end
+%     addpoints(h9,  t(i),e(9, i));
+%     addpoints(h10, t(i),e(10, i));
+%     addpoints(h11, t(i),e(11, i));
+%     addpoints(h12, t(i),e(12, i));
+%     addpoints(h13, t(i),e(13, i));
+%     addpoints(h14, t(i),e(14, i));
+%     addpoints(h15, t(i),e(15, i));
+%     addpoints(h16, t(i),e(16, i));
+    
+%     addpoints(h17, t(i),e(17, i));
+%     addpoints(h18, t(i),e(18, i));
+    
+%     addpoints(h19, t(i),DELTA_LIMITE_SUPERIOR*ppf(i));
+%     addpoints(h20, t(i),-DELTA_LIMITE_INFERIOR*ppf(i));
+    
+%     [grf1] = line(t(i),e(:,1));
+%     drawnow;
+%     frames(i) = getframe();
+%     if i < length(P(:,1,1))
+%         delete(grf1);
+%     end
+% end
+
+
+
+
+
+
+
+
+% %%% PLOTEA Y GRAFICA TODAS LAS GRAFICAS DE ERROR
+
+
+% figure(3)
+% grid on
+
+% max_x = 0;
+% ax = 2;
+
+% for i = 1: n
+%     if max_x < u(m*i-ax, 1)
+%         max_x = u(m*i-ax, 1);
+%     end
+% end
+
+% min_x = 0;
+
+% for i = 1: n
+%     if min_x > u(m*i-ax, 1)
+%         min_x = u(m*i-ax, 1);
+%     end
+% end 
+
+
+% axis([0 fin min_x max_x])
+
+% title('Entrada de control en eje X','FontSize',14)
+% xlabel('Tiempo','FontSize',14) 
+% ylabel('Control X','FontSize',14) 
+
+% h1 = animatedline('Color','#0072BD',"Linewidth",2);
+% h2 = animatedline('Color','#D95319','LineWidth',2);
+% h3 = animatedline('Color','#EDB120','LineWidth',2);
+% h4 = animatedline('Color','#7E2F8E','LineWidth',2);
+% h5 = animatedline('Color','#77AC30','LineWidth',2);
+% h6 = animatedline('Color','#4DBEEE','LineWidth',2);
+% h7 = animatedline('Color','#A2142F','LineWidth',2);
+% h8 = animatedline('Color','#FF0000','LineWidth',2);
+
+
+% for i = 1: length(u(1, :))
+%     addpoints(h1, t(i),u(m*1-ax, i));
+%     addpoints(h2, t(i),u(m*2-ax, i));
+%     addpoints(h3, t(i),u(m*3-ax, i));
+%     addpoints(h4, t(i),u(m*4-ax, i));
+%     addpoints(h5, t(i),u(m*5-ax, i));
+%     addpoints(h6, t(i),u(m*6-ax, i));
+%     addpoints(h7, t(i),u(m*7-ax, i));
+%     addpoints(h8, t(i),u(m*8-ax, i));    
+    
+%     [grf1] = line(t(i),u(:,1));
+%     drawnow;
+%     frames(i) = getframe();
+%     if i < length(t)
+%         delete(grf1);
+%     end
+% end
+
+
+
+% figure(4)
+
+% grid on
+% max_y = 0;
+% ay = 1;
+
+% for i = 1: n
+%     if max_y < u(m*i-ay, 1)
+%         max_y = u(m*i-ay, 1);
+%     end
+% end
+
+% min_y = 0;
+
+% for i = 1: n
+%     if min_y > u(m*i-ay, 1)
+%         min_y = u(m*i-ay, 1);
+%     end
+% end 
+
+
+% axis([0 fin min_y max_y])
+
+% title('Entrada de control en eje Y','FontSize',14)
+% xlabel('Tiempo','FontSize',14) 
+% ylabel('Control Y','FontSize',14) 
+
+% h1 = animatedline('Color','#0072BD',"Linewidth",2);
+% h2 = animatedline('Color','#D95319','LineWidth',2);
+% h3 = animatedline('Color','#EDB120','LineWidth',2);
+% h4 = animatedline('Color','#7E2F8E','LineWidth',2);
+% h5 = animatedline('Color','#77AC30','LineWidth',2);
+% h6 = animatedline('Color','#4DBEEE','LineWidth',2);
+% h7 = animatedline('Color','#A2142F','LineWidth',2);
+% h8 = animatedline('Color','#FF0000','LineWidth',2);
+
+% for i = 1: length(u(1, :))
+%     addpoints(h1, t(i),u(m*1-ay, i));
+%     addpoints(h2, t(i),u(m*2-ay, i));
+%     addpoints(h3, t(i),u(m*3-ay, i));
+%     addpoints(h4, t(i),u(m*4-ay, i));
+%     addpoints(h5, t(i),u(m*5-ay, i));
+%     addpoints(h6, t(i),u(m*6-ay, i));
+%     addpoints(h7, t(i),u(m*7-ay, i));
+%     addpoints(h8, t(i),u(m*8-ay, i));    
+    
+%     [grf1] = line(t(i),u(:,1));
+%     drawnow;
+%     frames(i) = getframe();
+%     if i < length(t)
+%         delete(grf1);
+%     end
+% end
+
+
+
+% figure(5)
+
+
+% grid on
+% max_z = 0;
+
+% for i = 1: n
+%     if max_z < u(m*i, 1)
+%         max_z = u(m*i, 1);
+%     end
+% end
+
+% min_z = 0;
+
+% for i = 1: n
+%     if min_z > u(m*i, 1)
+%         min_z = u(m*i, 1);
+%     end
+% end 
+
+
+% axis([0 fin min_z max_z])
+
+% title('Entrada de control en eje Z','FontSize',14)
+% xlabel('Tiempo','FontSize',14) 
+% ylabel('Control Z','FontSize',14) 
+
+% h1 = animatedline('Color','#0072BD',"Linewidth",2);
+% h2 = animatedline('Color','#D95319','LineWidth',2);
+% h3 = animatedline('Color','#EDB120','LineWidth',2);
+% h4 = animatedline('Color','#7E2F8E','LineWidth',2);
+% h5 = animatedline('Color','#77AC30','LineWidth',2);
+% h6 = animatedline('Color','#4DBEEE','LineWidth',2);
+% h7 = animatedline('Color','#A2142F','LineWidth',2);
+% h8 = animatedline('Color','#FF0000','LineWidth',2);
+
+
+% for i = 1: length(u(1, :))
+%     addpoints(h1, t(i),u(m*1, i));
+%     addpoints(h2, t(i),u(m*2, i));
+%     addpoints(h3, t(i),u(m*3, i));
+%     addpoints(h4, t(i),u(m*4, i));
+%     addpoints(h5, t(i),u(m*5, i));
+%     addpoints(h6, t(i),u(m*6, i));
+%     addpoints(h7, t(i),u(m*7, i));
+%     addpoints(h8, t(i),u(m*8, i));    
+    
+%     [grf1] = line(t(i),u(:,1));
+%     drawnow;
+%     frames(i) = getframe();
+%     if i < length(t)
+%         delete(grf1);
+%     end
+% end
 
 
 
