@@ -33,7 +33,7 @@ m = 3;
 n = 9;
 l = 21;
 c = 2.1;
-fin = 10;
+fin = 1.5;
 t = 0: T :fin;
 
 
@@ -178,26 +178,33 @@ for i = 1:length(t)-1
 end
 
 
-
+% Escribe una funcion para guardar video en mp4
 
 
 figure(1)
-
+vid = VideoWriter("DynamicAdquisitionPPC.avi", 'Motion JPEG AVI');
+open(vid)
 grid on
 
 h9 = animatedline('LineStyle',"-.",'Color','#072a16','LineWidth',1.5);
+
 
 for i = 1: length(P(:,1,1))
     addpoints(h9, P(i,9,1), P(i,9,2), P(i,9,3));
     
     [grf, points] = Framework3Dplot(q(:,i), E);
     drawnow limitrate;
-    
+    frames(i) = getframe();
+    newFrames = imresize(frames(i), [339 444]);
+    writeVideo(vid,newFrames)
+    % saveVideoAsMp4([grf, points], 30, "PrescribedPerformanceControl_MultiagentDynamicFormation")
     if i < length(P(:,1,1))
         delete(grf);
         delete(points);
     end
 end
+
+close(vid)
 
 title('Adquisición de la formación','FontSize',20)
 xlabel('Eje-X','FontSize',14)
