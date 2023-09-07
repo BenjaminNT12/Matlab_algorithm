@@ -1,4 +1,4 @@
-function [lines,points] = Framework3Dplot(q,E)
+function [lines,points] = Framework3Dplot(q, E)
     % M = zeros(length(q(1,:)),1);
     
     lE = length(E);

@@ -102,6 +102,9 @@ w0 = [zeros(length(t),1), zeros(length(t),1),  zeros(length(t),1)]';
 
 X = [q; V];
 
+ruido = noise(length(t))+pi*sin(t);
+% ruidoVector(:,1) = ones(n*m,1)*ruido;
+
 for i = 1:length(t)-1
     for k = 1:l
         qt(k*m-(m-1):m*k, i) = q(E(k,1)*m-2:E(k,1)*m, i) - q(E(k,2)*m-2:E(k,2)*m, i);
@@ -150,7 +153,7 @@ for i = 1:length(t)-1
     [tt, xx] = ode45(@systemDoubleIntegrator, [t(i) t(i+1)], X(:,i), [], u(:,i), m, n);
     X(:, i+1) = xx(end, :)';
     q(:, i+1) = xx(end, 1:m*n)';
-    V(:, i+1) = xx(end, m*n+1:2*m*n)';
+    V(:, i+1) = xx(end, m*n+1:2*m*n)'+ones(n*m,1)*ruido(i);
     
     for j = 1:n
         P(i,j,:) = [q(j*3-2, end), q(j*3-1, end) , q(j*3, end)];
