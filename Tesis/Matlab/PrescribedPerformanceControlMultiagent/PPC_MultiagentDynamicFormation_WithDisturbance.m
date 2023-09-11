@@ -33,7 +33,7 @@ m = 3;
 n = 9;
 l = 21;
 c = 2.1;
-fin = 20;
+fin = 2;
 t = 0: T :fin;
 
 
@@ -102,7 +102,7 @@ w0 = [zeros(length(t),1), zeros(length(t),1),  zeros(length(t),1)]';
 
 X = [q; V];
 
-ruido = noise(length(t))+pi*sin(t);
+% ruido = noise(length(t))+pi*sin(t);
 % ruidoVector(:,1) = ones(n*m,1)*ruido;
 
 for i = 1:length(t)-1
@@ -150,10 +150,10 @@ for i = 1:length(t)-1
     u = -KS*S - R'*rho*Ez + Vfp(:,i); %%%%%%%%%%%%% control con PPC
     % u = -KS*S + Vfp(:,i) - R'*e; %%%%%%%%%%%%% control sin PPC
 
-    [tt, xx] = ode45(@systemDoubleIntegrator, [t(i) t(i+1)], X(:,i), [], u(:,i), m, n);
+    [tt, xx] = ode45(@systemDoubleIntegratorWithDisturbance, [t(i) t(i+1)], X(:,i), [], u(:,i), m, n);
     X(:, i+1) = xx(end, :)';
     q(:, i+1) = xx(end, 1:m*n)';
-    V(:, i+1) = xx(end, m*n+1:2*m*n)'+ones(n*m,1)*ruido(i);
+    V(:, i+1) = xx(end, m*n+1:2*m*n)';
     
     for j = 1:n
         P(i,j,:) = [q(j*3-2, end), q(j*3-1, end) , q(j*3, end)];
@@ -161,34 +161,34 @@ for i = 1:length(t)-1
 end
 
 
-% Escribe una funcion para guardar video en mp4
-
 
 f = figure(1);
 view([-45,-90,45]);
 f.Position = [500 500 1000 1250];
 axis([1 10 1 10 0 26])
-vid = VideoWriter("DynamicAdquisitionPPC_Control.avi", 'Motion JPEG AVI');
-open(vid)
+% vid = VideoWriter("DynamicAdquisitionPPC_Control.avi", 'Motion JPEG AVI'); %% Comentar para guardar video
+% open(vid) %% Comentar para guardar video
 grid on
 
 h9 = animatedline('LineStyle',"-.",'Color','#072a16','LineWidth',1.5);
+trajectory = animatedline('LineStyle',"-",'Color','#d95319','LineWidth',1.5);
 
 
 for i = 1: length(P(:,1,1))
     addpoints(h9, P(i,9,1), P(i,9,2), P(i,9,3));
+    addpoints(trajectory, v0(1,i), v0(2,i), v0(3,i));
     
     [grf, points] = Framework3Dplot(q(:,i), E);
     drawnow limitrate;
     frames(i) = getframe();
-    writeVideo(vid, frames(i))
+    % writeVideo(vid, frames(i))  %% Comentar para guardar video
     if i < length(P(:,1,1))
         delete(grf);
         delete(points);
     end
 end
 
-close(vid)
+% close(vid) %% Comentar para guardar video
 
 title('Adquisición de la formación','FontSize',20)
 xlabel('Eje-X','FontSize',14)
