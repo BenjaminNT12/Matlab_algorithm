@@ -33,7 +33,7 @@ m = 3;
 n = 9;
 l = 21;
 c = 2.1;
-fin = 20;
+fin = 5;
 t = 0: T :fin;
 
 
@@ -161,31 +161,35 @@ end
 % Escribe una funcion para guardar video en mp4
 
 
+
 f = figure(1);
 view([-45,-90,45]);
 f.Position = [500 500 1000 1250];
 axis([1 10 1 10 0 26])
-vid = VideoWriter("DynamicAdquisitionPPC_Control.avi", 'Motion JPEG AVI');
-open(vid)
+% vid = VideoWriter("DynamicAdquisitionPPC_Control.avi", 'Motion JPEG AVI'); %% Comentar para guardar video
+% open(vid) %% Comentar para guardar video
 grid on
 
 h9 = animatedline('LineStyle',"-.",'Color','#072a16','LineWidth',1.5);
+trajectory = animatedline('LineStyle',"-",'Color','#d95319','LineWidth',1.5);
 
 
 for i = 1: length(P(:,1,1))
+
     addpoints(h9, P(i,9,1), P(i,9,2), P(i,9,3));
+    addpoints(trajectory, v0(1,i), v0(2,i), t(i));
     
     [grf, points] = Framework3Dplot(q(:,i), E);
     drawnow limitrate;
     frames(i) = getframe();
-    writeVideo(vid, frames(i))
+    % writeVideo(vid, frames(i))  %% Comentar para guardar video
     if i < length(P(:,1,1))
         delete(grf);
         delete(points);
     end
 end
 
-close(vid)
+% close(vid) %% Comentar para guardar video
 
 title('Adquisición de la formación','FontSize',20)
 xlabel('Eje-X','FontSize',14)

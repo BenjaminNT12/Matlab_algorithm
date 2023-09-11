@@ -33,7 +33,7 @@ m = 3;
 n = 9;
 l = 21;
 c = 2.1;
-fin = 2;
+fin = 5;
 t = 0: T :fin;
 
 
@@ -95,7 +95,7 @@ end
 ppf  = (PPF_INICIO-PPF_FIN)*exp(-c*t)+PPF_FIN;
 ppfp = -c*(PPF_INICIO-PPF_FIN)*exp(-c*t);
 
-V = (1.8*(rand(1,m*n)))';
+V = (0*(rand(1,m*n)))'; % velocidad inicial
 
 v0 = [2*sin(t)',         2*(cos(t))', ones(length(t),1)]'; % trayectoria
 w0 = [zeros(length(t),1), zeros(length(t),1),  zeros(length(t),1)]';
@@ -175,8 +175,9 @@ trajectory = animatedline('LineStyle',"-",'Color','#d95319','LineWidth',1.5);
 
 
 for i = 1: length(P(:,1,1))
+
     addpoints(h9, P(i,9,1), P(i,9,2), P(i,9,3));
-    addpoints(trajectory, v0(1,i), v0(2,i), v0(3,i));
+    addpoints(trajectory, 1.4800+v0(1,i),2.3256+ v0(2,i), 1.2323+t(i));
     
     [grf, points] = Framework3Dplot(q(:,i), E);
     drawnow limitrate;
