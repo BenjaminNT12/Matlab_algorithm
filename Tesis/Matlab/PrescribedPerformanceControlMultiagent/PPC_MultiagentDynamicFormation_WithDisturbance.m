@@ -18,7 +18,8 @@ clear;
 close all;
 clc;
 
-KV = 0.2;
+KT = 50.2;
+KV = 0.3;
 KS = 0.5;
 MAX_ERROR_INICIAL = 1;
 
@@ -33,7 +34,7 @@ m = 3;
 n = 9;
 l = 21;
 c = 2.1;
-fin = 5;
+fin = 50;
 t = 0: T :fin;
 
 
@@ -95,7 +96,7 @@ end
 ppf  = (PPF_INICIO-PPF_FIN)*exp(-c*t)+PPF_FIN;
 ppfp = -c*(PPF_INICIO-PPF_FIN)*exp(-c*t);
 
-V = (0*(rand(1,m*n)))'; % velocidad inicial
+V = (3.2*(rand(1,m*n)))'; % velocidad inicial
 
 v0 = [2*sin(t)',         2*(cos(t))', ones(length(t),1)]'; % trayectoria
 w0 = [zeros(length(t),1), zeros(length(t),1),  zeros(length(t),1)]';
@@ -137,6 +138,8 @@ for i = 1:length(t)-1
     Zp = 2*R*V(:,i);
     Rp = matrizRCubo9AgentWithLeader(V(:,i),m);
     S = V(:,i) - Vf(:,i);
+
+    tanH = -KT*tanh(S);
     
     Ezp(:,i) = rho*(Zp-ppfp(i)*varphi(:,i));
     Vfp2(:,i) = -KV*(Rp'*rho*Ez(:,i) + R'*rhop*Ez(:,i) + R'*rho*Ezp(:,i)); 
@@ -147,7 +150,8 @@ for i = 1:length(t)-1
         Vfp(:,i) = (Vf(:,i) - Vf(:,i-1))/T;
     end
     
-    u = -KS*S - R'*rho*Ez + Vfp(:,i); %%%%%%%%%%%%% control con PPC
+    u = -KS*S - R'*rho*Ez + Vfp(:,i) + tanH; %%%%%%%%%%%%% control con PPC agregando tanh
+    % u = -KS*S - R'*rho*Ez + Vfp(:,i); %%%%%%%%%%%%% control con PPC
     % u = -KS*S + Vfp(:,i) - R'*e; %%%%%%%%%%%%% control sin PPC
 
     [tt, xx] = ode45(@systemDoubleIntegratorWithDisturbance, [t(i) t(i+1)], X(:,i), [], u(:,i), m, n);
@@ -163,31 +167,41 @@ end
 
 
 f = figure(1);
-view([-45,-90,45]);
-f.Position = [500 500 1000 1250];
-axis([1 10 1 10 0 26])
-% vid = VideoWriter("DynamicAdquisitionPPC_Control.avi", 'Motion JPEG AVI'); %% Comentar para guardar video
-% open(vid) %% Comentar para guardar video
-grid on
+% view([-45,-90,45]);
+% f.Position = [500 500 1000 1250];
+% axis([1 10 1 10 0 26])
+% % vid = VideoWriter("DynamicAdquisitionPPC_Control.avi", 'Motion JPEG AVI'); %% Comentar para guardar video
+% % open(vid) %% Comentar para guardar video
+% grid on
 
-h9 = animatedline('LineStyle',"-.",'Color','#072a16','LineWidth',1.5);
-trajectory = animatedline('LineStyle',"-",'Color','#d95319','LineWidth',1.5);
+% h9 = animatedline('LineStyle',"-.",'Color','#072a16','LineWidth',1.5);
+% trajectory = animatedline('LineStyle',"-",'Color','#d95319','LineWidth',1.5);
 
+% leader = 9
+% for i = 1: length(P(:,1,1))
 
-for i = 1: length(P(:,1,1))
-
-    addpoints(h9, P(i,9,1), P(i,9,2), P(i,9,3));
-    addpoints(trajectory, 1.4800+v0(1,i),2.3256+ v0(2,i), 1.2323+t(i));
+%     addpoints(h9, P(i,9,1), P(i,9,2), P(i,9,3));
+%     % addpoints(trajectory, q(leader*3-2, 1)+v0(1,i),q(leader*3-1, 1)+ v0(2,i), t(i));
+%     addpoints(trajectory,4.28-v0(2,i), 3.05 + v0(1,i), 1.23+t(i));
     
-    [grf, points] = Framework3Dplot(q(:,i), E);
-    drawnow limitrate;
-    frames(i) = getframe();
-    % writeVideo(vid, frames(i))  %% Comentar para guardar video
-    if i < length(P(:,1,1))
-        delete(grf);
-        delete(points);
-    end
-end
+%     [grf, points] = Framework3Dplot(q(:,i), E);
+%     drawnow limitrate;
+%     frames(i) = getframe();
+%     % writeVideo(vid, frames(i))  %% Comentar para guardar video
+%     if i < length(P(:,1,1))
+%         delete(grf);
+%         delete(points);
+%     end
+% end
+
+% plotea todos los agentes en 3D
+
+figure(1)
+plot3(4.28-v0(2,:)', 3.05 + v0(1,:)', 1.23+t(:),'LineStyle',"-",'Color','#d95319','LineWidth',1.5);
+hold on
+plot3(q(9*m-2,:), q(9*m-1,:), q(9*m,:),'LineStyle',"-.",'Color','#072a16','LineWidth',1.5);
+
+[grf, points] = Framework3Dplot(q(:,i), E);
 
 % close(vid) %% Comentar para guardar video
 
@@ -212,40 +226,40 @@ title('Errores de distancia entre agentes')
 xlabel('Segundos')
 ylabel('Distancia')
 
-figure(3)
+% figure(3)
 
-ax = 2;
-for i = 1:n
-    plot(t(1:end-1),u(m*i-ax, :),"Linewidth",2)
-    hold on
-end
-grid on
-title('Entrada de control eje X')
-xlabel('Segundos')
-ylabel('Control')
-% legend({'$u1_{X}$','$u2_{X}$','$u3_{X}$','$u4_{X}$'},'Interpreter','latex','Location','northeast')
-figure(4)
-ay = 1;
-for i = 1:n
-    plot(t(1:end-1),u(m*i-ay, :),"Linewidth",2)
-%     legend({'$u1_{X}$','$u2_{X}$','$u3_{X}$','$u4_{X}$'},'Interpreter','latex','Location','southwest')
-    hold on
-end
-grid on
-title('Entrada de control eje Y')
-xlabel('Segundos')
-ylabel('Control')
-% legend({'$u1_{Y}$','$u2_{Y}$','$u3_{Y}$','$u4_{Y}$'},'Interpreter','latex','Location','northeast')
-figure(5)
+% ax = 2;
+% for i = 1:n
+%     plot(t(1:end-1),u(m*i-ax, :),"Linewidth",2)
+%     hold on
+% end
+% grid on
+% title('Entrada de control eje X')
+% xlabel('Segundos')
+% ylabel('Control')
+% % legend({'$u1_{X}$','$u2_{X}$','$u3_{X}$','$u4_{X}$'},'Interpreter','latex','Location','northeast')
+% figure(4)
+% ay = 1;
+% for i = 1:n
+%     plot(t(1:end-1),u(m*i-ay, :),"Linewidth",2)
+% %     legend({'$u1_{X}$','$u2_{X}$','$u3_{X}$','$u4_{X}$'},'Interpreter','latex','Location','southwest')
+%     hold on
+% end
+% grid on
+% title('Entrada de control eje Y')
+% xlabel('Segundos')
+% ylabel('Control')
+% % legend({'$u1_{Y}$','$u2_{Y}$','$u3_{Y}$','$u4_{Y}$'},'Interpreter','latex','Location','northeast')
+% figure(5)
 
-for i = 1:n
-    plot(t(1:end-1),u(m*i, :),"Linewidth",2)
-    hold on
-end
-grid on
-title('Entrada de control eje Z')
-xlabel('Segundos')
-ylabel('Control')
+% for i = 1:n
+%     plot(t(1:end-1),u(m*i, :),"Linewidth",2)
+%     hold on
+% end
+% grid on
+% title('Entrada de control eje Z')
+% xlabel('Segundos')
+% ylabel('Control')
 
 
 
