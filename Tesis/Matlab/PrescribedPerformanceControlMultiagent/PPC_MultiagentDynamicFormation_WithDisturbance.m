@@ -34,7 +34,7 @@ m = 3;
 n = 9;
 l = 21;
 c = 2.1;
-fin = 50;
+fin = 10;
 t = 0: T :fin;
 
 
@@ -166,7 +166,7 @@ end
 
 
 
-f = figure(1);
+% f = figure(1);
 % view([-45,-90,45]);
 % f.Position = [500 500 1000 1250];
 % axis([1 10 1 10 0 26])
@@ -203,7 +203,7 @@ plot3(q(9*m-2,:), q(9*m-1,:), q(9*m,:),'LineStyle',"-.",'Color','#072a16','LineW
 
 [grf, points] = Framework3Dplot(q(:,i), E);
 
-% close(vid) %% Comentar para guardar video
+close(vid) %% Comentar para guardar video
 
 title('Adquisición de la formación','FontSize',20)
 xlabel('Eje-X','FontSize',14)
