@@ -1,11 +1,11 @@
 % FILEPATH: /home/nicolas/Github/Matlab_algorithm/Tesis/Matlab/PrescribedPerformanceControlMultiagent/PrescribedPerformanceControl_Multiagent_test.m
-% This script implements a multi-agent system with prescribed performance control. 
-% The agents are modeled as double integrators and the control objective is to make 
-% them track a desired trajectory while maintaining a certain formation. The control 
-% law is based on a prescribed performance function and a Lyapunov function. The 
-% script generates random initial positions for the agents and plots their 
-% trajectories in 3D. 
-% 
+% This script implements a multi-agent system with prescribed performance control.
+% The agents are modeled as double integrators and the control objective is to make
+% them track a desired trajectory while maintaining a certain formation. The control
+% law is based on a prescribed performance function and a Lyapunov function. The
+% script generates random initial positions for the agents and plots their
+% trajectories in 3D.
+%
 % Inputs:
 %   - None
 %
@@ -26,7 +26,7 @@ MAX_ERROR_INICIAL = 1;
 DELTA_LIMITE_SUPERIOR = 1.2;
 DELTA_LIMITE_INFERIOR = 0.7;
 
-PPF_INICIO = 1;
+PPF_INICIO = 2;
 PPF_FIN = 0.17;
 
 T = 0.01;
@@ -73,14 +73,14 @@ E = [E1; E2; E3; E4; E5; E6; E7; E8; E9; E10; E11; E12; E13; E14; E15; E16; E17;
 % q = [q1'; q2'; q3'; q4'; q5'; q6'; q7'; q8'; q9'];
 
 q = [   1.0579+1; 1.2313+1; 0.0123;
-        1.5815+1; 1.3371+1; 0.1681;
-        2.0201+1; 3.3460+1; 0.2113;
-        0.1792+1; 2.7710+1; 0.5225;
-        0.8085+1; 0.8848+1; 2.2038;
-        2.7998+1; 1.3196+1; 2.0627;
-        2.4380+1; 3.1536+1; 2.3853;
-        0.3991+1; 3.1141+1; 2.1780;
-        1.4800;   2.3256;  1.2323];
+    1.5815+1; 1.3371+1; 0.1681;
+    2.0201+1; 3.3460+1; 0.2113;
+    0.1792+1; 2.7710+1; 0.5225;
+    0.8085+1; 0.8848+1; 2.2038;
+    2.7998+1; 1.3196+1; 2.0627;
+    2.4380+1; 3.1536+1; 2.3853;
+    0.3991+1; 3.1141+1; 2.1780;
+    1.4800;   2.3256;  1.2323];
 
 figure(1)
 
@@ -110,19 +110,20 @@ for i = 1:length(t)-1
     for k = 1:l
         qt(k*m-(m-1):m*k, i) = q(E(k,1)*m-2:E(k,1)*m, i) - q(E(k,2)*m-2:E(k,2)*m, i);
         e(k,i) = norm(qt(k*m-(m-1):m*k, i)) - d(k);
-        Z(k,1) = e(k,i)*(e(k,i)+2*d(k));
+        Z(k,i) = (norm(qt(k*m-(m-1):m*k, i)))^2 - 2*norm(qt(k*m-(m-1):m*k, i))* d(k) + d(k)^2;
+        % Z(k,1) = e(k,i)*(e(k,i)+2*d(k));
         varphi(k,i) = e(k,i)/ppf(i);
         Ez(k,i) = 1/2 * log((DELTA_LIMITE_SUPERIOR*varphi(k,i) + DELTA_LIMITE_INFERIOR*DELTA_LIMITE_SUPERIOR)/(DELTA_LIMITE_SUPERIOR*DELTA_LIMITE_INFERIOR-DELTA_LIMITE_INFERIOR*varphi(k,i)));
     end
- 
+    
     qdin = qdinVector(E, qt(:,i), 9, l, m);
-
+    
     for k = 1: n
         vd(k*m-2: k*m,1) = v0(:, i) + cross(w0(:, i), qdin(k*m-2:k*m,1));
     end
-
+    
     R = matrizRCubo9AgentWithLeader(q(:,i),m);
-
+    
     rho = eye(l).*((1/(2*ppf(i)))*(1./(varphi(:,i)+DELTA_LIMITE_INFERIOR) - 1./(varphi(:,i)-DELTA_LIMITE_SUPERIOR)));
     
     if i == 1
@@ -138,11 +139,11 @@ for i = 1:length(t)-1
     Zp = 2*R*V(:,i);
     Rp = matrizRCubo9AgentWithLeader(V(:,i),m);
     S = V(:,i) - Vf(:,i);
-
+    
     tanH = -KT*tanh(S);
     
     Ezp(:,i) = rho*(Zp-ppfp(i)*varphi(:,i));
-    Vfp2(:,i) = -KV*(Rp'*rho*Ez(:,i) + R'*rhop*Ez(:,i) + R'*rho*Ezp(:,i)); 
+    Vfp2(:,i) = -KV*(Rp'*rho*Ez(:,i) + R'*rhop*Ez(:,i) + R'*rho*Ezp(:,i));
     
     if i == 1
         Vfp(:,i) = Vf(:,i)/T;
@@ -153,7 +154,7 @@ for i = 1:length(t)-1
     u = -KS*S - R'*rho*Ez + Vfp(:,i) + tanH; %%%%%%%%%%%%% control con PPC agregando tanh
     % u = -KS*S - R'*rho*Ez + Vfp(:,i); %%%%%%%%%%%%% control con PPC
     % u = -KS*S + Vfp(:,i) - R'*e; %%%%%%%%%%%%% control sin PPC
-
+    
     [tt, xx] = ode45(@systemDoubleIntegratorWithDisturbance, [t(i) t(i+1)], X(:,i), [], u(:,i), m, n);
     X(:, i+1) = xx(end, :)';
     q(:, i+1) = xx(end, 1:m*n)';
@@ -183,7 +184,7 @@ end
 %     addpoints(h9, P(i,9,1), P(i,9,2), P(i,9,3));
 %     % addpoints(trajectory, q(leader*3-2, 1)+v0(1,i),q(leader*3-1, 1)+ v0(2,i), t(i));
 %     addpoints(trajectory,4.28-v0(2,i), 3.05 + v0(1,i), 1.23+t(i));
-    
+
 %     [grf, points] = Framework3Dplot(q(:,i), E);
 %     drawnow limitrate;
 %     frames(i) = getframe();
@@ -201,7 +202,7 @@ plot3(4.28-v0(2,:)', 3.05 + v0(1,:)', 1.23+t(:),'LineStyle',"-",'Color','#d95319
 hold on
 plot3(q(9*m-2,:), q(9*m-1,:), q(9*m,:),'LineStyle',"-.",'Color','#072a16','LineWidth',1.5);
 
-% [grf, points] = Framework3Dplot(q(:,i), E); %% Comentar para guardar video
+[grf, points] = Framework3Dplot(q(:,i), E); 
 
 % close(vid) %% Comentar para guardar video
 
@@ -230,7 +231,7 @@ ylabel('Distancia')
 figure(3)
 
 for i = 1:l
-    plot(t(1:end-1),e(i,:),"Linewidth",2)
+    plot(t(1:end-1),Z(i,:),"Linewidth",2)
     hold on
 end
 plot(t(1:end-1),DELTA_LIMITE_SUPERIOR*ppf(1:end-1),'Color','r','LineWidth',2,'LineStyle','--')
