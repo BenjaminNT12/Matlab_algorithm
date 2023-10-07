@@ -26,7 +26,7 @@ MAX_ERROR_INICIAL = 1;
 DELTA_LIMITE_SUPERIOR = 1.2;
 DELTA_LIMITE_INFERIOR = 0.7;
 
-PPF_INICIO = 2;
+PPF_INICIO = 1;
 PPF_FIN = 0.17;
 
 T = 0.01;
@@ -215,7 +215,7 @@ zlabel('Eje-Z','FontSize',14)
 figure(2)
 
 for i = 1:l
-    plot(t(1:end-1),e(i,:),"Linewidth",2)
+    plot(t(1:end-1),e(20,:),"Linewidth",2) %% 9, 20
     hold on
 end
 plot(t(1:end-1),DELTA_LIMITE_SUPERIOR*ppf(1:end-1),'Color','r','LineWidth',2,'LineStyle','--')
