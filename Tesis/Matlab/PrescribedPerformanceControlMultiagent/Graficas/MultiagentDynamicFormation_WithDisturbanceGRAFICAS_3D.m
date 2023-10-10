@@ -267,13 +267,13 @@ hold on
 plot(t(1:end-1),-DELTA_LIMITE_INFERIOR*ppf(1:end-1),'Color','r','LineWidth',2,'LineStyle','--')
 hold on
 grid on
-axis([5 15 -0.7 0.7])
+axis([5 15 -0.5 0.5])
 % xlabel('Seconds')
 % ylabel('Distance error')
 
 
 FFM = [0 0 1 1;
-       0.5 0.11 0.4 0.4;
+       0.5 0.11 0.43 0.4;
        0.2 0.2 0.6 0.6];
 fhv = [3:4];
 newFig = 102;
