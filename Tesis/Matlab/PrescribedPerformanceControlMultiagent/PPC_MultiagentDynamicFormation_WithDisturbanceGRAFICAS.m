@@ -19,15 +19,15 @@ close all;
 clc;
 
 KT = 50.2;
-KV = 0.3;
-KS = 0.5;
+KV = 0.2;
+KS = 0.1;
 MAX_ERROR_INICIAL = 1;
 
 DELTA_LIMITE_SUPERIOR = 3*1.2;
 DELTA_LIMITE_INFERIOR = 3*1.2;
 
 PPF_INICIO = 1;
-PPF_FIN = 0.17;
+PPF_FIN = 0.15;
 
 T = 0.01;
 m = 3;
@@ -72,15 +72,15 @@ E = [E1; E2; E3; E4; E5; E6; E7; E8; E9; E10; E11; E12; E13; E14; E15; E16; E17;
 
 % q = [q1'; q2'; q3'; q4'; q5'; q6'; q7'; q8'; q9'];
 
-q = 3*[   1.0579+1; 1.2313+1; 0.0123;
-    1.5815+1; 1.3371+1; 0.1681;
-    2.0201+1; 3.3460+1; 0.2113;
-    0.1792+1; 2.7710+1; 0.5225;
-    0.8085+1; 0.8848+1; 2.2038;
-    2.7998+1; 1.3196+1; 2.0627;
-    2.4380+1; 3.1536+1; 2.3853;
-    0.3991+1; 3.1141+1; 2.1780;
-    1.4800;   2.3256;  1.2323];
+q = 3*[ 1.0579+1; 1.2313+1; 0.0123;
+        0.5815+1; 1.3371+1; 0.1681;
+        2.0201+1; 3.3460+1; 0.2113;
+        0.1792+1; 1.7710+1; 0.5225;
+        0.8085+1; 0.8848+1; 2.2038;
+        1.7998+1; 1.3196+1; 2.0627;
+        2.4380+1; 3.1536+1; 2.3853;
+        1.3991+1; 3.1141+1; 2.1780;
+        1.4800;   3.3256;  0.6323];
 
 figure(1)
 
@@ -96,9 +96,9 @@ end
 ppf  = (PPF_INICIO-PPF_FIN)*exp(-c*t)+PPF_FIN;
 ppfp = -c*(PPF_INICIO-PPF_FIN)*exp(-c*t);
 
-V = (5.2*(ones(1,m*n)))'; % velocidad inicial
+V = (0.2*(ones(1,m*n)))'; % velocidad inicial
 
-v0 = [2*sin(0.35*t)',         2*(cos(0.35*t))', ones(length(t),1)]'; % trayectoria
+v0 = [2*sin(0.35*t)',       2*(cos(0.35*t))',   ones(length(t),1)]'; % trayectoria
 w0 = [zeros(length(t),1), zeros(length(t),1),  zeros(length(t),1)]';
 
 X = [q; V];
@@ -168,9 +168,9 @@ end
 
 
 % f = figure(1);
-% view([-45,-90,45]);
-% f.Position = [500 500 1000 1250];
-% axis([1 10 1 10 0 26])
+% % view([-45,-90,45]);% Quitar comentario si se quiere una venta adaptable
+% % f.Position = [500 500 1000 1250]; % Quitar comentario si se quiere una venta adaptable
+% % axis([1 10 1 10 0 26]) % Quitar comentario si se quiere una venta adaptable
 % % vid = VideoWriter("DynamicAdquisitionPPC_Control.avi", 'Motion JPEG AVI'); %% Comentar para guardar video
 % % open(vid) %% Comentar para guardar video
 % grid on
@@ -202,7 +202,14 @@ plot3(12.28-(1/0.35)*v0(2,:)', 9.05 + (1/0.35)*v0(1,:)', 3*1.23+t(:),'LineStyle'
 hold on
 plot3(q(9*m-2,:), q(9*m-1,:), q(9*m,:),'LineStyle',"-",'Color','blue','LineWidth',2);
 
+
 [grf, points] = Framework3Dplot(q(:,i), E); 
+
+% Plotear todas las demas trayectorias de los agentes
+for i = 1:n
+    plot3(q(i*m-2,:), q(i*m-1,:), q(i*m,:),'LineStyle',"-.",'LineWidth',0.5);
+    hold on
+end
 
 % close(vid) %% Comentar para guardar video
 
