@@ -23,8 +23,8 @@ KV = 0.3;
 KS = 0.5;
 MAX_ERROR_INICIAL = 1;
 
-DELTA_LIMITE_SUPERIOR = 1.2;
-DELTA_LIMITE_INFERIOR = 0.7;
+DELTA_LIMITE_SUPERIOR = 3*1.2;
+DELTA_LIMITE_INFERIOR = 3*1.2;
 
 PPF_INICIO = 1;
 PPF_FIN = 0.17;
@@ -33,20 +33,20 @@ T = 0.01;
 m = 3;
 n = 9;
 l = 21;
-c = 2.1;
-fin = 10;
+c = 0.55;
+fin = 30;
 t = 0: T :fin;
 
 
-qd1 = [-1, -1, -1];
-qd2 = [ 1, -1, -1];
-qd3 = [ 1,  1, -1];
-qd4 = [-1,  1, -1];
-qd5 = [-1, -1,  1];
-qd6 = [ 1, -1,  1];
-qd7 = [ 1,  1,  1];
-qd8 = [-1,  1,  1];
-qd9 = [ 0,  0,  0];
+qd1 = 3*[-1, -1, -1];
+qd2 = 3*[ 1, -1, -1];
+qd3 = 3*[ 1,  1, -1];
+qd4 = 3*[-1,  1, -1];
+qd5 = 3*[-1, -1,  1];
+qd6 = 3*[ 1, -1,  1];
+qd7 = 3*[ 1,  1,  1];
+qd8 = 3*[-1,  1,  1];
+qd9 = 3*[ 0,  0,  0];
 
 qd = [qd1'; qd2'; qd3'; qd4'; qd5'; qd6'; qd7'; qd8'; qd9'];
 
@@ -72,7 +72,7 @@ E = [E1; E2; E3; E4; E5; E6; E7; E8; E9; E10; E11; E12; E13; E14; E15; E16; E17;
 
 % q = [q1'; q2'; q3'; q4'; q5'; q6'; q7'; q8'; q9'];
 
-q = [   1.0579+1; 1.2313+1; 0.0123;
+q = 3*[   1.0579+1; 1.2313+1; 0.0123;
     1.5815+1; 1.3371+1; 0.1681;
     2.0201+1; 3.3460+1; 0.2113;
     0.1792+1; 2.7710+1; 0.5225;
@@ -96,9 +96,9 @@ end
 ppf  = (PPF_INICIO-PPF_FIN)*exp(-c*t)+PPF_FIN;
 ppfp = -c*(PPF_INICIO-PPF_FIN)*exp(-c*t);
 
-V = (3.2*(rand(1,m*n)))'; % velocidad inicial
+V = (5.2*(ones(1,m*n)))'; % velocidad inicial
 
-v0 = [2*sin(t)',         2*(cos(t))', ones(length(t),1)]'; % trayectoria
+v0 = [2*sin(0.35*t)',         2*(cos(0.35*t))', ones(length(t),1)]'; % trayectoria
 w0 = [zeros(length(t),1), zeros(length(t),1),  zeros(length(t),1)]';
 
 X = [q; V];
@@ -134,8 +134,8 @@ for i = 1:length(t)-1
         temp = rho;
     end
     
-    Vf(:,i) = -KV*R'*rho*Ez(:,i) + vd(:,1); %%%%%%%%%%%%% control con PPC
-    % Vf(:,i) = -KV*R'*e(:,i) + vd(:,1);  %%%%%%%%%%%%% control sin PPC
+    % Vf(:,i) = -KV*R'*rho*Ez(:,i) + vd(:,1); %%%%%%%%%%%%% control con PPC
+    Vf(:,i) = -KV*R'*e(:,i) + vd(:,1);  %%%%%%%%%%%%% control sin PPC
     Zp = 2*R*V(:,i);
     Rp = matrizRCubo9AgentWithLeader(V(:,i),m);
     S = V(:,i) - Vf(:,i);
@@ -151,9 +151,9 @@ for i = 1:length(t)-1
         Vfp(:,i) = (Vf(:,i) - Vf(:,i-1))/T;
     end
     
-    u = -KS*S - R'*rho*Ez + Vfp(:,i) + tanH; %%%%%%%%%%%%% control con PPC agregando tanh
+    % u = -KS*S - R'*rho*Ez + Vfp(:,i)+ tanH; %%%%%%%%%%%%% control con PPC agregando tanh
     % u = -KS*S - R'*rho*Ez + Vfp(:,i); %%%%%%%%%%%%% control con PPC
-    % u = -KS*S + Vfp(:,i) - R'*e; %%%%%%%%%%%%% control sin PPC
+    u = -KS*S + Vfp(:,i) - R'*e; %%%%%%%%%%%%% control sin PPC
     
     [tt, xx] = ode45(@systemDoubleIntegratorWithDisturbance, [t(i) t(i+1)], X(:,i), [], u(:,i), m, n);
     X(:, i+1) = xx(end, :)';
@@ -198,24 +198,26 @@ end
 % plotea todos los agentes en 3D
 
 figure(1)
-plot3(4.28-v0(2,:)', 3.05 + v0(1,:)', 1.23+t(:),'LineStyle',"-",'Color','#d95319','LineWidth',1.5);
+plot3(12.28-(1/0.35)*v0(2,:)', 9.05 + (1/0.35)*v0(1,:)', 3*1.23+t(:),'LineStyle',"-.",'Color','red','LineWidth',2);
 hold on
-plot3(q(9*m-2,:), q(9*m-1,:), q(9*m,:),'LineStyle',"-.",'Color','#072a16','LineWidth',1.5);
+plot3(q(9*m-2,:), q(9*m-1,:), q(9*m,:),'LineStyle',"-",'Color','blue','LineWidth',2);
 
 [grf, points] = Framework3Dplot(q(:,i), E); 
 
 % close(vid) %% Comentar para guardar video
 
-title('Adquisición de la formación','FontSize',20)
-xlabel('Eje-X','FontSize',14)
-ylabel('Eje-Y','FontSize',14)
-zlabel('Eje-Z','FontSize',14)
+% title('Adquisición de la formación','FontSize',20)
+set(gca,'FontSize',14)
+grid on
+xlabel('X-Axis [m]','FontSize',14)
+ylabel('Y-Axis [m]','FontSize',14)
+zlabel('Z-Axis [m]','FontSize',14)
 
 
 figure(2)
 
 for i = 1:l
-    plot(t(1:end-1),e(20,:),"Linewidth",2) %% 9, 20
+    plot(t(1:end-1),e(i,:),"Linewidth",2) %% 9, 20
     hold on
 end
 plot(t(1:end-1),DELTA_LIMITE_SUPERIOR*ppf(1:end-1),'Color','r','LineWidth',2,'LineStyle','--')
@@ -223,61 +225,79 @@ hold on
 plot(t(1:end-1),-DELTA_LIMITE_INFERIOR*ppf(1:end-1),'Color','r','LineWidth',2,'LineStyle','--')
 hold on
 grid on
-title('Errores de distancia entre agentes')
-xlabel('Segundos')
-ylabel('Distancia')
+% title('Errores de distancia entre agentes')
+xlabel('Seconds')
+ylabel('Distance error')
 
-
-figure(3)
-
-for i = 1:l
-    plot(t(1:end-1),Z(i,:),"Linewidth",2)
-    hold on
-end
-plot(t(1:end-1),DELTA_LIMITE_SUPERIOR*ppf(1:end-1),'Color','r','LineWidth',2,'LineStyle','--')
-hold on
-plot(t(1:end-1),-DELTA_LIMITE_INFERIOR*ppf(1:end-1),'Color','r','LineWidth',2,'LineStyle','--')
-hold on
-grid on
-title('Errores de distancia entre agentes')
-xlabel('Segundos')
-ylabel('Distancia')
 
 % figure(3)
 
-% ax = 2;
-% for i = 1:n
-%     plot(t(1:end-1),u(m*i-ax, :),"Linewidth",2)
+% for i = 1:l
+%     plot(t(1:end-1),Z(i,:),"Linewidth",2)
 %     hold on
 % end
+% plot(t(1:end-1),DELTA_LIMITE_SUPERIOR*ppf(1:end-1),'Color','r','LineWidth',2,'LineStyle','--')
+% hold on
+% plot(t(1:end-1),-DELTA_LIMITE_INFERIOR*ppf(1:end-1),'Color','r','LineWidth',2,'LineStyle','--')
+% hold on
 % grid on
-% title('Entrada de control eje X')
+% title('Errores de distancia entre agentes')
 % xlabel('Segundos')
-% ylabel('Control')
-% % legend({'$u1_{X}$','$u2_{X}$','$u3_{X}$','$u4_{X}$'},'Interpreter','latex','Location','northeast')
-% figure(4)
-% ay = 1;
-% for i = 1:n
-%     plot(t(1:end-1),u(m*i-ay, :),"Linewidth",2)
-% %     legend({'$u1_{X}$','$u2_{X}$','$u3_{X}$','$u4_{X}$'},'Interpreter','latex','Location','southwest')
-%     hold on
-% end
-% grid on
-% title('Entrada de control eje Y')
-% xlabel('Segundos')
-% ylabel('Control')
-% % legend({'$u1_{Y}$','$u2_{Y}$','$u3_{Y}$','$u4_{Y}$'},'Interpreter','latex','Location','northeast')
-% figure(5)
+% ylabel('Distancia')
 
-% for i = 1:n
-%     plot(t(1:end-1),u(m*i, :),"Linewidth",2)
-%     hold on
-% end
-% grid on
-% title('Entrada de control eje Z')
-% xlabel('Segundos')
-% ylabel('Control')
+figure(3)
 
+ax = 2;
+for i = 1:n
+    plot(t(1:end-1),u(m*i-ax, :),"Linewidth",2)
+    hold on
+end
+grid on
+title('Entrada de control eje X')
+xlabel('Segundos')
+ylabel('Control')
+% legend({'$u1_{X}$','$u2_{X}$','$u3_{X}$','$u4_{X}$'},'Interpreter','latex','Location','northeast')
+figure(4)
+ay = 1;
+for i = 1:n
+    plot(t(1:end-1),u(m*i-ay, :),"Linewidth",2)
+%     legend({'$u1_{X}$','$u2_{X}$','$u3_{X}$','$u4_{X}$'},'Interpreter','latex','Location','southwest')
+    hold on
+end
+grid on
+title('Entrada de control eje Y')
+xlabel('Segundos')
+ylabel('Control')
+% legend({'$u1_{Y}$','$u2_{Y}$','$u3_{Y}$','$u4_{Y}$'},'Interpreter','latex','Location','northeast')
+figure(5)
+
+for i = 1:n
+    plot(t(1:end-1),u(m*i, :),"Linewidth",2)
+    hold on
+end
+grid on
+title('Entrada de control eje Z')
+xlabel('Segundos')
+ylabel('Control')
+
+figure(6)
+
+% Grafica para calcular la norma de la velocidad v0 - V de cada agente
+
+for i = 1:length(t)
+    sum = 0;
+    for k = 1:n
+        sum = norm(v0(:,i) - V(m*k-2:m*k, i)) + sum; % Calcula la norma de v0 - V
+    end
+    norm_v0_V(i) = sum;
+end
+
+plot(t, norm_v0_V, 'Linewidth',2)
+
+title('Norma de la velocidad v0 - V de cada agente')
+xlabel('Segundos')
+ylabel('Norma')
+grid on
 
 
 
