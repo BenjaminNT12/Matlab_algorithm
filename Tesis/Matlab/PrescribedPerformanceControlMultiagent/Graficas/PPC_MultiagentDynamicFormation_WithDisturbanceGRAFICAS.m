@@ -27,13 +27,13 @@ DELTA_LIMITE_SUPERIOR = 3*1.2;
 DELTA_LIMITE_INFERIOR = 3*1.2;
 
 PPF_INICIO = 1;
-PPF_FIN = 0.15;
+PPF_FIN = 0.06;
 
 T = 0.01;
 m = 3;
 n = 9;
 l = 21;
-c = 0.55;
+c = 0.7;
 fin = 30;
 t = 0: T :fin;
 
@@ -72,15 +72,15 @@ E = [E1; E2; E3; E4; E5; E6; E7; E8; E9; E10; E11; E12; E13; E14; E15; E16; E17;
 
 % q = [q1'; q2'; q3'; q4'; q5'; q6'; q7'; q8'; q9'];
 
-q = 3*[ 1.0579+1; 1.2313+1; 0.0123;
+q = 3*[ 1.0579+1; 1.2313+1; -0.0123;
         0.5815+1; 1.3371+1; 0.1681;
         2.0201+1; 3.3460+1; 0.2113;
-        0.1792+1; 1.7710+1; 0.5225;
+        -0.1792+1; 1.7710+1; 0.5225;
         0.8085+1; 0.8848+1; 2.2038;
         1.7998+1; 1.3196+1; 2.0627;
         2.4380+1; 3.1536+1; 2.3853;
         1.3991+1; 3.1141+1; 2.1780;
-        1.4800;   3.3256;  0.6323];
+        1.2300;   3.5256;  0.6323];
 
 figure(1)
 
@@ -198,7 +198,7 @@ end
 % plotea todos los agentes en 3D
 
 figure(1)
-plot3(12.28-(1/0.35)*v0(2,:)', 9.05 + (1/0.35)*v0(1,:)', 3*1.23+t(:),'LineStyle',"-.",'Color','red','LineWidth',2);
+plot3(12.28-(1/0.35)*v0(2,:)', 9.25 + (1/0.35)*v0(1,:)', 3*1.23+t(:),'LineStyle',"-.",'Color','red','LineWidth',2);
 hold on
 plot3(q(9*m-2,:), q(9*m-1,:), q(9*m,:),'LineStyle',"-",'Color','blue','LineWidth',2);
 
@@ -206,10 +206,10 @@ plot3(q(9*m-2,:), q(9*m-1,:), q(9*m,:),'LineStyle',"-",'Color','blue','LineWidth
 [grf, points] = Framework3Dplot(q(:,i), E); 
 
 % Plotear todas las demas trayectorias de los agentes
-for i = 1:n
-    plot3(q(i*m-2,:), q(i*m-1,:), q(i*m,:),'LineStyle',"-.",'LineWidth',0.5);
-    hold on
-end
+% for i = 1:n
+%     plot3(q(i*m-2,:), q(i*m-1,:), q(i*m,:),'LineStyle',"-.",'LineWidth',0.5);
+%     hold on
+% end
 
 % close(vid) %% Comentar para guardar video
 
