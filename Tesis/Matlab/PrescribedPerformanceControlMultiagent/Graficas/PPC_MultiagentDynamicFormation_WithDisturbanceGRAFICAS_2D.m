@@ -205,23 +205,42 @@ plot3(q(9*m-2,:), q(9*m-1,:), q(9*m,:),'LineStyle',"-",'Color','blue','LineWidth
 
 [grf, points] = Framework3Dplot(q(:,i), E); 
 
-% Plotear todas las demas trayectorias de los agentes
-% for i = 1:n
-%     plot3(q(i*m-2,:), q(i*m-1,:), q(i*m,:),'LineStyle',"-.",'LineWidth',0.5);
-%     hold on
-% end
-
-% close(vid) %% Comentar para guardar video
-
-% title('Adquisición de la formación','FontSize',20)
 set(gca,'FontSize',14)
 grid on
+% view([-80,-90,45]);
 xlabel('X-Axis [m]','FontSize',14)
 ylabel('Y-Axis [m]','FontSize',14)
 zlabel('Z-Axis [m]','FontSize',14)
 
-
 figure(2)
+plot3(12.28-(1/0.35)*v0(2,:)', 9.25 + (1/0.35)*v0(1,:)', 3*1.23+t(:),'LineStyle',"-.",'Color','red','LineWidth',2);
+hold on
+plot3(q(9*m-2,:), q(9*m-1,:), q(9*m,:),'LineStyle',"-",'Color','blue','LineWidth',2);
+
+[grf, points] = Framework3Dplot(q(:,i), E); 
+
+set(gca,'FontSize',8)
+grid on
+view([-45,-90,30]);
+axis([63 73 53 63 81.5 91.5])
+xlabel('X-Axis [m]')
+ylabel('Y-Axis [m]')
+zlabel('Z-Axis [m]')
+
+FFM = [0 0 1 1;
+       0.59 0.4 0.42 0.42;
+       0.2 0.2 0.1 0.1];
+fhv = [1:2];
+newFig = 101;
+hNew = lafig3(newFig, fhv, FFM);
+
+
+
+
+
+
+
+figure(3)
 
 for i = 1:l
     plot(t(1:end-1),e(i,:),"Linewidth",2) %% 9, 20
@@ -237,57 +256,38 @@ xlabel('Seconds')
 ylabel('Distance error')
 
 
-% figure(3)
-
-% for i = 1:l
-%     plot(t(1:end-1),Z(i,:),"Linewidth",2)
-%     hold on
-% end
-% plot(t(1:end-1),DELTA_LIMITE_SUPERIOR*ppf(1:end-1),'Color','r','LineWidth',2,'LineStyle','--')
-% hold on
-% plot(t(1:end-1),-DELTA_LIMITE_INFERIOR*ppf(1:end-1),'Color','r','LineWidth',2,'LineStyle','--')
-% hold on
-% grid on
-% title('Errores de distancia entre agentes')
-% xlabel('Segundos')
-% ylabel('Distancia')
-
-figure(3)
-
-ax = 2;
-for i = 1:n
-    plot(t(1:end-1),u(m*i-ax, :),"Linewidth",2)
-    hold on
-end
-grid on
-title('Entrada de control eje X')
-xlabel('Segundos')
-ylabel('Control')
-% legend({'$u1_{X}$','$u2_{X}$','$u3_{X}$','$u4_{X}$'},'Interpreter','latex','Location','northeast')
 figure(4)
-ay = 1;
-for i = 1:n
-    plot(t(1:end-1),u(m*i-ay, :),"Linewidth",2)
-%     legend({'$u1_{X}$','$u2_{X}$','$u3_{X}$','$u4_{X}$'},'Interpreter','latex','Location','southwest')
+
+for i = 1:l
+    plot(t(1:end-1),e(i,:),"Linewidth",2) %% 9, 20
     hold on
 end
+plot(t(1:end-1),DELTA_LIMITE_SUPERIOR*ppf(1:end-1),'Color','r','LineWidth',2,'LineStyle','--')
+hold on
+plot(t(1:end-1),-DELTA_LIMITE_INFERIOR*ppf(1:end-1),'Color','r','LineWidth',2,'LineStyle','--')
+hold on
 grid on
-title('Entrada de control eje Y')
-xlabel('Segundos')
-ylabel('Control')
-% legend({'$u1_{Y}$','$u2_{Y}$','$u3_{Y}$','$u4_{Y}$'},'Interpreter','latex','Location','northeast')
+axis([5 15 -0.7 0.7])
+% xlabel('Seconds')
+% ylabel('Distance error')
+
+
+FFM = [0 0 1 1;
+       0.5 0.11 0.4 0.4;
+       0.2 0.2 0.6 0.6];
+fhv = [3:4];
+newFig = 102;
+hNew = lafig3(newFig, fhv, FFM);
+
+
+
+
+
+
+
+
+
 figure(5)
-
-for i = 1:n
-    plot(t(1:end-1),u(m*i, :),"Linewidth",2)
-    hold on
-end
-grid on
-title('Entrada de control eje Z')
-xlabel('Segundos')
-ylabel('Control')
-
-figure(6)
 
 % Grafica para calcular la norma de la velocidad v0 - V de cada agente
 
@@ -305,6 +305,59 @@ title('Norma de la velocidad v0 - V de cada agente')
 xlabel('Segundos')
 ylabel('Norma')
 grid on
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+% figure(3)
+
+% ax = 2;
+% for i = 1:n
+%     plot(t(1:end-1),u(m*i-ax, :),"Linewidth",2)
+%     hold on
+% end
+% grid on
+% title('Entrada de control eje X')
+% xlabel('Segundos')
+% ylabel('Control')
+% figure(4)
+% ay = 1;
+% for i = 1:n
+%     plot(t(1:end-1),u(m*i-ay, :),"Linewidth",2)
+%     hold on
+% end
+% grid on
+% title('Entrada de control eje Y')
+% xlabel('Segundos')
+% ylabel('Control')
+% figure(5)
+
+% for i = 1:n
+%     plot(t(1:end-1),u(m*i, :),"Linewidth",2)
+%     hold on
+% end
+% grid on
+% title('Entrada de control eje Z')
+% xlabel('Segundos')
+% ylabel('Control')
+
+
 
 
 

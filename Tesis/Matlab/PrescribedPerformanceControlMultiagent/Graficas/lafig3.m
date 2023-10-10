@@ -66,7 +66,7 @@ newOrg = [relPosX + relSclX*X0, relPosY + relSclY*Y0];
 
 jThis = jThis + 1;
 hNew(jThis) = copyobj(hThis,newFig); set(hNew(jThis), 'Position', [newOrg newSz]);
-legend('x1','x2')
+% legend('x1','x2')
 end %j (current axes to copy)
 
 % ----------------------------------
