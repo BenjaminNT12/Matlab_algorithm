@@ -34,7 +34,7 @@ m = 3;
 n = 9;
 l = 21;
 c = 0.7;
-fin = 50;
+fin = 30;
 t = 0: T :fin;
 
 
@@ -252,14 +252,14 @@ plot(t(1:end-1),-DELTA_LIMITE_INFERIOR*ppf(1:end-1),'Color','r','LineWidth',2,'L
 hold on
 grid on
 % title('Errores de distancia entre agentes')
-xlabel('Seconds')
+xlabel('Time [Sec]')
 ylabel('Distance error [m]')
 
 
 figure(4)
 
 for i = 1:l
-    plot(t(1:end-1),e(i,:),"Linewidth",2) %% 9, 20
+    plot(t(1:end-1),e(i,:),"Linewidth",1) %% 9, 20
     hold on
 end
 plot(t(1:end-1),DELTA_LIMITE_SUPERIOR*ppf(1:end-1),'Color','r','LineWidth',2,'LineStyle','--')
@@ -267,19 +267,19 @@ hold on
 plot(t(1:end-1),-DELTA_LIMITE_INFERIOR*ppf(1:end-1),'Color','r','LineWidth',2,'LineStyle','--')
 hold on
 grid on
-axis([5 15 -0.3 0.3])
-% xlabel('Seconds')
+axis([0 3 -4 4])
+% xlabel('Time [Sec]')
 % ylabel('Distance error')
 
 
 FFM = [0 0 1 1;
-       0.5 0.11 0.4 0.4;
-       0.2 0.2 0.6 0.6];
+       0.2 0.58 0.35 0.35;
+       0.53 0.12 0.35 0.35;];
 fhv = [3:4];
 newFig = 102;
 hNew = lafig3(newFig, fhv, FFM);
 
-
+close(3:4)
 
 
 
@@ -310,30 +310,97 @@ for i = 1:n
 end
 grid on
 % title('Entrada de control eje X')
-xlabel('Seconds')
+xlabel('Time [Sec]')
 ylabel('X-Axis control')
 
-
 figure(6)
+ax = 2;
+for i = 1:n
+    plot(t(1:end-1),u(m*i-ax, :),"Linewidth",2)
+    hold on
+end
+grid on
+axis([20 30 -0.8 -0.4])
+
+FFM = [0 0 1 1;
+       0.53 0.2 0.35 0.35;
+       0.2 0.58 0.35 0.35;];
+fhv = [5:6];
+newFig = 103;
+hNew = lafig3(newFig, fhv, FFM);
+
+close(5:6)
+
+
+figure(7)
 ay = 1;
 for i = 1:n
     plot(t(1:end-1),u(m*i-ay, :),"Linewidth",2)
     hold on
 end
 grid on
-% title('Entrada de control eje Y')
-xlabel('Seconds')
+
+xlabel('Time [Sec]')
 ylabel('Y-Axis control')
 
-figure(7)
+figure(8)
+ay = 1;
+for i = 1:n
+    plot(t(1:end-1),u(m*i-ay, :),"Linewidth",2)
+    hold on
+end
+grid on
+axis([20 30 0.3 0.6])
+
+FFM = [0 0 1 1;
+       0.53 0.43 0.35 0.35;];
+fhv = [7:8];
+newFig = 104;
+hNew = lafig3(newFig, fhv, FFM);
+
+close(7:8)
+
+
+
+
+
+figure(9)
 for i = 1:n
     plot(t(1:end-1),u(m*i, :),"Linewidth",2)
     hold on
 end
 grid on
-% title('Entrada de control eje Z')
-xlabel('Seconds')
+xlabel('Time [Sec]')
 ylabel('Z-Axis control')
+
+figure(10)
+for i = 1:n
+    plot(t(1:end-1),u(m*i, :),"Linewidth",2)
+    hold on
+end
+grid on
+axis([20 30 -0.4 -0.1])
+
+FFM = [0 0 1 1;
+       0.53 0.5 0.35 0.35;];
+fhv = [9:10];
+newFig = 105;
+hNew = lafig3(newFig, fhv, FFM);
+
+close(9:10)
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 % Grafica para calcular la norma de la velocidad v0 - V de cada agente
@@ -345,17 +412,14 @@ for i = 1:length(t)
     end
     norm_v0_V(i) = sum;
 end
-% plot(t, norm_v0_V, 'Linewidth',2)
 semilogy(t, norm_v0_V, 'Linewidth',2)
-% title('Norma de la velocidad v0 - V de cada agente')
-%     legend({'$u1_{X}$','$u2_{X}$','$u3_{X}$','$u4_{X}$'},'Interpreter','latex','Location','southwest')
-xlabel('Seconds');
-ylabel({'$\sum^{N}_{i=1}||v_0 - v_i ||$'},'Interpreter','latex');
+xlabel('Time [Sec]');
+ylabel({'\fontsize{14}{21}$\sum^{N}_{i=1}||v_0 - v_i ||$'},'Interpreter','latex');
 grid on
 
-% Grafica para mostrar la velocidad de un solo agente
-figure(9)
-plot(t, V(1:3, :), 'Linewidth',2)
+% % Grafica para mostrar la velocidad de un solo agente
+% figure(9)
+% plot(t, V(1:3, :), 'Linewidth',2)
 
 
 

@@ -17,7 +17,7 @@
 clear;
 close all;
 clc;
-
+% parpool(6)
 KT = 25;
 KV = 0.2;
 KS = 0.1;
@@ -212,27 +212,27 @@ xlabel('X-Axis [m]','FontSize',14)
 ylabel('Y-Axis [m]','FontSize',14)
 zlabel('Z-Axis [m]','FontSize',14)
 
-figure(2)
-plot3(12.28-(1/0.35)*v0(2,:)', 9.25 + (1/0.35)*v0(1,:)', 3*1.23+t(:),'LineStyle',"-.",'Color','red','LineWidth',2);
-hold on
-plot3(q(9*m-2,:), q(9*m-1,:), q(9*m,:),'LineStyle',"-",'Color','blue','LineWidth',2);
+% figure(2)
+% plot3(12.28-(1/0.35)*v0(2,:)', 9.25 + (1/0.35)*v0(1,:)', 3*1.23+t(:),'LineStyle',"-.",'Color','red','LineWidth',2);
+% hold on
+% plot3(q(9*m-2,:), q(9*m-1,:), q(9*m,:),'LineStyle',"-",'Color','blue','LineWidth',2);
 
-[grf, points] = Framework3Dplot(q(:,i), E); 
+% [grf, points] = Framework3Dplot(q(:,i), E); 
 
-set(gca,'FontSize',8)
-grid on
-view([-45,-90,30]);
-axis([63 73 53 63 81.5 91.5])
-xlabel('X-Axis [m]')
-ylabel('Y-Axis [m]')
-zlabel('Z-Axis [m]')
+% set(gca,'FontSize',8)
+% grid on
+% view([-45,-90,30]);
+% axis([63 73 53 63 81.5 91.5])
+% xlabel('X-Axis [m]')
+% ylabel('Y-Axis [m]')
+% zlabel('Z-Axis [m]')
 
-FFM = [0 0 1 1;
-       0.59 0.4 0.42 0.42;
-       0.2 0.2 0.1 0.1];
-fhv = [1:2];
-newFig = 101;
-hNew = lafig3(newFig, fhv, FFM);
+% FFM = [0 0 1 1;
+%        0.59 0.4 0.42 0.42;
+%        0.2 0.2 0.1 0.1];
+% fhv = [1:2];
+% newFig = 101;
+% hNew = lafig3(newFig, fhv, FFM);
 
 
 
@@ -252,42 +252,56 @@ plot(t(1:end-1),-DELTA_LIMITE_INFERIOR*ppf(1:end-1),'Color','r','LineWidth',2,'L
 hold on
 grid on
 % title('Errores de distancia entre agentes')
-xlabel('Seconds')
+xlabel('Time [Sec]')
 ylabel('Distance error [m]')
 
 
 figure(4)
 
 for i = 1:l
-    plot(t(1:end-1),e(i,:),"Linewidth",2) %% 9, 20
+    plot(t(1:end-1),e(i,:),"Linewidth",1) %% 9, 20
     hold on
 end
-plot(t(1:end-1),DELTA_LIMITE_SUPERIOR*ppf(1:end-1),'Color','r','LineWidth',2,'LineStyle','--')
+plot(t(1:end-1),DELTA_LIMITE_SUPERIOR*ppf(1:end-1),'Color','r','LineWidth',1.5,'LineStyle','--')
 hold on
-plot(t(1:end-1),-DELTA_LIMITE_INFERIOR*ppf(1:end-1),'Color','r','LineWidth',2,'LineStyle','--')
+plot(t(1:end-1),-DELTA_LIMITE_INFERIOR*ppf(1:end-1),'Color','r','LineWidth',1.5,'LineStyle','--')
 hold on
 grid on
-axis([5 15 -0.5 0.5])
+axis([0 5 -1 1])
+
+
+figure(5)
+
+for i = 1:l
+    plot(t(1:end-1),e(i,:),"Linewidth",1) %% 9, 20
+    hold on
+end
+plot(t(1:end-1),DELTA_LIMITE_SUPERIOR*ppf(1:end-1),'Color','r','LineWidth',1.5,'LineStyle','--')
+hold on
+plot(t(1:end-1),-DELTA_LIMITE_INFERIOR*ppf(1:end-1),'Color','r','LineWidth',1.5,'LineStyle','--')
+hold on
+grid on
+axis([15 20 -0.28 0.28])
 % xlabel('Seconds')
 % ylabel('Distance error')
 
 
 FFM = [0 0 1 1;
-       0.5 0.11 0.43 0.4;
-       0.2 0.2 0.6 0.6];
-fhv = [3:4];
+       0.2 0.58 0.35 0.35;
+       0.53 0.12 0.35 0.35;];
+fhv = [3:5];
 newFig = 102;
 hNew = lafig3(newFig, fhv, FFM);
 
 
+close(3:5)
 
 
 
 
 
 
-
-figure(5)
+figure(6)
 
 % Grafica para calcular la norma de la velocidad v0 - V de cada agente
 
@@ -301,10 +315,10 @@ end
 
 semilogy(t, norm_v0_V, 'Linewidth',2)
 
-xlabel('Seconds');
+xlabel('Time [Sec]');
 ylabel({'$\sum^{N}_{i=1}||v_0 - v_i ||$'},'Interpreter','latex');
 grid on
-
+% delete(gcp)
 
 
 
