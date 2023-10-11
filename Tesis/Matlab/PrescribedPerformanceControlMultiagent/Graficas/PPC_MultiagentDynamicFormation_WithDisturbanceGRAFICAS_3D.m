@@ -18,7 +18,7 @@ clear;
 close all;
 clc;
 
-KT = 50.2;
+KT = 25;
 KV = 0.2;
 KS = 0.1;
 MAX_ERROR_INICIAL = 1;
@@ -34,7 +34,7 @@ m = 3;
 n = 9;
 l = 21;
 c = 0.7;
-fin = 30;
+fin = 50;
 t = 0: T :fin;
 
 
@@ -345,13 +345,17 @@ for i = 1:length(t)
     end
     norm_v0_V(i) = sum;
 end
-plot(t, norm_v0_V, 'Linewidth',2)
+% plot(t, norm_v0_V, 'Linewidth',2)
+semilogy(t, norm_v0_V, 'Linewidth',2)
 % title('Norma de la velocidad v0 - V de cada agente')
 %     legend({'$u1_{X}$','$u2_{X}$','$u3_{X}$','$u4_{X}$'},'Interpreter','latex','Location','southwest')
 xlabel('Seconds');
 ylabel({'$\sum^{N}_{i=1}||v_0 - v_i ||$'},'Interpreter','latex');
 grid on
 
+% Grafica para mostrar la velocidad de un solo agente
+figure(9)
+plot(t, V(1:3, :), 'Linewidth',2)
 
 
 

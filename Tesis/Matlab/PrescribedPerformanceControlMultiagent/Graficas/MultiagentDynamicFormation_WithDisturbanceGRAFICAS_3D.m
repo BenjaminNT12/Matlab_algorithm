@@ -18,7 +18,7 @@ clear;
 close all;
 clc;
 
-KT = 50.2;
+KT = 25;
 KV = 0.2;
 KS = 0.1;
 MAX_ERROR_INICIAL = 1;
@@ -153,7 +153,7 @@ for i = 1:length(t)-1
     
     % u = -KS*S - R'*rho*Ez + Vfp(:,i)+ tanH; %%%%%%%%%%%%% control con PPC agregando tanh
     % u = -KS*S - R'*rho*Ez + Vfp(:,i); %%%%%%%%%%%%% control con PPC
-    u = -KS*S + Vfp(:,i) - R'*e; %%%%%%%%%%%%% control sin PPC
+    u = -KS*S + Vfp(:,i) - R'*e + tanH; %%%%%%%%%%%%% control sin PPC
     
     [tt, xx] = ode45(@systemDoubleIntegratorWithDisturbance, [t(i) t(i+1)], X(:,i), [], u(:,i), m, n);
     X(:, i+1) = xx(end, :)';
@@ -253,7 +253,7 @@ hold on
 grid on
 % title('Errores de distancia entre agentes')
 xlabel('Seconds')
-ylabel('Distance error')
+ylabel('Distance error [m]')
 
 
 figure(4)
@@ -299,11 +299,10 @@ for i = 1:length(t)
     norm_v0_V(i) = sum;
 end
 
-plot(t, norm_v0_V, 'Linewidth',2)
+semilogy(t, norm_v0_V, 'Linewidth',2)
 
-title('Norma de la velocidad v0 - V de cada agente')
-xlabel('Segundos')
-ylabel('Norma')
+xlabel('Seconds');
+ylabel({'$\sum^{N}_{i=1}||v_0 - v_i ||$'},'Interpreter','latex');
 grid on
 
 
