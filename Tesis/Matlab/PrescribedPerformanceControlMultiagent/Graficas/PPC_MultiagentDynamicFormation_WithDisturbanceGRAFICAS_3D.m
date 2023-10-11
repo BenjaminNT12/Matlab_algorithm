@@ -134,8 +134,8 @@ for i = 1:length(t)-1
         temp = rho;
     end
     
-    % Vf(:,i) = -KV*R'*rho*Ez(:,i) + vd(:,1); %%%%%%%%%%%%% control con PPC
-    Vf(:,i) = -KV*R'*e(:,i) + vd(:,1);  %%%%%%%%%%%%% control sin PPC
+    Vf(:,i) = -KV*R'*rho*Ez(:,i) + vd(:,1); %%%%%%%%%%%%% control con PPC
+    % Vf(:,i) = -KV*R'*e(:,i) + vd(:,1);  %%%%%%%%%%%%% control sin PPC
     Zp = 2*R*V(:,i);
     Rp = matrizRCubo9AgentWithLeader(V(:,i),m);
     S = V(:,i) - Vf(:,i);
@@ -151,9 +151,9 @@ for i = 1:length(t)-1
         Vfp(:,i) = (Vf(:,i) - Vf(:,i-1))/T;
     end
     
-    % u = -KS*S - R'*rho*Ez + Vfp(:,i)+ tanH; %%%%%%%%%%%%% control con PPC agregando tanh
+    u = -KS*S - R'*rho*Ez + Vfp(:,i)+ tanH; %%%%%%%%%%%%% control con PPC agregando tanh
     % u = -KS*S - R'*rho*Ez + Vfp(:,i); %%%%%%%%%%%%% control con PPC
-    u = -KS*S + Vfp(:,i) - R'*e; %%%%%%%%%%%%% control sin PPC
+    % u = -KS*S + Vfp(:,i) - R'*e; %%%%%%%%%%%%% control sin PPC
     
     [tt, xx] = ode45(@systemDoubleIntegratorWithDisturbance, [t(i) t(i+1)], X(:,i), [], u(:,i), m, n);
     X(:, i+1) = xx(end, :)';
@@ -212,27 +212,27 @@ xlabel('X-Axis [m]','FontSize',14)
 ylabel('Y-Axis [m]','FontSize',14)
 zlabel('Z-Axis [m]','FontSize',14)
 
-figure(2)
-plot3(12.28-(1/0.35)*v0(2,:)', 9.25 + (1/0.35)*v0(1,:)', 3*1.23+t(:),'LineStyle',"-.",'Color','red','LineWidth',2);
-hold on
-plot3(q(9*m-2,:), q(9*m-1,:), q(9*m,:),'LineStyle',"-",'Color','blue','LineWidth',2);
+% figure(2)
+% plot3(12.28-(1/0.35)*v0(2,:)', 9.25 + (1/0.35)*v0(1,:)', 3*1.23+t(:),'LineStyle',"-.",'Color','red','LineWidth',2);
+% hold on
+% plot3(q(9*m-2,:), q(9*m-1,:), q(9*m,:),'LineStyle',"-",'Color','blue','LineWidth',2);
 
-[grf, points] = Framework3Dplot(q(:,i), E); 
+% [grf, points] = Framework3Dplot(q(:,i), E); 
 
-set(gca,'FontSize',8)
-grid on
-view([-45,-90,30]);
-axis([63 73 53 63 81.5 91.5])
-xlabel('X-Axis [m]')
-ylabel('Y-Axis [m]')
-zlabel('Z-Axis [m]')
+% set(gca,'FontSize',8)
+% grid on
+% view([-45,-90,30]);
+% axis([10 20 0 10 28 38])
+% xlabel('X-Axis [m]')
+% ylabel('Y-Axis [m]')
+% zlabel('Z-Axis [m]')
 
-FFM = [0 0 1 1;
-       0.59 0.4 0.42 0.42;
-       0.2 0.2 0.1 0.1];
-fhv = [1:2];
-newFig = 101;
-hNew = lafig3(newFig, fhv, FFM);
+% FFM = [0 0 1 1;
+%        0.59 0.4 0.42 0.42;
+%        0.2 0.2 0.1 0.1];
+% fhv = [1:2];
+% newFig = 101;
+% hNew = lafig3(newFig, fhv, FFM);
 
 
 
@@ -253,7 +253,7 @@ hold on
 grid on
 % title('Errores de distancia entre agentes')
 xlabel('Seconds')
-ylabel('Distance error')
+ylabel('Distance error [m]')
 
 
 figure(4)
@@ -267,7 +267,7 @@ hold on
 plot(t(1:end-1),-DELTA_LIMITE_INFERIOR*ppf(1:end-1),'Color','r','LineWidth',2,'LineStyle','--')
 hold on
 grid on
-axis([5 15 -0.7 0.7])
+axis([5 15 -0.3 0.3])
 % xlabel('Seconds')
 % ylabel('Distance error')
 
@@ -302,56 +302,55 @@ hNew = lafig3(newFig, fhv, FFM);
 
 
 
-% figure(3)
-
-% ax = 2;
-% for i = 1:n
-%     plot(t(1:end-1),u(m*i-ax, :),"Linewidth",2)
-%     hold on
-% end
-% grid on
+figure(5)
+ax = 2;
+for i = 1:n
+    plot(t(1:end-1),u(m*i-ax, :),"Linewidth",2)
+    hold on
+end
+grid on
 % title('Entrada de control eje X')
-% xlabel('Segundos')
-% ylabel('Control')
-% figure(4)
-% ay = 1;
-% for i = 1:n
-%     plot(t(1:end-1),u(m*i-ay, :),"Linewidth",2)
-%     hold on
-% end
-% grid on
+xlabel('Seconds')
+ylabel('X-Axis control')
+
+
+figure(6)
+ay = 1;
+for i = 1:n
+    plot(t(1:end-1),u(m*i-ay, :),"Linewidth",2)
+    hold on
+end
+grid on
 % title('Entrada de control eje Y')
-% xlabel('Segundos')
-% ylabel('Control')
-% figure(5)
+xlabel('Seconds')
+ylabel('Y-Axis control')
 
-% for i = 1:n
-%     plot(t(1:end-1),u(m*i, :),"Linewidth",2)
-%     hold on
-% end
-% grid on
+figure(7)
+for i = 1:n
+    plot(t(1:end-1),u(m*i, :),"Linewidth",2)
+    hold on
+end
+grid on
 % title('Entrada de control eje Z')
-% xlabel('Segundos')
-% ylabel('Control')
+xlabel('Seconds')
+ylabel('Z-Axis control')
 
-% figure(6)
 
-% % Grafica para calcular la norma de la velocidad v0 - V de cada agente
-
-% for i = 1:length(t)
-%     sum = 0;
-%     for k = 1:n
-%         sum = norm(v0(:,i) - V(m*k-2:m*k, i)) + sum; % Calcula la norma de v0 - V
-%     end
-%     norm_v0_V(i) = sum;
-% end
-
-% plot(t, norm_v0_V, 'Linewidth',2)
-
+% Grafica para calcular la norma de la velocidad v0 - V de cada agente
+figure(8)
+for i = 1:length(t)
+    sum = 0;
+    for k = 1:n
+        sum = norm(v0(:,i) - V(m*k-2:m*k, i)) + sum; % Calcula la norma de v0 - V
+    end
+    norm_v0_V(i) = sum;
+end
+plot(t, norm_v0_V, 'Linewidth',2)
 % title('Norma de la velocidad v0 - V de cada agente')
-% xlabel('Segundos')
-% ylabel('Norma')
-% grid on
+%     legend({'$u1_{X}$','$u2_{X}$','$u3_{X}$','$u4_{X}$'},'Interpreter','latex','Location','southwest')
+xlabel('Seconds');
+ylabel({'$\sum^{N}_{i=1}||v_0 - v_i ||$'},'Interpreter','latex');
+grid on
 
 
 
