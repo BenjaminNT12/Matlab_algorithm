@@ -34,7 +34,7 @@ m = 3;
 n = 9;
 l = 21;
 c = 0.7;
-fin = 30;
+fin = 50;
 t = 0: T :fin;
 
 
@@ -252,14 +252,15 @@ plot(t(1:end-1),-DELTA_LIMITE_INFERIOR*ppf(1:end-1),'Color','r','LineWidth',2,'L
 hold on
 grid on
 % title('Errores de distancia entre agentes')
-xlabel('Time [Sec]')
-ylabel('Distance error [m]')
+set(gca,'FontSize',14)
+xlabel('Time [sec]')
+ylabel('Distance errors e_{ij} [m]')
 
 
 figure(4)
 
 for i = 1:l
-    plot(t(1:end-1),e(i,:),"Linewidth",1) %% 9, 20
+    plot(t(1:end-1),e(i,:),"Linewidth",2) %% 9, 20
     hold on
 end
 plot(t(1:end-1),DELTA_LIMITE_SUPERIOR*ppf(1:end-1),'Color','r','LineWidth',2,'LineStyle','--')
@@ -267,15 +268,28 @@ hold on
 plot(t(1:end-1),-DELTA_LIMITE_INFERIOR*ppf(1:end-1),'Color','r','LineWidth',2,'LineStyle','--')
 hold on
 grid on
-axis([0 3 -4 4])
-% xlabel('Time [Sec]')
-% ylabel('Distance error')
+axis([0 5 0 4])
+set(gca,'FontSize',14)
+
+figure(5)
+
+for i = 1:l
+    plot(t(1:end-1),e(i,:),"Linewidth",2) %% 9, 20
+    hold on
+end
+plot(t(1:end-1),DELTA_LIMITE_SUPERIOR*ppf(1:end-1),'Color','r','LineWidth',2,'LineStyle','--')
+hold on
+plot(t(1:end-1),-DELTA_LIMITE_INFERIOR*ppf(1:end-1),'Color','r','LineWidth',2,'LineStyle','--')
+hold on
+grid on
+axis([0 5 -4 0])
+set(gca,'FontSize',14)
 
 
 FFM = [0 0 1 1;
-       0.2 0.58 0.35 0.35;
-       0.53 0.12 0.35 0.35;];
-fhv = [3:4];
+       0.55 0.58 0.35 0.35;
+       0.55 0.155 0.35 0.35;];
+fhv = [3:5];
 newFig = 102;
 hNew = lafig3(newFig, fhv, FFM);
 
@@ -302,17 +316,6 @@ close(3:4)
 
 
 
-figure(5)
-ax = 2;
-for i = 1:n
-    plot(t(1:end-1),u(m*i-ax, :),"Linewidth",2)
-    hold on
-end
-grid on
-% title('Entrada de control eje X')
-xlabel('Time [Sec]')
-ylabel('X-Axis control')
-
 figure(6)
 ax = 2;
 for i = 1:n
@@ -320,28 +323,30 @@ for i = 1:n
     hold on
 end
 grid on
+% title('Entrada de control eje X')
+set(gca,'FontSize',14)
+xlabel('Time [sec]')
+ylabel('X-Axis control')
+
+figure(7)
+ax = 2;
+for i = 1:n
+    plot(t(1:end-1),u(m*i-ax, :),"Linewidth",2)
+    hold on
+end
+grid on
+set(gca,'FontSize',14)
 axis([20 30 -0.8 -0.4])
 
 FFM = [0 0 1 1;
        0.53 0.2 0.35 0.35;
        0.2 0.58 0.35 0.35;];
-fhv = [5:6];
+fhv = [6:7];
 newFig = 103;
 hNew = lafig3(newFig, fhv, FFM);
 
-close(5:6)
+close(6:7)
 
-
-figure(7)
-ay = 1;
-for i = 1:n
-    plot(t(1:end-1),u(m*i-ay, :),"Linewidth",2)
-    hold on
-end
-grid on
-
-xlabel('Time [Sec]')
-ylabel('Y-Axis control')
 
 figure(8)
 ay = 1;
@@ -350,28 +355,31 @@ for i = 1:n
     hold on
 end
 grid on
+set(gca,'FontSize',14)
+xlabel('Time [sec]')
+ylabel('Y-Axis control')
+
+figure(9)
+ay = 1;
+for i = 1:n
+    plot(t(1:end-1),u(m*i-ay, :),"Linewidth",2)
+    hold on
+end
+grid on
+set(gca,'FontSize',14)
 axis([20 30 0.3 0.6])
 
 FFM = [0 0 1 1;
        0.53 0.43 0.35 0.35;];
-fhv = [7:8];
+fhv = [8:9];
 newFig = 104;
 hNew = lafig3(newFig, fhv, FFM);
 
-close(7:8)
+close(8:9)
 
 
 
 
-
-figure(9)
-for i = 1:n
-    plot(t(1:end-1),u(m*i, :),"Linewidth",2)
-    hold on
-end
-grid on
-xlabel('Time [Sec]')
-ylabel('Z-Axis control')
 
 figure(10)
 for i = 1:n
@@ -379,15 +387,26 @@ for i = 1:n
     hold on
 end
 grid on
+set(gca,'FontSize',14)
+xlabel('Time [sec]')
+ylabel('Z-Axis control')
+
+figure(11)
+for i = 1:n
+    plot(t(1:end-1),u(m*i, :),"Linewidth",2)
+    hold on
+end
+grid on
+set(gca,'FontSize',14)
 axis([20 30 -0.4 -0.1])
 
 FFM = [0 0 1 1;
        0.53 0.5 0.35 0.35;];
-fhv = [9:10];
+fhv = [10:11];
 newFig = 105;
 hNew = lafig3(newFig, fhv, FFM);
 
-close(9:10)
+close(10:11)
 
 
 
@@ -404,16 +423,28 @@ close(9:10)
 
 
 % Grafica para calcular la norma de la velocidad v0 - V de cada agente
-figure(8)
+figure(12)
+% Grafica para calcular la norma de la velocidad v0 - V de cada agente
+e(:,5001) = 0;
 for i = 1:length(t)
     sum = 0;
-    for k = 1:n
-        sum = norm(v0(:,i) - V(m*k-2:m*k, i)) + sum; % Calcula la norma de v0 - V
+    for k = 1:l
+        % sum = norm(v0(:,i) - V(m*k-2:m*k, i)) + sum; % Calcula la norma de v0 - V
+        sum = norm(e(k,i))+sum;
     end
-    norm_v0_V(i) = sum;
+    norm_v0_V(i) = sum*t(i);
 end
 semilogy(t, norm_v0_V, 'Linewidth',2)
-xlabel('Time [Sec]');
+
+fileID = fopen('datos.txt','r');
+formatSpec = '%f';
+norm_v0_V2 = fscanf(fileID,formatSpec)
+hold on
+semilogy(t, norm_v0_V2, 'Linewidth',2)
+
+
+set(gca,'FontSize',14)
+xlabel('Time [sec]');
 ylabel({'\fontsize{14}{21}$\sum^{N}_{i=1}||v_0 - v_i ||$'},'Interpreter','latex');
 grid on
 
@@ -422,8 +453,14 @@ grid on
 % plot(t, V(1:3, :), 'Linewidth',2)
 
 
+figure(13)
+plot(t, norm_v0_V, 'Linewidth',2)
+hold on
+plot(t, norm_v0_V2, 'Linewidth',2)
 
 
+% ISE
+% ITAE
 
 
 

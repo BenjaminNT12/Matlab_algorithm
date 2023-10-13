@@ -34,7 +34,7 @@ m = 3;
 n = 9;
 l = 21;
 c = 0.7;
-fin = 30;
+fin = 50;
 t = 0: T :fin;
 
 
@@ -252,43 +252,46 @@ plot(t(1:end-1),-DELTA_LIMITE_INFERIOR*ppf(1:end-1),'Color','r','LineWidth',2,'L
 hold on
 grid on
 % title('Errores de distancia entre agentes')
-xlabel('Time [Sec]')
-ylabel('Distance error [m]')
+set(gca,'FontSize',14)
+xlabel('Time [sec]')
+ylabel('Distance errors e_{ij} [m]')
 
 
 figure(4)
 
 for i = 1:l
-    plot(t(1:end-1),e(i,:),"Linewidth",1) %% 9, 20
+    plot(t(1:end-1),e(i,:),"Linewidth",2) %% 9, 20
     hold on
 end
-plot(t(1:end-1),DELTA_LIMITE_SUPERIOR*ppf(1:end-1),'Color','r','LineWidth',1.5,'LineStyle','--')
+set(gca,'FontSize',14)
+plot(t(1:end-1),DELTA_LIMITE_SUPERIOR*ppf(1:end-1),'Color','r','LineWidth',2,'LineStyle','--')
 hold on
-plot(t(1:end-1),-DELTA_LIMITE_INFERIOR*ppf(1:end-1),'Color','r','LineWidth',1.5,'LineStyle','--')
+plot(t(1:end-1),-DELTA_LIMITE_INFERIOR*ppf(1:end-1),'Color','r','LineWidth',2,'LineStyle','--')
 hold on
 grid on
-axis([0 5 -1 1])
+axis([0 8 0 4])
 
 
 figure(5)
 
 for i = 1:l
-    plot(t(1:end-1),e(i,:),"Linewidth",1) %% 9, 20
+    plot(t(1:end-1),e(i,:),"Linewidth",2) %% 9, 20
     hold on
 end
+set(gca,'FontSize',14)
 plot(t(1:end-1),DELTA_LIMITE_SUPERIOR*ppf(1:end-1),'Color','r','LineWidth',1.5,'LineStyle','--')
 hold on
 plot(t(1:end-1),-DELTA_LIMITE_INFERIOR*ppf(1:end-1),'Color','r','LineWidth',1.5,'LineStyle','--')
 hold on
 grid on
-axis([15 20 -0.28 0.28])
+axis([0 8 -4 0])
 % xlabel('Seconds')
 % ylabel('Distance error')
 
 
 FFM = [0 0 1 1;
-       0.2 0.58 0.35 0.35;
-       0.53 0.12 0.35 0.35;];
+       0.55 0.58 0.35 0.35;
+       0.55 0.155 0.35 0.35;];
 fhv = [3:5];
 newFig = 102;
 hNew = lafig3(newFig, fhv, FFM);
@@ -304,15 +307,18 @@ close(3:5)
 figure(6)
 
 % Grafica para calcular la norma de la velocidad v0 - V de cada agente
-
+e(:,5001) = 0;
 for i = 1:length(t)
     sum = 0;
-    for k = 1:n
-        sum = norm(v0(:,i) - V(m*k-2:m*k, i)) + sum; % Calcula la norma de v0 - V
+    for k = 1:l
+        % sum = norm(v0(:,i) - V(m*k-2:m*k, i)) + sum; % Calcula la norma de v0 - V
+        sum = norm(e(k,i))+sum;
     end
-    norm_v0_V(i) = sum;
+    norm_v0_V(i) = sum*t(i);
 end
 
+
+dlmwrite('datos.txt', norm_v0_V, 'delimiter', '\n');
 semilogy(t, norm_v0_V, 'Linewidth',2)
 
 xlabel('Time [Sec]');
