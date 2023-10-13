@@ -34,7 +34,7 @@ m = 3;
 n = 9;
 l = 21;
 c = 0.7;
-fin = 50;
+fin = 30;
 t = 0: T :fin;
 
 
@@ -302,8 +302,6 @@ close(3:5)
 
 
 
-
-
 figure(6)
 
 % Grafica para calcular la norma de la velocidad v0 - V de cada agente
@@ -312,19 +310,44 @@ for i = 1:length(t)
     sum = 0;
     for k = 1:l
         % sum = norm(v0(:,i) - V(m*k-2:m*k, i)) + sum; % Calcula la norma de v0 - V
-        sum = norm(e(k,i))+sum;
+        sum = norm(e(k,i));
     end
-    norm_v0_V(i) = sum*t(i);
+    ISE(i) = sum^2;
+end
+
+dlmwrite('ISE_datos.txt', ISE, 'delimiter', '\n');
+semilogy(t, ISE, 'Linewidth',2)
+
+set(gca,'FontSize',14)
+xlabel('Time [Sec]');
+ylabel({'$\sum^{N}_{i=1}||e_{ij}||^2$'},'Interpreter','latex');
+grid on
+
+
+
+
+
+figure(7)
+
+% Grafica para calcular la norma de la velocidad v0 - V de cada agente
+e(:,5001) = 0;
+for i = 1:length(t)
+    sum = 0;
+    for k = 1:l
+        % sum = norm(v0(:,i) - V(m*k-2:m*k, i)) + sum; % Calcula la norma de v0 - V
+        sum = norm(e(k,i));
+    end
+    ITAE(i) = sum*t(i);
 end
 
 
-dlmwrite('datos.txt', norm_v0_V, 'delimiter', '\n');
-semilogy(t, norm_v0_V, 'Linewidth',2)
+dlmwrite('ITAE_datos.txt', ITAE, 'delimiter', '\n');
+semilogy(t, ITAE, 'Linewidth',2)
 
+set(gca,'FontSize',14)
 xlabel('Time [Sec]');
-ylabel({'$\sum^{N}_{i=1}||v_0 - v_i ||$'},'Interpreter','latex');
+ylabel({'$\sum^{N}_{i=1}||e_{ij}||^2$'},'Interpreter','latex');
 grid on
-% delete(gcp)
 
 
 

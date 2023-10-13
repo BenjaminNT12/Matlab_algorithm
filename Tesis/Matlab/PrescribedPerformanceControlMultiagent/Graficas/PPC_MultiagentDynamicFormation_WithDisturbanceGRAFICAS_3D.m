@@ -429,23 +429,22 @@ e(:,5001) = 0;
 for i = 1:length(t)
     sum = 0;
     for k = 1:l
-        % sum = norm(v0(:,i) - V(m*k-2:m*k, i)) + sum; % Calcula la norma de v0 - V
         sum = norm(e(k,i))+sum;
     end
-    norm_v0_V(i) = sum*t(i);
+    ISE(i) = sum^2;
 end
-semilogy(t, norm_v0_V, 'Linewidth',2)
+semilogy(t, ISE, 'Linewidth',2)
 
-fileID = fopen('datos.txt','r');
+fileID = fopen('ISE_datos.txt','r');
 formatSpec = '%f';
-norm_v0_V2 = fscanf(fileID,formatSpec)
+ISE2 = fscanf(fileID,formatSpec);
 hold on
-semilogy(t, norm_v0_V2, 'Linewidth',2)
+semilogy(t, ISE2, 'Linewidth',2)
 
 
 set(gca,'FontSize',14)
 xlabel('Time [sec]');
-ylabel({'\fontsize{14}{21}$\sum^{N}_{i=1}||v_0 - v_i ||$'},'Interpreter','latex');
+ylabel({'\fontsize{14}{21}$\sum^{N}_{i=1}||e_{ij}||^2$'},'Interpreter','latex');
 grid on
 
 % % Grafica para mostrar la velocidad de un solo agente
@@ -454,9 +453,9 @@ grid on
 
 
 figure(13)
-plot(t, norm_v0_V, 'Linewidth',2)
+plot(t, ISE, 'Linewidth',2)
 hold on
-plot(t, norm_v0_V2, 'Linewidth',2)
+plot(t, ISE2, 'Linewidth',2)
 
 
 % ISE
