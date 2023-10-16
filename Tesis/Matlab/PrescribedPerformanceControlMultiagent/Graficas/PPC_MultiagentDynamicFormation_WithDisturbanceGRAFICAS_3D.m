@@ -34,7 +34,7 @@ m = 3;
 n = 9;
 l = 21;
 c = 0.7;
-fin = 50;
+fin = 30;
 t = 0: T :fin;
 
 
@@ -447,15 +447,62 @@ xlabel('Time [sec]');
 ylabel({'\fontsize{14}{21}$\sum^{N}_{i=1}||e_{ij}||^2$'},'Interpreter','latex');
 grid on
 
+
+
+
+
+
+
+
+% Grafica para calcular la norma de la velocidad v0 - V de cada agente
+figure(13)
+% Grafica para calcular la norma de la velocidad v0 - V de cada agente
+e(:,3001) = 0;
+for i = 1:length(t)
+    sum = 0;
+    for k = 1:l
+        sum = norm(e(k,i))+sum;
+    end
+    ITAE(i) = sum*t(i);
+end
+semilogy(t, ITAE, 'Linewidth',2)
+
+fileID = fopen('ITAE_datos.txt','r');
+formatSpec = '%f';
+ITAE2 = fscanf(fileID,formatSpec);
+hold on
+semilogy(t, ITAE2, 'Linewidth',2)
+
+
+set(gca,'FontSize',14)
+xlabel('Time [sec]');
+ylabel({'\fontsize{14}{21}$\sum^{N}_{i=1}||e_{ij}||t(i)$'},'Interpreter','latex');
+grid on
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 % % Grafica para mostrar la velocidad de un solo agente
 % figure(9)
 % plot(t, V(1:3, :), 'Linewidth',2)
 
 
-figure(13)
-plot(t, ISE, 'Linewidth',2)
-hold on
-plot(t, ISE2, 'Linewidth',2)
+% figure(13)
+% plot(t, ISE, 'Linewidth',2)
+% hold on
+% plot(t, ISE2, 'Linewidth',2)
 
 
 % ISE

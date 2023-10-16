@@ -305,7 +305,7 @@ close(3:5)
 figure(6)
 
 % Grafica para calcular la norma de la velocidad v0 - V de cada agente
-e(:,5001) = 0;
+e(:,3001) = 0;
 for i = 1:length(t)
     sum = 0;
     for k = 1:l
@@ -330,7 +330,7 @@ grid on
 figure(7)
 
 % Grafica para calcular la norma de la velocidad v0 - V de cada agente
-e(:,5001) = 0;
+e(:,3001) = 0;
 for i = 1:length(t)
     sum = 0;
     for k = 1:l
