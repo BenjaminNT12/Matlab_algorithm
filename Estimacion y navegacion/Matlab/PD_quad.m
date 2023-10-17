@@ -11,8 +11,8 @@ Jm = 0.0001
 Kt = 0.1188
 Jx = 0.5522
 Omega(1) = 0
-U = [0 -L*Kt 0 L*Kt; L*Kt 0 -L*Kt 0; Kt -Kt Kt -Kt];
-invU = pinv(U)
+% U = [0 -L*Kt 0 L*Kt; L*Kt 0 -L*Kt 0; Kt -Kt Kt -Kt];
+% invU = pinv(U)
 
 u   = [0 0 0] 
 r0  = 0.5*cos(t);           

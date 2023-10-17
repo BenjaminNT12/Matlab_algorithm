@@ -13,20 +13,20 @@ Jm = 0.0001;
 Kt = 0.1188;
 Jx = 0.5522;
 
-% Control PD
+Control PD
 
-% tau = [tau_x; tau_y; tau_z]
+tau = [tau_x; tau_y; tau_z]
 
-% dxdt(1,1) = x(2);
-% dxdt(2,1) =(1/Jy)*((Jz-Jx)*x(4)*x(6)+Jm*OMEGA+tau2-Kay*x(2));
-% % Modelo para roll
-% % phi2p=(Jy-Jz)/Jx*thetap*psip+Jm*omega/Jx+tau1/Jx-Kax*phip;
-% dxdt(3,1) = x(4);
-% dxdt(4,1) =(1/Jx)*((Jy-Jz)*x(2)*x(6)+Jm*OMEGA+tau1-Kax*x(4));
-% % Modelo para yaw
-% % yaw2p=(Jx-Jy)/Jz*phip*thetap+tau3/Jz-Kaz*psip;
-% dxdt(5,1) = x(6);
-% dxdt(6,1) = (1/Jz)*((Jx-Jy)*x(4)*x(2)+tau3-Kaz*x(6));
+dxdt(1,1) = x(2);
+dxdt(2,1) =(1/Jy)*((Jz-Jx)*x(4)*x(6)+Jm*OMEGA+tau2-Kay*x(2));
+% Modelo para roll
+% phi2p=(Jy-Jz)/Jx*thetap*psip+Jm*omega/Jx+tau1/Jx-Kax*phip;
+dxdt(3,1) = x(4);
+dxdt(4,1) =(1/Jx)*((Jy-Jz)*x(2)*x(6)+Jm*OMEGA+tau1-Kax*x(4));
+% Modelo para yaw
+% yaw2p=(Jx-Jy)/Jz*phip*thetap+tau3/Jz-Kaz*psip;
+dxdt(5,1) = x(6);
+dxdt(6,1) = (1/Jz)*((Jx-Jy)*x(4)*x(2)+tau3-Kaz*x(6));
 
 x1pp = x(2);
 x2pp = ((Jy - Jz)*x(4)*x(6) + Jm*omega + u(1) - K_afx*x(2))/Jx;
