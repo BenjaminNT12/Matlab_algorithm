@@ -151,7 +151,7 @@ for i = 1:length(t)-1
         Vfp(:,i) = (Vf(:,i) - Vf(:,i-1))/T;
     end
     
-    u = -KS*S - R'*rho*Ez + Vfp(:,i)+ tanH; %%%%%%%%%%%%% control con PPC agregando tanh
+    u = -KS*S - R'*rho*Ez + Vfp(:,i) + tanH; %%%%%%%%%%%%% control con PPC agregando tanh
     % u = -KS*S - R'*rho*Ez + Vfp(:,i); %%%%%%%%%%%%% control con PPC
     % u = -KS*S + Vfp(:,i) - R'*e; %%%%%%%%%%%%% control sin PPC
     
