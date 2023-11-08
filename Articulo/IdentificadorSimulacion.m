@@ -7,7 +7,7 @@ close all          % Is used to close all open figure windows
 
 k1 = 0.01;
 alpha1 = 2.2; % >1
-alpha2 = 0.9;  % <2
+alpha2 = 0.9; % <2
 beta1  = 0.2;
 beta2  = 0.2;
 gamma1 = 0.2;
