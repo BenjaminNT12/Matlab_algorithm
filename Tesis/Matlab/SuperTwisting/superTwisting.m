@@ -44,7 +44,6 @@ for i = 1:length(t)-1
     s(i) = ep(i) + beta_1*e(i);
 
     ust(i) = (m/(cos(theta(1,i))*cos(phi(1,i))))*(g + z1dpp(i)- beta_1*ep(i) - k1*(sqrt(abs(s(i)))*sign(s(i))) - k2*trapz(sign(s(i))));
-    % umst(i) = aklsjdklasjdlkjaskl
 
     [tt,zz] = ode45(@quadCopterModel2Order, [t(i) t(i+1)], X(:,i), [], ust(i));
     X(:, i+1) = zz(end, :)';
