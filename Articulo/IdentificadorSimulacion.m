@@ -35,7 +35,6 @@ phi(:, 1) = [ tanh(Z(1, 1));
               tanh(Z(2, 1))]; % funcion de activacion de la red vector
 
 Zg = 0.2*ones(2,1);
-
 Zt = Z - Zg;
 
 for i = 1:length(t)-1
@@ -46,9 +45,10 @@ for i = 1:length(t)-1
     Zg(:, i+1) = zz(end, :)';
 
     Zt(:,i+1) = Z(:, i+1) - Zg(:, i+1);
+    
     s = Zt(1) + k1*sign(Zt(2))*abs(Zt(2))^alpha1; % sliding surface escalar
-    phi(:, i+1) = [ tanh(Z(1,i+1)); 
-                    tanh(Z(2,i+1))]; % funcion de activacion de la red vector
+    phi(:, i+1) = [tanh(Z(1,i+1)); 
+                   tanh(Z(2,i+1))]; % funcion de activacion de la red vector
 
     Wgp(:,i+1) = gamma1*(alpha1*k1*abs(Zt(2))^(alpha1-1)*s*phi(:,i+1)+sigma1*Wt(:,i)); % W punt, derivada de los pesos estimados de la red escalar
     Wg(:,i+1) = Wg(:,i) + Wgp(:,i+1)*T; % Wg, pesos estimados de la red escalar
