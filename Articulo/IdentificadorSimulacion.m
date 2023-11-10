@@ -6,8 +6,8 @@ close all          % Is used to close all open figure windows
 
 
 k1 = 0.01;
-alpha1 = 2.2; % >1
-alpha2 = 0.9; % <2
+alpha1 = 1.5; % 1-2
+alpha2 = 1.2; % >1 
 beta1  = 0.2;
 beta2  = 0.2;
 gamma1 = 0.2;
@@ -27,7 +27,7 @@ t = 0:T:fin;     % Vector de similitud
 
 u = 0; 
 
-W0 = 0.5*ones(2,1);
+W0 = 0.01*ones(2,1);
 Wg = zeros(2,1);
 Wt = W0-Wg;
 Z = 0.5*ones(2,1);
@@ -38,7 +38,6 @@ Zg = 0.2*ones(2,1);
 Zt = Z - Zg;
 
 for i = 1:length(t)-1
-    % i
     [tt,xx] = ode45(@system, [t(i) t(i+1)], Z(:,i), [], u);
     [ttt,zz] = ode45(@identifier, [t(i) t(i+1)], Zg(:,i), [], u, Wg(:,i), phi(:,i), Zt(:, i),P(:));
     Z(:, i+1) = xx(end, :)';
@@ -47,8 +46,7 @@ for i = 1:length(t)-1
     Zt(:,i+1) = Z(:, i+1) - Zg(:, i+1);
     
     s = Zt(1) + k1*sign(Zt(2))*abs(Zt(2))^alpha1; % sliding surface escalar
-    phi(:, i+1) = [tanh(Z(1,i+1)); 
-                   tanh(Z(2,i+1))]; % funcion de activacion de la red vector
+    phi(:, i+1) = tanh(Z(:,i+1)); % funcion de activacion de la red vector
 
     Wgp(:,i+1) = gamma1*(alpha1*k1*abs(Zt(2))^(alpha1-1)*s*phi(:,i+1)+sigma1*Wt(:,i)); % W punt, derivada de los pesos estimados de la red escalar
     Wg(:,i+1) = Wg(:,i) + Wgp(:,i+1)*T; % Wg, pesos estimados de la red escalar
@@ -70,3 +68,29 @@ plot(t(end-1000:end),Z(2,end-1000:end))
 hold on
 plot(t(end-1000:end),Zg(2,end-1000:end))
 
+figure(4)
+plot(t,Z(1,:))
+hold on
+plot(t,Zg(1,:))
+
+figure(7)
+plot(t, Wg(1,:));
+hold on
+plot(t, Wg(2,:));
+
+figure(8)
+plot(t, Wgp(1,:));
+hold on
+plot(t, Wgp(2,:));
+
+figure(9)
+
+% Primer gráfico
+subplot(2, 1, 1); % Divide la figura en una cuadrícula de 2 filas y 1 columna, y crea el primer gráfico en la primera fila
+plot(t, Zt(1,:));
+title('Zt1'); % Opcional: añade un título al gráfico
+
+% Segundo gráfico
+subplot(2, 1, 2); % Divide la figura en una cuadrícula de 2 filas y 1 columna, y crea el segundo gráfico en la segunda fila
+plot(t, Zt(2,:));
+title('Zt2'); 
