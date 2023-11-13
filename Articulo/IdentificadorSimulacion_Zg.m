@@ -4,7 +4,7 @@ clc
 clear           % You can clear all variables
 close all          % Is used to close all open figure windows
 
-tic
+
 k1 = 0.01;
 alpha1 = 1.5; % 1-2
 alpha2 = 1.2; % >1 
@@ -21,7 +21,7 @@ P = [k1;
      gamma1;
      sigma1];
 
-fin = 10000;
+fin = 1000;
 T = 0.01;        % Paso de integración 
 t = 0:T:fin;     % Vector de similitud
 
@@ -31,10 +31,10 @@ W0 = 0.01*ones(2,1);
 Wg = zeros(2,1);
 Wt = W0-Wg;
 Z = 0.5*ones(2,1);
-phi(:, 1) = [ tanh(Z(1, 1)); 
-              tanh(Z(2, 1))]; % funcion de activacion de la red vector
-
 Zg = 0.2*ones(2,1);
+phi(:, 1) = [ tanh(Zg(1, 1)); 
+              tanh(Zg(2, 1))]; % funcion de activacion de la red vector
+
 Zt = Z - Zg;
 
 for i = 1:length(t)-1
@@ -46,7 +46,7 @@ for i = 1:length(t)-1
     Zt(:,i+1) = Z(:, i+1) - Zg(:, i+1);
     
     s = Zt(1) + k1*sign(Zt(2))*abs(Zt(2))^alpha1; % sliding surface escalar
-    phi(:, i+1) = tanh(Z(:,i+1)); % funcion de activacion de la red vector
+    phi(:, i+1) = tanh(Zg(:,i+1)); % funcion de activacion de la red vector
 
     Wgp(:,i+1) = gamma1*(alpha1*k1*abs(Zt(2))^(alpha1-1)*s*phi(:,i+1)+sigma1*Wt(:,i)); % W punt, derivada de los pesos estimados de la red escalar
     Wg(:,i+1) = Wg(:,i) + Wgp(:,i+1)*T; % Wg, pesos estimados de la red escalar
@@ -94,4 +94,3 @@ title('Zt1'); % Opcional: añade un título al gráfico
 subplot(2, 1, 2); % Divide la figura en una cuadrícula de 2 filas y 1 columna, y crea el segundo gráfico en la segunda fila
 plot(t, Zt(2,:));
 title('Zt2'); 
-toc
