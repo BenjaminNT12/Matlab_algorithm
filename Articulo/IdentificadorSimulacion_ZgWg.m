@@ -14,7 +14,7 @@ gamma1 = 0.2;
 sigma1 = 0.9;
 sigma2 = 0.001;
 
-P = [k1;
+Ganancias = [k1;
      alpha1;
      alpha2;
      beta1;
@@ -40,7 +40,7 @@ Zt = Z - Zg;
 
 for i = 1:length(t)-1
     [tt,xx] = ode45(@system, [t(i) t(i+1)], Z(:,i), [], u);
-    [ttt,zz] = ode45(@identifier, [t(i) t(i+1)], Zg(:,i), [], u, Wg(:,i), phi(:,i), Zt(:, i),P(:));
+    [ttt,zz] = ode45(@identifier, [t(i) t(i+1)], Zg(:,i), [], u, Wg(:,i), phi(:,i), Zt(:, i),Ganancias(:));
     Z(:, i+1) = xx(end, :)';
     Zg(:, i+1) = zz(end, :)';
 
