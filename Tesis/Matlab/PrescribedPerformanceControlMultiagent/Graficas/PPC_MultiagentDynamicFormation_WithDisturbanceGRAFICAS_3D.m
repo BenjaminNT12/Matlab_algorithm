@@ -480,10 +480,16 @@ ylabel({'\fontsize{14}{21}$\sum^{N}_{i=1}||e_{ij}||t(i)$'},'Interpreter','latex'
 grid on
 
 
+figure(14)
+view([-45,-90,60]);% Quitar comentario si se quiere una venta adaptable
+axis([-4 4 -4 4 -4 4]) % Quitar comentario si se quiere una venta adaptable
+grid on
+[grf, points] = Framework3Dplot(qd(:,1), E);
 
-
-
-
+set(gca,'FontSize',14)
+xlabel('X-Axis [m]','FontSize',14)
+ylabel('Y-Axis [m]','FontSize',14)
+zlabel('Z-Axis [m]','FontSize',14)
 
 
 
