@@ -198,7 +198,7 @@ end
 % plotea todos los agentes en 3D
 
 figure(1)
-plot3(12.28-(1/0.35)*v0(2,:)', 9.25 + (1/0.35)*v0(1,:)', 3*1.2+t(:),'LineStyle',"-.",'Color','red','LineWidth',2);
+plot3(12.28-(1/0.35)*v0(2,:)', 9.25 + (1/0.35)*v0(1,:)', 3*1.0+t(:),'LineStyle',"-.",'Color','red','LineWidth',2);
 hold on
 plot3(q(9*m-2,:), q(9*m-1,:), q(9*m,:),'LineStyle',"-",'Color','blue','LineWidth',2);
 
