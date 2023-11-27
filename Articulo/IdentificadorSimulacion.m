@@ -21,7 +21,7 @@ P = [k1;
      gamma1;
      sigma1];
 
-fin = 10000;
+fin = 500;
 T = 0.01;        % Paso de integración 
 t = 0:T:fin;     % Vector de similitud
 
@@ -50,7 +50,7 @@ for i = 1:length(t)-1
 
     Wgp(:,i+1) = gamma1*(alpha1*k1*abs(Zt(2))^(alpha1-1)*s*phi(:,i+1)+sigma1*Wt(:,i)); % W punt, derivada de los pesos estimados de la red escalar
     Wg(:,i+1) = Wg(:,i) + Wgp(:,i+1)*T; % Wg, pesos estimados de la red escalar
-    Wt(:,i+1) = Wg(:,i+1) - Wg(:,i); % W tilde, error de pesos de la red
+    Wt(:,i+1) = Wg(:,i+1) - W0; % W tilde, error de pesos de la red
 end
 
 figure(1)

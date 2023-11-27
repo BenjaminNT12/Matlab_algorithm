@@ -18,7 +18,7 @@ clear;
 close all;
 clc;
 % parpool(6)
-KT = 25;
+KT = 35;
 KV = 0.2;
 KS = 0.1;
 MAX_ERROR_INICIAL = 1;
