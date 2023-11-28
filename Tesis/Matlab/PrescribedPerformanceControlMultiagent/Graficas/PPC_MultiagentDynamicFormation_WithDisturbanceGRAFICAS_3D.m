@@ -138,9 +138,9 @@ for i = 1:length(t)-1
     % Vf(:,i) = -KV*R'*e(:,i) + vd(:,1);  %%%%%%%%%%%%% control sin PPC
     Zp = 2*R*V(:,i);
     Rp = matrizRCubo9AgentWithLeader(V(:,i),m);
-    S = V(:,i) - Vf(:,i);
+    S(:,i) = V(:,i) - Vf(:,i);
     
-    tanH = -KT*tanh(S);
+    tanH = -KT*tanh(S(:,i));
     
     Ezp(:,i) = rho*(Zp-ppfp(i)*varphi(:,i));
     Vfp2(:,i) = -KV*(Rp'*rho*Ez(:,i) + R'*rhop*Ez(:,i) + R'*rho*Ezp(:,i));
@@ -151,9 +151,9 @@ for i = 1:length(t)-1
         Vfp(:,i) = (Vf(:,i) - Vf(:,i-1))/T;
     end
     
-    u = -KS*S - R'*rho*Ez + Vfp(:,i)+ tanH; %%%%%%%%%%%%% control con PPC agregando tanh
-    % u = -KS*S - R'*rho*Ez + Vfp(:,i); %%%%%%%%%%%%% control con PPC
-    % u = -KS*S + Vfp(:,i) - R'*e; %%%%%%%%%%%%% control sin PPC
+    u = -KS*S(:,i) - R'*rho*Ez + Vfp(:,i)+ tanH; %%%%%%%%%%%%% control con PPC agregando tanh
+    % u = -KS*S(:,i) - R'*rho*Ez + Vfp(:,i); %%%%%%%%%%%%% control con PPC
+    % u = -KS*S(:,i) + Vfp(:,i) - R'*e; %%%%%%%%%%%%% control sin PPC
     
     [tt, xx] = ode45(@systemDoubleIntegratorWithDisturbance, [t(i) t(i+1)], X(:,i), [], u(:,i), m, n);
     X(:, i+1) = xx(end, :)';
@@ -497,6 +497,12 @@ zlabel('Z-Axis [m]','FontSize',14)
 
 
 
+figure(15)
+
+for i = 1:3*n
+    plot(t(1:end-1),S(i,:),"Linewidth",2) %% 9, 20
+    hold on
+end
 
 
 

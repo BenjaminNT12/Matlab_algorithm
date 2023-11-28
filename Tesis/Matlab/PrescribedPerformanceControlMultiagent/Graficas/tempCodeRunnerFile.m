@@ -1,17 +1,6 @@
-figure(6)
+figure(15)
 
-% Grafica para calcular la norma de la velocidad v0 - V de cada agente
-
-for i = 1:length(t)
-    sum = 0;
-    for k = 1:n
-        sum = norm(v0(:,i) - V(m*k-2:m*k, i)) + sum; % Calcula la norma de v0 - V
-    end
-    norm_v0_V(i) = sum;
+for i = 1:3*n
+    plot(t(1:end-1),S(i,:),"Linewidth",2) %% 9, 20
+    hold on
 end
-
-semilogy(t, norm_v0_V, 'Linewidth',2)
-
-xlabel('Seconds');
-ylabel({'$\sum^{N}_{i=1}||v_0 - v_i ||$'},'Interpreter','latex');
-grid on
