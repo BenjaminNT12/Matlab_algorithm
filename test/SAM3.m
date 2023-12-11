@@ -42,3 +42,5 @@ end
 
 fprintf('La sumatoria de de Q es desde la capa 1 a %d es:' ,C);
 Qbar(:,:,C+1)
+
+%Seccion de variables colocadas por el ususario
