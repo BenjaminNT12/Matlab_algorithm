@@ -2,7 +2,7 @@ clc;
 clear;
 close all;
 % Obtiene una lista de todos los archivos en el directorio
-files = dir('~/Github/Matlab_algorithm/Pruebas/ControlBenjamin/prueba5/*.txt');
+files = dir('~/Github/Matlab_algorithm/Pruebas/ControlBenjamin/prueba1/*.txt');
 
 % Inicializa las variables
 yaw = [];
