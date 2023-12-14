@@ -22,15 +22,15 @@ Ganancias = [k1;
      gamma1;
      sigma1];
 
-fin = 1000;
+fin = 120;
 T = 0.01;        % Paso de integración 
 t = 0:T:fin;     % Vector de similitud
 
 u = 0; 
 
-W0 = 0.01*ones(2,1);
+W0 = 0.05*ones(2,1);
 Wg = zeros(2,1);
-Wt = W0-Wg;
+Wt = Wg-W0;
 Z = 0.5*ones(2,1);
 Zg = 0.2*ones(2,1);
 phi(:, 1) = [ tanh(Zg(1, 1)); 
@@ -52,7 +52,7 @@ for i = 1:length(t)-1
     Wtb(:,i) = (1/Wg(:,i))';
     Wgp(:,i+1) = gamma1*(alpha1*k1*abs(Zt(2))^(alpha1-1)*s*phi(:,i+1) + sigma1*Wt(:,i) + sigma2*Wtb(:,i)*norm(Wg(:,i))); % W punt, derivada de los pesos estimados de la red escalar
     Wg(:,i+1) = Wg(:,i) + Wgp(:,i+1)*T; % Wg, pesos estimados de la red escalar
-    Wt(:,i+1) = Wg(:,i+1) - Wg(:,i); % W tilde, error de pesos de la red
+    Wt(:,i+1) = Wg(:,i+1) - W0; % W tilde, error de pesos de la red
 end
 
 figure(1)
@@ -76,6 +76,8 @@ hold on
 plot(t,Zg(1,:))
 
 figure(7)
+% escribe el nombre de la variable que quieres graficar
+title('Pesos estimados de la red escalar');
 plot(t, Wg(1,:));
 hold on
 plot(t, Wg(2,:));

@@ -21,7 +21,7 @@ P = [k1;
      gamma1;
      sigma1];
 
-fin = 500;
+fin = 120;
 T = 0.01;        % Paso de integración 
 t = 0:T:fin;     % Vector de similitud
 
