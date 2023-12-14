@@ -1,4 +1,4 @@
-fid = fopen('control1.txt', 'r');  % Abre el archivo en modo lectura
+fid = fopen('~/Github/Matlab_algorithm/Pruebas/Alberca/Control/secuencia9/control_2023-12-08_14-47.txt', 'r');  % Abre el archivo en modo lectura
 data = textscan(fid, 'yaw: %f yaw Deseada: %f Control: %f Error: %f');  % Lee los valores numéricos
 fclose(fid);  % Cierra el archivo
 

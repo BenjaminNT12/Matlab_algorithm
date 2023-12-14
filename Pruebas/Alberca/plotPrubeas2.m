@@ -1,6 +1,6 @@
 clc; clear; close all;
 % Obtiene una lista de todos los archivos en el directorio
-files = dir('~/Github/Matlab_algorithm/Pruebas/Alberca/Control/todos/*.txt');
+files = dir('~/Github/Matlab_algorithm/Pruebas/ControlBenjamin/*.txt');
 
 
 % Itera sobre cada archivo
