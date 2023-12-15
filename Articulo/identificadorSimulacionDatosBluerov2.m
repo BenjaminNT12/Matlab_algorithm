@@ -4,7 +4,7 @@ close all;
 % Obtiene una lista de todos los archivos en el directorio
 files = dir('~/Github/Matlab_algorithm/Pruebas/ControlBenjamin/prueba1/*.txt');
 
-k1 = 0.03;
+k1 = 1.9;
 alpha1 = 1.05; % 1-2
 alpha2 = 1.01; % >1 
 beta1  = 0.1;
