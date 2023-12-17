@@ -4,11 +4,11 @@ close all;
 % Obtiene una lista de todos los archivos en el directorio
 files = dir('~/Github/Matlab_algorithm/Pruebas/ControlBenjamin/prueba1/*.txt');
 
-k1 = 1.9;
-alpha1 = 1.05; % 1-2
+k1 = 0.05;
+alpha1 = 1.5; % 1-2
 alpha2 = 1.01; % >1 
-beta1  = 0.1;
-beta2  = 0.1;
+beta1  = 1.3;
+beta2  = 0.5;
 gamma1 = 0.1;
 sigma1 = 0.1;
 sigma2 = 0.3;
@@ -24,8 +24,8 @@ P = [k1;
 u = 0; 
 
 W0 = [1; 0.5];
-
-
+ 
+ 
 % Inicializa las variables
 yaw = [];
 yawVel = [];
@@ -35,7 +35,7 @@ control = [];
 error = [];
 t = [];
 T = 0.05;
-
+ 
 % Itera sobre cada archivo
 for file = files'
     % Abre el archivo en modo lectura
@@ -54,6 +54,7 @@ for file = files'
     t = [t, (0:0.05:length(data{1})*0.05-0.05) + (length(t)*0.05)];
 end
 
+yaw = deg2rad(yaw);
 
 Wg = zeros(2,1);
 Wt = W0-Wg;
@@ -90,7 +91,7 @@ subplot(4, 1, 1);
 plot(t, Z(1,:))
 hold on
 plot(t, Zg(1,:))
-title('POSICIÓN, Z(1,:) and Zg(1,:)');
+title('POSICIÓN, Z 1 and Zg 1');
 
 subplot(4, 1, 2);
 % plot(t, yawVel(:))
@@ -98,46 +99,44 @@ subplot(4, 1, 2);
 plot(t, Z(2,:))
 hold on
 plot(t, Zg(2,:))
-title('VELOCIDAD, Z(2,:) and Zg(2,:)');
+title('VELOCIDAD, Z 2 and Zg 2');
 
 subplot(4, 1, 3);
 plot(t, Wg(1,:));
 hold on
 plot(t, Wg(2,:));
-title('PESOS, Wg(1,:) and Wg(2,:)');
+title('PESOS, Wg 1 and Wg 2');
 
 % plot de s
 subplot(4, 1, 4);
 plot(t, s(:));
 title('s(:)');
 
-% figure(1)
-% % plot(t, yawDeseada(:))
-% % hold on
-% plot(t, Z(1,:))
-% hold on
-% plot(t, Zg(1,:))
+% plot de de la entrada de control
 
-% figure(2)
-% % plot(t, yawVel(:))
-% % hold on
-% plot(t, Z(2,:))
-% hold on
-% plot(t, Zg(2,:))
-
-% figure(3)
-% plot(t, Wg(1,:));
-% hold on
-% plot(t, Wg(2,:));
-
-% % plot de s
-% figure(4)
-% plot(t, s(:));
+figure(2)
+plot(t, control(:));
 
 
+figure(3)
+plot(t, Z(2,:))
+hold on
+plot(t, Zg(2,:))
+title('VELOCIDAD, Z 2 and Zg 2');
 
+figure(4)
+plot(t, Z(1,:))
+hold on
+plot(t, Zg(1,:))
+title('POSICIÓN, Z 1 and Zg 1');
 
-
+figure(5)
+plot(t, s(:));
+title('s');
+ymax = 1;
+ymin = -1;
+% Establece los límites del eje x
+ylim([ymin ymax]); 
 
 
 
@@ -166,29 +165,6 @@ title('s(:)');
 
 
 
-
-% figure(8)
-% plot(t, Wgp(1,:));
-% hold on
-% plot(t, Wgp(2,:));
-
-% figure(9)
-
-% % Primer gráfico
-% subplot(2, 1, 1); % Divide la figura en una cuadrícula de 2 filas y 1 columna, y crea el primer gráfico en la primera fila
-% plot(t, Zt(1,:));
-% title('Zt1'); % Opcional: añade un título al gráfico
-
-% % Segundo gráfico
-% subplot(2, 1, 2); % Divide la figura en una cuadrícula de 2 filas y 1 columna, y crea el segundo gráfico en la segunda fila
-% plot(t, Zt(2,:));
-% title('Zt2'); 
-
-% plot de yaw
-% figure(10)
-% plot(t, yaw);
-
-% plot de s
 
 
 
