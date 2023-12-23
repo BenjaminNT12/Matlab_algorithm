@@ -67,3 +67,15 @@ plot(t, yawDeseada, 'r--');
 hold off;
 title('Yaw y Yaw Deseada');
 legend('Yaw', 'Yaw Deseada');
+
+
+figure(3)
+T = 0.05
+% subplot(3, 1, 1);
+plot(t(1:200/T), deg2rad(yaw( 1:200/T)),  'LineWidth', 1.2)  % Línea azul gruesa
+% hold on
+% plot(t(1:200/T), Zg(1, 1:200/T), '--', 'LineWidth', 1.2)  % Línea roja punteada
+% title('Posición Yaw 0 - 200 Seg.');
+xlabel('Segundos');
+ylabel('Radianes');
+legend('Yaw', 'Yaw estimada');
