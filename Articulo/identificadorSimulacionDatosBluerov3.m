@@ -156,24 +156,24 @@ figure(7)
 
 
 subplot(2,1,1)
-plot(t, Zt(1,:),LineWidth=2.9);
+plot(t, Zt(1,:));
 title("Error de identificaci\'on, $\tilde{\zeta}_1$",'Interpreter','latex', FontSize=14);
 xlabel('Tiempo segundos')
-ylabel('Pesos de la red')
+ylabel('Error')
 leg1 = legend('$\tilde{\zeta}_1$');
 set(leg1,'Interpreter','latex');
 set(leg1,'FontSize',17);
-ylim([-5 5])
+ylim([-1 1])
 grid on
 
 subplot(2,1,2)
 
-plot(t, Zt(2,:), LineWidth=2.9, Color='#D95319');
+plot(t, Zt(2,:), Color='#D95319');
 title("Error de identificaci\'on, $\tilde{\zeta}_2$",'Interpreter','latex', FontSize=14);
 xlabel('Tiempo segundos')
-ylabel('Pesos de la red')
+ylabel('Error')
 leg1 = legend('$\tilde{\zeta}_2$');
 set(leg1,'Interpreter','latex');
 set(leg1,'FontSize',17);
-% ylim([-5 5])
+ylim([-1 1])
 grid on

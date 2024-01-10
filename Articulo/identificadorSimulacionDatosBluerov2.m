@@ -231,8 +231,10 @@ legend('Velocidad Yaw medida', 'Velocidad Yaw estimada');
 % plot(t, Zg(1,:))
 % title('POSICIÓN, Z 1 and Zg 1');
 
+tiempo_sdeslizamiento = 200;
+
 figure(5)
-plot(t, s(:));
+plot(t(1:tiempo_sdeslizamiento/T), s(1:tiempo_sdeslizamiento/T));
 title('Superficie de Deslizamiento S');  % Corrección de la ortografía
 xlabel('Tiempo (s)');  % Etiqueta del eje x
 ylabel('S');  % Etiqueta del eje y
@@ -300,8 +302,45 @@ ylabel('IAE');
 legend('IAE1', 'IAE2');
 grid on
 
+figure(11)
+
+tiempo_error = 200;
+subplot(2,1,1)
+plot(t(1:tiempo_error/T), Zt(1,(1:tiempo_error/T)));
+title("Error de identificaci\'on, $\tilde{\zeta}_1$",'Interpreter','latex', FontSize=14);
+xlabel('Tiempo segundos')
+ylabel('Error')
+leg1 = legend('$\tilde{\zeta}_1$');
+set(leg1,'Interpreter','latex');
+set(leg1,'FontSize',17);
+ylim([-1 1])
+grid on
+
+subplot(2,1,2)
+
+plot(t(1:tiempo_error/T), Zt(2,(1:tiempo_error/T)), Color='#D95319');
+title("Error de identificaci\'on, $\tilde{\zeta}_2$",'Interpreter','latex', FontSize=14);
+xlabel('Tiempo segundos')
+ylabel('Error')
+leg1 = legend('$\tilde{\zeta}_2$');
+set(leg1,'Interpreter','latex');
+set(leg1,'FontSize',17);
+ylim([-1 1])
+grid on
 
 
+tiempo_pesos = 200;
+figure(12)
+plot(t(1:tiempo_pesos/T), Wg(1,(1:tiempo_pesos/T)));
+hold on
+plot(t(1:tiempo_pesos/T), Wg(2,(1:tiempo_pesos/T)));
+title('Pesos de la red, $\hat{W}_1$, $\hat{W}_2$','Interpreter','latex');
+xlabel('Tiempo segundos')
+ylabel('Pesos de la red')
+leg1 = legend('$\hat{W}_1$','$\hat{W}_2$');
+set(leg1,'Interpreter','latex');
+set(leg1,'FontSize',17);
+grid on
 
 
 
