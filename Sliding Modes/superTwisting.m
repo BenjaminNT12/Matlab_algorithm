@@ -13,14 +13,20 @@ beta_1 = 0.25;
 T = 0.01;          % Paso de integración 
 t = [0:T:120];     % Vector de similitud
 
-x = [0; 0];
-y = [0; 0];
-z = [0; 0];    % Condiciones Iniciales
+x = [0;
+     0];
+y = [0;
+     0];
+z = [0;
+     0];    % Condiciones Iniciales
 
 
-psi = [0; 0];
-theta = [0; 0];
-phi = [0; 0];
+psi = [0;
+       0];
+theta = [0;
+         0];
+phi = [0;
+       0];
 
 X(1:2,1) = x;
 X(3:4,1) = y;
@@ -40,7 +46,6 @@ for i = 1:length(t)-1
     s(i) = ep(i) + beta_1*e(i);
 
     ust(i) = (m/(cos(theta(1,i))*cos(phi(1,i))))*(g + z1dpp(i)- beta_1*ep(i) - k1*(sqrt(abs(s(i)))*sign(s(i))) - k2*trapz(sign(s(i))));
-    % umst(i) = aklsjdklasjdlkjaskl
 
     [tt,zz] = ode45(@quadCopterModel2Order, [t(i) t(i+1)], X(:,i), [], ust(i));
     X(:, i+1) = zz(end, :)';
@@ -54,4 +59,4 @@ end
 
 plot(t,z(1,:),'b',t,z1d,'r','LineWidth',2)
 ylim([0 2])
-
+% plot(t,z1d,'LineWidth',2)

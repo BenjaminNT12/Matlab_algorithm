@@ -45,6 +45,17 @@ function dxdt = quadCopterModel2Order(t , X, uz)
         phi1p = phi(2,1);
         phi2p = (uphi - X(8,1)*X(10,1)*(IX-Iyy))/Izz;
     
-        dxdt = [x1p; x2p; y1p; y2p; z1p; z2p; psi1p; psi2p; theta1p; theta2p; phi1p; phi2p];
+        dxdt = [x1p;
+                x2p;
+                y1p;
+                y2p; 
+                z1p; 
+                z2p; 
+                psi1p; 
+                psi2p; 
+                theta1p; 
+                theta2p; 
+                phi1p; 
+                phi2p];
     end
     
