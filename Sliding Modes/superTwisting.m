@@ -11,7 +11,7 @@ k2 = 6;            % Ganancia 2
 beta_1 = 0.25; 
 
 T = 0.01;          % Paso de integración 
-t = [0:T:120];     % Vector de similitud
+t = 0:T:120;     % Vector de similitud
 
 x = [0;
      0];
