@@ -27,7 +27,7 @@ DELTA_LIMITE_SUPERIOR = 3*1.2;
 DELTA_LIMITE_INFERIOR = 3*1.2;
 
 PPF_INICIO = 1;
-PPF_FIN = 0.06;
+PPF_FIN = 0.01;
 
 T = 0.01;
 m = 3;
@@ -131,10 +131,12 @@ for i = 1:length(t)-1
 
         etaMas(k,i) = eMas(k,i)^2 + 2*d(k)*eMas(k,i);
         etaMenos(k,i) = eMenos(k,i)^2 - 2*d(k)*eMenos(k,i);
-
-        Z(k,i) = (norm(qt(k*m-(m-1):m*k, i)))^2 - 2*norm(qt(k*m-(m-1):m*k, i))* d(k) + d(k)^2;
-        % Z(k,1) = e(k,i)*(e(k,i)+2*d(k));
-        varphi(k,i) = e(k,i)/ppf(i);
+        % eta(k,i) = e(k,i)*(e(k,i)+2*d(k));
+        eta(k,i) = norm(qt(k*m-(m-1):m*k, i))^2 - d(k)^2;
+        % eta(k,i) = (norm(qt(k*m-(m-1):m*k, i)))^2 - 2*norm(qt(k*m-(m-1):m*k, i))* d(k) + d(k)^2;
+        % Z(k,i) = (norm(qt(k*m-(m-1):m*k, i)))^2 - 2*norm(qt(k*m-(m-1):m*k, i))* d(k) + d(k)^2;
+        % Z(k,i) = e(k,i)*(e(k,i)+2*d(k));
+        varphi(k,i) = eta(k,i)/ppf(i);
         Ez(k,i) = 1/2 * log((bmas(k)*varphi(k,i) + bmenos(k)*bmas(k))/(bmas(k)*bmenos(k)-bmenos(k)*varphi(k,i)));
     end
     
@@ -543,23 +545,29 @@ end
 % ITAE
 
 
-figure(16)
+
 
 % plotea la variable bmas
 for i = 1:n
+    figure(16+i)
     plot(t(1:end-1),eMas(i,:),"Linewidth",2) %%
     hold on
-    plot(t(1:end-1),eMenos(i,:),"Linewidth",2) %% 
+    plot(t(1:end-1),-eMenos(i,:),"Linewidth",2) %% 
+    hold on
+    plot(t(1:end-1),e(i,1:length(t)-1),"Linewidth",2) %%
     hold on
 end
 
-figure(17)
+% figure(17)
 
 % plotea la variable bmas
 for i = 1:n
+    figure(1007+i)
     plot(t(1:end-1),etaMas(i,:),"Linewidth",2) %% 9, 20
     hold on
-    plot(t(1:end-1),etaMenos(i,:),"Linewidth",2) %% 9, 20
+    plot(t(1:end-1),-etaMenos(i,:),"Linewidth",2) %% 9, 20
+    hold on
+    plot(t(1:end-1),eta(i,:),"Linewidth",2) %% 9, 20
     hold on
 end
 
