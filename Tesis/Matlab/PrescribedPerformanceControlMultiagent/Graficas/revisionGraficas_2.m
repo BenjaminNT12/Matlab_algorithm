@@ -27,7 +27,7 @@ DELTA_LIMITE_SUPERIOR = 3*1.2;
 DELTA_LIMITE_INFERIOR = 3*1.2;
 
 PPF_INICIO = 1;
-PPF_FIN = 0.01;
+PPF_FIN = 0.15;
 
 T = 0.01;
 m = 3;
@@ -59,18 +59,6 @@ E16  = [6 7]; E17  = [6 8]; E18  = [6 9];
 E19  = [7 8]; E20  = [7 9]; E21  = [8 9];
 
 E = [E1; E2; E3; E4; E5; E6; E7; E8; E9; E10; E11; E12; E13; E14; E15; E16; E17; E18; E19; E20; E21];
-
-% q1 = qd1 + MAX_ERROR_INICIAL*(rand(1,m) - 1.05);
-% q2 = qd2 + MAX_ERROR_INICIAL*(rand(1,m) - 1.05);
-% q3 = qd3 + MAX_ERROR_INICIAL*(rand(1,m) - 1.05);
-% q4 = qd4 + MAX_ERROR_INICIAL*(rand(1,m) - 1.05);
-% q5 = qd5 + MAX_ERROR_INICIAL*(rand(1,m) - 1.05);
-% q6 = qd6 + MAX_ERROR_INICIAL*(rand(1,m) - 1.05);
-% q7 = qd7 + MAX_ERROR_INICIAL*(rand(1,m) - 1.05);
-% q8 = qd8 + MAX_ERROR_INICIAL*(rand(1,m) - 1.05);
-% q9 = qd9 + MAX_ERROR_INICIAL*(rand(1,m) - 1.05);
-
-% q = [q1'; q2'; q3'; q4'; q5'; q6'; q7'; q8'; q9'];
 
 q = 3*[ 1.0579+1; 1.2313+1; -0.0123;
         0.5815+1; 1.3371+1; 0.1681;
@@ -113,14 +101,6 @@ w0 = [zeros(length(t),1), zeros(length(t),1),  zeros(length(t),1)]';
 
 X = [q; V];
 
-% ruido = noise(length(t))+pi*sin(t);
-% ruidoVector(:,1) = ones(n*m,1)*ruido;
-
-% for i=1:l
-%     etaijmas(i,:) = bmas(i)*ppf;
-%     etaijmenos(i,:) = bmenos(i)*ppf;
-% end
-
 for i = 1:length(t)-1
     for k = 1:l
         qt(k*m-(m-1):m*k, i) = q(E(k,1)*m-2:E(k,1)*m, i) - q(E(k,2)*m-2:E(k,2)*m, i);
@@ -131,13 +111,17 @@ for i = 1:length(t)-1
 
         etaMas(k,i) = eMas(k,i)^2 + 2*d(k)*eMas(k,i);
         etaMenos(k,i) = eMenos(k,i)^2 - 2*d(k)*eMenos(k,i);
-        % eta(k,i) = e(k,i)*(e(k,i)+2*d(k));
-        eta(k,i) = norm(qt(k*m-(m-1):m*k, i))^2 - d(k)^2;
-        % eta(k,i) = (norm(qt(k*m-(m-1):m*k, i)))^2 - 2*norm(qt(k*m-(m-1):m*k, i))* d(k) + d(k)^2;
-        % Z(k,i) = (norm(qt(k*m-(m-1):m*k, i)))^2 - 2*norm(qt(k*m-(m-1):m*k, i))* d(k) + d(k)^2;
-        % Z(k,i) = e(k,i)*(e(k,i)+2*d(k));
+        
+        eta(k,i) = e(k,i)*(norm(qt(k*m-(m-1):m*k, i)) + d(k));
+
         varphi(k,i) = eta(k,i)/ppf(i);
+        varphi2(k,i) = e(k,i)/ppf(i);
+
+        valores_del_logaritmo(k,i) = (bmas(k)*varphi(k,i) + bmenos(k)*bmas(k))/(bmas(k)*bmenos(k)-bmenos(k)*varphi(k,i));
+        valores_del_logaritmo2(k,i) = (bmas(k)*varphi2(k,i) + bmenos(k)*bmas(k))/(bmas(k)*bmenos(k)-bmenos(k)*varphi2(k,i));
+
         Ez(k,i) = 1/2 * log((bmas(k)*varphi(k,i) + bmenos(k)*bmas(k))/(bmas(k)*bmenos(k)-bmenos(k)*varphi(k,i)));
+        Ez2(k,i) = 1/2 * log((bmas(k)*varphi2(k,i) + bmenos(k)*bmas(k))/(bmas(k)*bmenos(k)-bmenos(k)*varphi2(k,i)));
     end
     
     qdin = qdinVector(E, qt(:,i), 9, l, m);
@@ -190,35 +174,6 @@ for i = 1:length(t)-1
 end
 
 
-
-% f = figure(1);
-% % view([-45,-90,45]);% Quitar comentario si se quiere una venta adaptable
-% % f.Position = [500 500 1000 1250]; % Quitar comentario si se quiere una venta adaptable
-% % axis([1 10 1 10 0 26]) % Quitar comentario si se quiere una venta adaptable
-% % vid = VideoWriter("DynamicAdquisitionPPC_Control.avi", 'Motion JPEG AVI'); %% Comentar para guardar video
-% % open(vid) %% Comentar para guardar video
-% grid on
-
-% h9 = animatedline('LineStyle',"-.",'Color','#072a16','LineWidth',1.5);
-% trajectory = animatedline('LineStyle',"-",'Color','#d95319','LineWidth',1.5);
-
-% leader = 9
-% for i = 1: length(P(:,1,1))
-
-%     addpoints(h9, P(i,9,1), P(i,9,2), P(i,9,3));
-%     % addpoints(trajectory, q(leader*3-2, 1)+v0(1,i),q(leader*3-1, 1)+ v0(2,i), t(i));
-%     addpoints(trajectory,4.28-v0(2,i), 3.05 + v0(1,i), 1.23+t(i));
-
-%     [grf, points] = Framework3Dplot(q(:,i), E);
-%     drawnow limitrate;
-%     frames(i) = getframe();
-%     % writeVideo(vid, frames(i))  %% Comentar para guardar video
-%     if i < length(P(:,1,1))
-%         delete(grf);
-%         delete(points);
-%     end
-% end
-
 % plotea todos los agentes en 3D
 
 figure(1)
@@ -235,33 +190,6 @@ grid on
 xlabel('X-Axis [m]','FontSize',14)
 ylabel('Y-Axis [m]','FontSize',14)
 zlabel('Z-Axis [m]','FontSize',14)
-
-% figure(2)
-% plot3(12.28-(1/0.35)*v0(2,:)', 9.25 + (1/0.35)*v0(1,:)', 3*1.23+t(:),'LineStyle',"-.",'Color','red','LineWidth',2);
-% hold on
-% plot3(q(9*m-2,:), q(9*m-1,:), q(9*m,:),'LineStyle',"-",'Color','blue','LineWidth',2);
-
-% [grf, points] = Framework3Dplot(q(:,i), E); 
-
-% set(gca,'FontSize',8)
-% grid on
-% view([-45,-90,30]);
-% axis([10 20 0 10 28 38])
-% xlabel('X-Axis [m]')
-% ylabel('Y-Axis [m]')
-% zlabel('Z-Axis [m]')
-
-% FFM = [0 0 1 1;
-%        0.59 0.4 0.42 0.42;
-%        0.2 0.2 0.1 0.1];
-% fhv = [1:2];
-% newFig = 101;
-% hNew = lafig3(newFig, fhv, FFM);
-
-
-
-
-
 
 
 figure(3)
@@ -320,260 +248,45 @@ hNew = lafig3(newFig, fhv, FFM);
 close(3:4)
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-figure(6)
-ax = 2;
+% plotea la variable varphi
+figure(20)
 for i = 1:n
-    plot(t(1:end-1),u(m*i-ax, :),"Linewidth",2)
+    plot(t(1:end-1),varphi(i,:),"Linewidth",2) %% 9, 20
     hold on
 end
-grid on
-% title('Entrada de control eje X')
-set(gca,'FontSize',14)
-xlabel('Time [sec]')
-ylabel('X-Axis control')
 
-figure(7)
-ax = 2;
+figure(21)
 for i = 1:n
-    plot(t(1:end-1),u(m*i-ax, :),"Linewidth",2)
+    plot(t(1:end-1),varphi2(i,:),"Linewidth",2) %% 9, 20
     hold on
 end
-grid on
-set(gca,'FontSize',14)
-axis([20 30 -0.8 -0.4])
 
-FFM = [0 0 1 1;
-       0.53 0.2 0.35 0.35;
-       0.2 0.58 0.35 0.35;];
-fhv = [6:7];
-newFig = 103;
-hNew = lafig3(newFig, fhv, FFM);
-
-close(6:7)
-
-
-figure(8)
-ay = 1;
+% plotea la variable Ez
+figure(22)
 for i = 1:n
-    plot(t(1:end-1),u(m*i-ay, :),"Linewidth",2)
+    plot(t(1:end-1),Ez(i,:),"Linewidth",2) %% 9, 20
     hold on
 end
-grid on
-set(gca,'FontSize',14)
-xlabel('Time [sec]')
-ylabel('Y-Axis control')
 
-figure(9)
-ay = 1;
+% plotea la variable Ez2
+figure(23)
 for i = 1:n
-    plot(t(1:end-1),u(m*i-ay, :),"Linewidth",2)
+    plot(t(1:end-1),Ez2(i,:),"Linewidth",2) %% 9, 20
     hold on
 end
-grid on
-set(gca,'FontSize',14)
-axis([20 30 0.3 0.6])
 
-FFM = [0 0 1 1;
-       0.53 0.43 0.35 0.35;];
-fhv = [8:9];
-newFig = 104;
-hNew = lafig3(newFig, fhv, FFM);
-
-close(8:9)
-
-
-
-
-
-figure(10)
+% plotea la variable valores_del_logaritmo
+figure(24)
 for i = 1:n
-    plot(t(1:end-1),u(m*i, :),"Linewidth",2)
+    plot(t(1:end-1),valores_del_logaritmo(i,:),"Linewidth",2) %% 9, 20
     hold on
 end
-grid on
-set(gca,'FontSize',14)
-xlabel('Time [sec]')
-ylabel('Z-Axis control')
 
-figure(11)
+figure(25)
 for i = 1:n
-    plot(t(1:end-1),u(m*i, :),"Linewidth",2)
+    plot(t(1:end-1),valores_del_logaritmo2(i,:),"Linewidth",2) %% 9, 20
     hold on
 end
-grid on
-set(gca,'FontSize',14)
-axis([20 30 -0.4 -0.1])
-
-FFM = [0 0 1 1;
-       0.53 0.5 0.35 0.35;];
-fhv = [10:11];
-newFig = 105;
-hNew = lafig3(newFig, fhv, FFM);
-
-close(10:11)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-% Grafica para calcular la norma de la velocidad v0 - V de cada agente
-figure(12)
-% Grafica para calcular la norma de la velocidad v0 - V de cada agente
-e(:,5001) = 0;
-for i = 1:length(t)
-    sum = 0;
-    for k = 1:l
-        sum = norm(e(k,i))+sum;
-    end
-    ISE(i) = sum^2;
-end
-semilogy(t, ISE, 'Linewidth',2)
-
-fileID = fopen('ISE_datos.txt','r');
-formatSpec = '%f';
-ISE2 = fscanf(fileID,formatSpec);
-hold on
-semilogy(t, ISE2, 'Linewidth',2)
-
-
-set(gca,'FontSize',14)
-xlabel('Time [sec]');
-ylabel({'\fontsize{14}{21}$\sum^{N}_{i=1}||e_{ij}||^2$'},'Interpreter','latex');
-grid on
-
-
-
-
-
-
-
-
-% Grafica para calcular la norma de la velocidad v0 - V de cada agente
-figure(13)
-% Grafica para calcular la norma de la velocidad v0 - V de cada agente
-e(:,3001) = 0;
-for i = 1:length(t)
-    sum = 0;
-    for k = 1:l
-        sum = norm(e(k,i))+sum;
-    end
-    ITAE(i) = sum*t(i);
-end
-semilogy(t, ITAE, 'Linewidth',2)
-
-fileID = fopen('ITAE_datos.txt','r');
-formatSpec = '%f';
-ITAE2 = fscanf(fileID,formatSpec);
-hold on
-semilogy(t, ITAE2, 'Linewidth',2)
-
-
-set(gca,'FontSize',14)
-xlabel('Time [sec]');
-ylabel({'\fontsize{14}{21}$\sum^{N}_{i=1}||e_{ij}||t(i)$'},'Interpreter','latex');
-grid on
-
-
-figure(14)
-view([-45,-90,60]);% Quitar comentario si se quiere una venta adaptable
-axis([-4 4 -4 4 -4 4]) % Quitar comentario si se quiere una venta adaptable
-grid on
-[grf, points] = Framework3Dplot(qd(:,1), E);
-
-set(gca,'FontSize',14)
-xlabel('X-Axis [m]','FontSize',14)
-ylabel('Y-Axis [m]','FontSize',14)
-zlabel('Z-Axis [m]','FontSize',14)
-
-
-
-
-
-
-
-figure(15)
-
-for i = 1:3*n
-    plot(t(1:end-1),S(i,:),"Linewidth",2) %% 9, 20
-    hold on
-end
-
-
-
-% % Grafica para mostrar la velocidad de un solo agente
-% figure(9)
-% plot(t, V(1:3, :), 'Linewidth',2)
-
-
-% figure(13)
-% plot(t, ISE, 'Linewidth',2)
-% hold on
-% plot(t, ISE2, 'Linewidth',2)
-
-
-% ISE
-% ITAE
-
-
-
-
-% plotea la variable bmas
-for i = 1:n
-    figure(16+i)
-    plot(t(1:end-1),eMas(i,:),"Linewidth",2) %%
-    hold on
-    plot(t(1:end-1),-eMenos(i,:),"Linewidth",2) %% 
-    hold on
-    plot(t(1:end-1),e(i,1:length(t)-1),"Linewidth",2) %%
-    hold on
-end
-
-% figure(17)
-
-% plotea la variable bmas
-for i = 1:n
-    figure(1007+i)
-    plot(t(1:end-1),etaMas(i,:),"Linewidth",2) %% 9, 20
-    hold on
-    plot(t(1:end-1),etaMenos(i,:),"Linewidth",2) %% 9, 20
-    hold on
-    plot(t(1:end-1),eta(i,:),"Linewidth",2) %% 9, 20
-    hold on
-end
-
-
-
-
 
 
 
