@@ -153,7 +153,7 @@ for i = 1:length(t)-1
     end
     
     R = matrizRCubo9AgentWithLeader(q(:,i),m);
-    
+    % rango = rank(R)
     rho = eye(l).*((1/(2*ppf(i)))*(1./(varphi(:,i)+DELTA_LIMITE_INFERIOR) - 1./(varphi(:,i)-DELTA_LIMITE_SUPERIOR)));
     
     if i == 1
@@ -415,7 +415,20 @@ fhv = [32:33];
 newFig = 202;
 hNew = lafig3(newFig, fhv, FFM);
 
+%% la sumatoria de todos los errores cuadraticos inicialessumError
+sumError = 0;
+for i = 1:l
+    sumError = sumError + e(i,1)^2;
+end
+sumError
+%% la sumatoria de todos los valores absolutos de los errores iniciales
+sumAError = 0;
 
+for i = 1:l
+    sumAError = sumAError + abs(e(i,1));
+end
+
+sumAError
 
 
 
