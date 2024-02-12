@@ -19,13 +19,12 @@ close all;
 clc;
 
 
-KT = 35;
+KT = 35.01;
 KV = 2.5;
-KS = 1.5;
-MAX_ERROR_INICIAL = 1;
+KS = 1.1;
 
-DELTA_LIMITE_SUPERIOR = 3*1.2;
-DELTA_LIMITE_INFERIOR = 3*1.2;
+DELTA_LIMITE_SUPERIOR = 3*1.3;
+DELTA_LIMITE_INFERIOR = 3*1;
 
 PPF_INICIO = 1;
 PPF_FIN = 0.06;
@@ -34,7 +33,7 @@ T = 0.01;
 m = 3;
 n = 9;
 l = 21;
-c = 0.7;
+c = 0.5;
 fin = 30;
 t = 0: T :fin;
 
@@ -61,15 +60,15 @@ E19  = [7 8]; E20  = [7 9]; E21  = [8 9];
 
 E = [E1; E2; E3; E4; E5; E6; E7; E8; E9; E10; E11; E12; E13; E14; E15; E16; E17; E18; E19; E20; E21];
 
-q = 3*[ 1.0579+1; 1.2313+1; -0.0123;
-        0.5815+1; 1.3371+1; 0.1681;
-        2.0201+1; 3.3460+1; 0.2113;
-        -0.1792+1; 1.7710+1; 0.5225;
-        0.8085+1; 0.8848+1; 2.2038;
-        1.7998+1; 1.3196+1; 2.0627;
-        2.4380+1; 3.1536+1; 2.3853;
-        1.3991+1; 3.1141+1; 2.1780;
-        1.2300;   3.5256;  0.6323];
+q = 3*[ 1.0579+1;       1.2313+1;       -0.0123;
+        0.5815+1;       1.3371+1;        0.1681;
+        2.0201+1;       3.3460+1;        0.2113;
+       -0.1792+1;       1.7710+1;        0.5225;
+        0.8085+1;       0.8848+1;        2.2038;
+        1.7998+1;       1.3196+1;        2.0627;
+        2.4380+1;       3.1536+1;        2.3853;
+        1.1991+1;       3.3141+1;        2.1780;
+        1.2300;     3.5256; 0.6323+0.5];
 
 figure(1)
 
@@ -101,7 +100,7 @@ end
 
 vectorB = [bmenos, bmas] 
 
-V = (0.1*(ones(1,m*n)))'; % velocidad inicial
+V = (1.1*(ones(1,m*n)))'; % velocidad inicial
 
 v0 = [2*sin(0.35*t)',       2*(cos(0.35*t))',   ones(length(t),1)]'; % trayectoria
 w0 = [zeros(length(t),1), zeros(length(t),1),  zeros(length(t),1)]';
@@ -132,7 +131,6 @@ for i = 1:length(t)-1
     for k = 1:l
         qt(k*m-(m-1):m*k, i) = q(E(k,2)*m-2:E(k,2)*m, i) - q(E(k,1)*m-2:E(k,1)*m, i);
         e(k,i) = (norm(qt(k*m-(m-1):m*k, i)) - d(k));
-        % error de norma cuadra menos distancia cuadrada
         eq(k,i) = (norm(qt(k*m-(m-1):m*k, i)))^2 - d(k)^2;
         
         eMas(k,i) = - d(k) + (d(k)^2 + bmas(k)*ppf(i))^0.5;
@@ -258,13 +256,13 @@ hold on
 plot(t(1:end-1),-eMenos(1,1:end),'Color','r','LineWidth',2,'LineStyle','--')
 hold on
 grid on
-axis([0 5 -4 0])
+axis([0 5 -3 0])
 set(gca,'FontSize',14)
 
 
 FFM = [0 0 1 1;
        0.55 0.58 0.35 0.35;
-       0.55 0.155 0.35 0.35;];
+       0.55 0.11 0.35 0.35;];
 fhv = [3:5];
 newFig = 102;
 hNew = lafig3(newFig, fhv, FFM);
@@ -306,6 +304,7 @@ for i = 1:l
 end
 
 % plotea la variable bmas
+temp = 0;
 for i = 1:l
     if i == 3 || i == 6 || i == 9 || i == 12 || i == 15 || i == 18 || i == 20 || i == 21
         figure(32)
@@ -315,16 +314,16 @@ for i = 1:l
         hold on
         plot(t(1:end-1),eta(i,:),"Linewidth",2) %% 9, 20
         hold on
+        grid on
         xlabel('Time [Sec]', 'FontSize', 14)
-        ylabel('Error $\eta$', 'Interpreter', 'latex', 'FontSize', 14)
+        ylabel('Error $\epsilon$', 'Interpreter', 'latex', 'FontSize', 14)
         for j = 1:length(etaMenos(i,:))
-            if eta(i,j) > etaMas(i,j) || eta(i,j) < etaMenos(i,j)
-                i
+            if (eta(i,j) > etaMas(i,j) || eta(i,j) < etaMenos(i,j)) && temp ~= i
+                temp = i
             end
         end
-        % val_E1 = E(i,:)
     end
-    if i == 10 || i == 17
+    if i == 3 || i == 6 || i == 9 || i == 12 || i == 15 || i == 18 || i == 20 || i == 21
         figure(33)
         plot(t(1:end-1),etaMas(i,:),'Color','r','LineWidth',2,'LineStyle','--') %% 9, 20
         hold on
@@ -332,16 +331,17 @@ for i = 1:l
         hold on
         plot(t(1:end-1),eta(i,:),"Linewidth",2) %% 9, 20
         hold on
+        grid on
         xlabel('Time [Sec]', 'FontSize', 14)
-        ylabel('Error $\eta$', 'Interpreter', 'latex', 'FontSize', 14)
+        ylabel('Error $\epsilon$', 'Interpreter', 'latex', 'FontSize', 14)
         for j = 1:length(etaMenos(i,:))
-            if eta(i,j) > etaMas(i,j) || eta(i,j) < etaMenos(i,j)
-                i
+            if (eta(i,j) > etaMas(i,j) || eta(i,j) < etaMenos(i,j)) && temp ~= i
+                temp = i
             end
         end
-        % val_E1 = E(i,:)
+        axis([1 6 -13.5 -3])
     end
-    if i == 1 || i == 2 || i == 4 || i == 5 || i == 7 || i == 8 || i == 11 || i == 13 || i == 14 || i == 16 || i == 19
+    if i == 10 || i == 17
         figure(34)
         plot(t(1:end-1),etaMas(i,:),'Color','r','LineWidth',2,'LineStyle','--') %% 9, 20
         hold on
@@ -349,11 +349,30 @@ for i = 1:l
         hold on
         plot(t(1:end-1),eta(i,:),"Linewidth",2) %% 9, 20
         hold on
+        grid on
         xlabel('Time [Sec]', 'FontSize', 14)
-        ylabel('Error $\eta$', 'Interpreter', 'latex', 'FontSize', 14)
+        ylabel('Error $\epsilon$', 'Interpreter', 'latex', 'FontSize', 14)
         for j = 1:length(etaMenos(i,:))
-            if eta(i,j) > etaMas(i,j) || eta(i,j) < etaMenos(i,j)
-                i
+            if (eta(i,j) > etaMas(i,j) || eta(i,j) < etaMenos(i,j)) && temp ~= i
+                temp = i
+            end
+        end
+        % val_E1 = E(i,:)
+    end
+    if i == 1 || i == 2 || i == 4 || i == 5 || i == 7 || i == 8 || i == 11 || i == 13 || i == 14 || i == 16 || i == 19
+        figure(35)
+        plot(t(1:end-1),etaMas(i,:),'Color','r','LineWidth',2,'LineStyle','--') %% 9, 20
+        hold on
+        plot(t(1:end-1),etaMenos(i,:),'Color','r','LineWidth',2,'LineStyle','--') %% 9, 20
+        hold on
+        plot(t(1:end-1),eta(i,:),"Linewidth",2) %% 9, 20
+        hold on
+        grid on
+        xlabel('Time [Sec]', 'FontSize', 14)
+        ylabel('Error $\epsilon$', 'Interpreter', 'latex', 'FontSize', 14)
+        for j = 1:length(etaMenos(i,:))
+            if (eta(i,j) > etaMas(i,j) || eta(i,j) < etaMenos(i,j)) && temp ~= i
+                temp = i
             end
         end
     end
@@ -389,3 +408,14 @@ end
 %     plot(t(1:end-1),eq(i,:),"Linewidth",2) %
 %     hold on
 % end
+
+FFM = [0 0 1 1;
+       0.38 0.47 0.55 0.45;];
+fhv = [32:33];
+newFig = 202;
+hNew = lafig3(newFig, fhv, FFM);
+
+
+
+
+
