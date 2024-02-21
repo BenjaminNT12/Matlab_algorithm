@@ -18,23 +18,29 @@ clear;
 close all;
 clc;
 
-
-Ktang = 35.01;
-Ksigma = 0.8;
-Kv = 1.1;
-TAU_sigma = 0.5;
+if ~exist('parpool', 'file')
+    error('Parallel Computing Toolbox no está disponible.');
+end
+% Ktang = 3;
+% Ksigma = 0.1;
+% Kv = 0.15;
+% TAU_sigma = 3.7;
+Ktang = 16;
+Ksigma = 5;
+Kv = 0.3;
+TAU_sigma = 1.9723;
 
 DELTA_LIMITE_SUPERIOR = 3*1.3;
 DELTA_LIMITE_INFERIOR = 3*1;
 
 PPF_INICIO = 1;
-PPF_FIN = 0.05;
+PPF_FIN = 0.07;
 
 T = 0.01;
 m = 3;
 n = 9;
 l = 21;
-c = 0.5;
+c = 0.9;
 fin = 30;
 t = 0: T :fin;
 
@@ -100,6 +106,18 @@ for i = 1:l
 end
 
 V = (1.1*(ones(1,m*n)))'; % velocidad inicial
+% V = [
+%     0.2786; 0.7190; 0.8849; 
+%     0.7418; 1.0539; 1.0164; 
+%     0.5796; 0.7611; 0.2201; 
+%     1.4793; 0.4173; 0.3381;
+%     0.6841; 0.4576; 0.8366;
+%     0.6413; 1.4371; 1.3964;
+%     0.2685; 1.1592; 0.5499;
+%     0.7497; 0.9122; 1.4256;
+%     0.7431; 1.4780; 0.5919
+% ];
+% V = 1.09 + 0.01*rand(m*n, 1);
 
 v0 = [2*sin(0.35*t)',       2*(cos(0.35*t))',   ones(length(t),1)]'; % trayectoria
 w0 = [zeros(length(t),1), zeros(length(t),1),  zeros(length(t),1)]';
@@ -113,7 +131,6 @@ eMas = zeros(l, length(t)-1);
 eMenos = zeros(l, length(t)-1);
 etaMas = zeros(l, length(t)-1);
 etaMenos = zeros(l, length(t)-1);
-epsilon = zeros(l, length(t)-1);
 zeta = zeros(l, length(t)-1);
 gammaV = zeros(l, length(t)-1);
 Ezp = zeros(l, length(t)-1);
@@ -147,7 +164,7 @@ for i = 1:length(t)-1
     for k = 1: n
         vd(k*m-2: k*m,1) = v0(:, i) + cross(w0(:, i), qtin(k*m-2:k*m,1));
     end
-    
+    % errorV() = 
     R = matrizRCubo9AgentWithLeader(p(:,i),m);
     % rango = rank(R)
     for j = 1:l
@@ -172,7 +189,7 @@ for i = 1:length(t)-1
         Vvp(:,i) = (Vv(:,i) - Vv(:,i-1))/T;
     end
     
-    u = Vvp(:,i) - R'*eta*gammaV - (((TAU_sigma/2)^2)/2 + Ksigma ) - Ktang*tanh(sigma(:,i)); %%%%%%%%%%%%% control con PPC agregando tanh
+    u = Vvp(:,i) - R'*eta'*gammaV - ((TAU_sigma^2)/2 + Ksigma )*sigma(:,i) - Ktang*tanh(sigma(:,i)); %%%%%%%%%%%%% control con PPC agregando tanh
     
     [tt, xx] = ode45(@systemDoubleIntegratorWithDisturbance, [t(i) t(i+1)], X(:,i), [], u(:,i), m, n);
     X(:, i+1) = xx(end, :)';
@@ -186,9 +203,12 @@ end
 
 
 % % plotea todos los agentes en 3D
+% f = figure(1);
+% plotAnimation(P, v0, t, p, E, f)
+
 
 figure(1)
-plot3(12.28-(1/0.35)*v0(2,:)', 9.25 + (1/0.35)*v0(1,:)', 3*1.0+t(:),'LineStyle',"-.",'Color','red','LineWidth',2);
+plot3(12.08-(1/0.35)*v0(2,:)', 9.4 + (1/0.35)*v0(1,:)', 3.5*1.0+t(:),'LineStyle',"-.",'Color','red','LineWidth',2);
 hold on
 plot3(p(9*m-2,:), p(9*m-1,:), p(9*m,:),'LineStyle',"-",'Color','blue','LineWidth',2);
 
@@ -203,123 +223,204 @@ ylabel('Y-Axis [m]','FontSize',14)
 zlabel('Z-Axis [m]','FontSize',14)
 
 
-figure(3)
-
-for i = 1:l
-    plot(t(1:end-1),e(i,:),"Linewidth",2) %
-    hold on
-end
-plot(t(1:end-1),eMas(1,1:end),'Color','r','LineWidth',2,'LineStyle','--')
-hold on
-plot(t(1:end-1),-eMenos(1,1:end),'Color','r','LineWidth',2,'LineStyle','--')
-hold on
-grid on
-% title('Errores de distancia entre agentes')
-set(gca,'FontSize',14)
-xlabel('Time [sec]')
-ylabel('Distance errors e_{ij} [m]')
-
-
-figure(4)
-
-for i = 1:l
-    plot(t(1:end-1),e(i,:),"Linewidth",2) % 
-    hold on
-end
-plot(t(1:end-1),eMas(1,1:end),'Color','r','LineWidth',2,'LineStyle','--')
-hold on
-plot(t(1:end-1),-eMenos(1,1:end),'Color','r','LineWidth',2,'LineStyle','--')
-hold on
-grid on
-axis([0 5 0 4])
-set(gca,'FontSize',14)
-
-figure(5)
-
-for i = 1:l
-    plot(t(1:end-1),e(i,:),"Linewidth",2) %
-    hold on
-end
-plot(t(1:end-1),eMas(1,1:end),'Color','r','LineWidth',2,'LineStyle','--')
-hold on
-plot(t(1:end-1),-eMenos(1,1:end),'Color','r','LineWidth',2,'LineStyle','--')
-hold on
-grid on
-axis([0 5 -3 0])
-set(gca,'FontSize',14)
-
-
-FFM = [0 0 1 1;
-       0.55 0.58 0.35 0.35;
-       0.55 0.11 0.35 0.35;];
-fhv = [3:5];
-newFig = 102;
-hNew = lafig3(newFig, fhv, FFM);
-close(3:5)
-
 
 % plotea la variable bmas
+temp = 0;
 for i = 1:l
     if i == 3 || i == 6 || i == 9 || i == 12 || i == 15 || i == 18 || i == 20 || i == 21
-        figure(29)
+        figure(32)
         plot(t(1:end-1),eMas(i,:),'Color','r','LineWidth',2,'LineStyle','--') %% 9, 20
         hold on
         plot(t(1:end-1),-eMenos(i,:),'Color','r','LineWidth',2,'LineStyle','--') %% 9, 20
         hold on
-        plot(t(1:end-1),e(i,:),"Linewidth",2) %% 9, 20
+        plot(t(1:end-1), e(i,:),"Linewidth",2) %% 9, 20
         hold on
-        % val_E1 = E(i,:)
+        grid on
+        xlabel('Time [Sec]', 'FontSize', 18)
+        ylabel('Error $e_{ij}$', 'Interpreter', 'latex', 'FontSize', 18)
+        for j = 1:length(etaMenos(i,:))
+            if (e(i,j) > eMas(i,j) || e(i,j) < -eMenos(i,j)) && temp ~= i
+                temp = i
+            end
+        end
+    end
+    if i == 3 || i == 6 || i == 9 || i == 12 || i == 15 || i == 18 || i == 20 || i == 21
+        figure(33)
+        plot(t(1:end-1),eMas(i,:),'Color','r','LineWidth',2,'LineStyle','--') %% 9, 20
+        hold on
+        plot(t(1:end-1),-eMenos(i,:),'Color','r','LineWidth',2,'LineStyle','--') %% 9, 20
+        hold on
+        plot(t(1:end-1), e(i,:),"Linewidth",2) %% 9, 20
+        hold on
+        grid on
+        xlabel('Time [Sec]', 'FontSize', 18)
+        ylabel('Error $e_{ij}$', 'Interpreter', 'latex', 'FontSize', 18)
+        for j = 1:length(etaMenos(i,:))
+            if (e(i,j) > eMas(i,j) || e(i,j) < -eMenos(i,j)) && temp ~= i
+                temp = i
+            end
+        end
+        axis([0.8 5 -1.5 0.1])
     end
     if i == 10 || i == 17
-        figure(30)
+        figure(34)
         plot(t(1:end-1),eMas(i,:),'Color','r','LineWidth',2,'LineStyle','--') %% 9, 20
         hold on
         plot(t(1:end-1),-eMenos(i,:),'Color','r','LineWidth',2,'LineStyle','--') %% 9, 20
         hold on
-        plot(t(1:end-1),e(i,:),"Linewidth",2) %% 9, 20
+        plot(t(1:end-1), e(i,:),"Linewidth",2) %% 9, 20
         hold on
+        grid on
+        xlabel('Time [Sec]', 'FontSize', 18)
+        ylabel('Error $e_{ij}$', 'Interpreter', 'latex', 'FontSize', 18)
+        for j = 1:length(etaMenos(i,:))
+            if (e(i,j) > eMas(i,j) || e(i,j) < -eMenos(i,j)) && temp ~= i
+                temp = i
+            end
+        end
         % val_E1 = E(i,:)
     end
     if i == 1 || i == 2 || i == 4 || i == 5 || i == 7 || i == 8 || i == 11 || i == 13 || i == 14 || i == 16 || i == 19
-        figure(31)
+        figure(35)
         plot(t(1:end-1),eMas(i,:),'Color','r','LineWidth',2,'LineStyle','--') %% 9, 20
         hold on
         plot(t(1:end-1),-eMenos(i,:),'Color','r','LineWidth',2,'LineStyle','--') %% 9, 20
         hold on
-        plot(t(1:end-1),e(i,:),"Linewidth",2) %% 9, 20
+        plot(t(1:end-1), e(i,:),"Linewidth",2) %% 9, 20
         hold on
-        % val_E2 = E(i,:)
+        grid on
+        xlabel('Time [Sec]', 'FontSize', 18)
+        ylabel('Error $e_{ij}$', 'Interpreter', 'latex', 'FontSize', 18)
+        for j = 1:length(etaMenos(i,:))
+            if (e(i,j) > eMas(i,j) || e(i,j) < -eMenos(i,j)) && temp ~= i
+                temp = i
+            end
+        end
     end
 end
 
+FFM = [0 0 1 1;
+0.38 0.57 0.55 0.35;];
+fhv = [32:33];
+newFig = 202;
+hNew = lafig3(newFig, fhv, FFM);
+
+
+
+
+% temp = 0;
+% % plotea la variable bmas
+% for i = 1:l
+%     if i == 3 || i == 6 || i == 9 || i == 12 || i == 15 || i == 18 || i == 20 || i == 21
+%         figure(29)
+%         plot(t(1:end-1),eMas(i,:),'Color','r','LineWidth',2,'LineStyle','--') %% 9, 20
+%         hold on
+%         plot(t(1:end-1),-eMenos(i,:),'Color','r','LineWidth',2,'LineStyle','--') %% 9, 20
+%         hold on
+%         plot(t(1:end-1), e(i,:),"Linewidth",2) %% 9, 20
+%         hold on
+%         for j = 1:length(eMas(i,:))
+%             if (e(i,j) > eMas(i,j) || e(i,j) < -eMenos(i,j)) && temp ~= i
+%                 temp = i
+%             end
+%         end
+%         grid on
+%     end
+%     if i == 10 || i == 17
+%         figure(30)
+%         plot(t(1:end-1),eMas(i,:),'Color','r','LineWidth',2,'LineStyle','--') %% 9, 20
+%         hold on
+%         plot(t(1:end-1),-eMenos(i,:),'Color','r','LineWidth',2,'LineStyle','--') %% 9, 20
+%         hold on
+%         plot(t(1:end-1), e(i,:),"Linewidth",2) %% 9, 20
+%         hold on
+%         for j = 1:length(eMas(i,:))
+%             if (e(i,j) > eMas(i,j) || e(i,j) < -eMenos(i,j)) && temp ~= i
+%                 temp = i
+%             end
+%         end
+%         grid on
+%     end
+%     if i == 1 || i == 2 || i == 4 || i == 5 || i == 7 || i == 8 || i == 11 || i == 13 || i == 14 || i == 16 || i == 19
+%         figure(31)
+%         plot(t(1:end-1),eMas(i,:),'Color','r','LineWidth',2,'LineStyle','--') %% 9, 20
+%         hold on
+%         plot(t(1:end-1),-eMenos(i,:),'Color','r','LineWidth',2,'LineStyle','--') %% 9, 20
+%         hold on
+%         plot(t(1:end-1), e(i,:),"Linewidth",2) %% 9, 20
+%         hold on
+%         grid on
+%         for j = 1:length(eMas(i,:))
+%             if (e(i,j) > eMas(i,j) || e(i,j) < -eMenos(i,j)) && temp ~= i
+%                 temp = i
+%             end
+%         end
+%     end
+% end
+
+% figure(3)
+
+% for i = 1:l
+%     plot(t(1:end-1),e(i,:),"Linewidth",2) %
+%     hold on
+% end
+% plot(t(1:end-1),eMas(1,1:end),'Color','r','LineWidth',2,'LineStyle','--')
+% hold on
+% plot(t(1:end-1),-eMenos(1,1:end),'Color','r','LineWidth',2,'LineStyle','--')
+% hold on
+% grid on
+% % title('Errores de distancia entre agentes')
+% set(gca,'FontSize',14)
+% xlabel('Time [sec]')
+% ylabel('Distance errors e_{ij} [m]')
+
+
+% figure(4)
+
+% for i = 1:l
+%     plot(t(1:end-1),e(i,:),"Linewidth",2) % 
+%     hold on
+% end
+% plot(t(1:end-1),eMas(1,1:end),'Color','r','LineWidth',2,'LineStyle','--')
+% hold on
+% plot(t(1:end-1),-eMenos(1,1:end),'Color','r','LineWidth',2,'LineStyle','--')
+% hold on
+% grid on
+% axis([0 5 0 4])
+% set(gca,'FontSize',14)
+
+% figure(5)
+
+% for i = 1:l
+%     plot(t(1:end-1),e(i,:),"Linewidth",2) %
+%     hold on
+% end
+% plot(t(1:end-1),eMas(1,1:end),'Color','r','LineWidth',2,'LineStyle','--')
+% hold on
+% plot(t(1:end-1),-eMenos(1,1:end),'Color','r','LineWidth',2,'LineStyle','--')
+% hold on
+% grid on
+% axis([0 5 -3 0])
+% set(gca,'FontSize',14)
+
 
 % FFM = [0 0 1 1;
-% 0.38 0.47 0.55 0.45;];
-% fhv = [32:33];
-% newFig = 202;
+%        0.55 0.58 0.35 0.35;
+%        0.55 0.11 0.35 0.35;];
+% fhv = [3:5];
+% newFig = 102;
 % hNew = lafig3(newFig, fhv, FFM);
+% close(3:5)
 
-%% la sumatoria de todos los errores cuadraticos inicialessumError
-sumError = 0;
-for i = 1:l
-    sumError = sumError + e(i,1)^2;
-end
-sumError
-%% la sumatoria de todos los valores absolutos de los errores iniciales
-sumAError = 0;
 
-for i = 1:l
-    sumAError = sumAError + abs(e(i,1));
-end
 
-sumAError
 
 
 
 % Grafica para calcular la norma de la velocidad v0 - V de cada agente
 figure(12)
 % Grafica para calcular la norma de la velocidad v0 - V de cada agente
-e(:,5001) = 0;
+e(:,3001) = 0;
 for i = 1:length(t)
     sum = 0;
     for k = 1:l
@@ -340,11 +441,6 @@ set(gca,'FontSize',14)
 xlabel('Time [sec]');
 ylabel({'\fontsize{14}{21}$\sum^{N}_{i=1}||e_{ij}||^2$'},'Interpreter','latex');
 grid on
-
-
-
-
-
 
 
 
@@ -374,6 +470,9 @@ ylabel({'\fontsize{14}{21}$\sum^{N}_{i=1}||e_{ij}||t(i)$'},'Interpreter','latex'
 grid on
 
 
+
+
+
 figure(14)
 view([-45,-90,60]);% Quitar comentario si se quiere una venta adaptable
 axis([-4 4 -4 4 -4 4]) % Quitar comentario si se quiere una venta adaptable
@@ -386,99 +485,3 @@ ylabel('Y-Axis [m]','FontSize',14)
 zlabel('Z-Axis [m]','FontSize',14)
 
 
-
-
-
-
-
-figure(15)
-
-for i = 1:3*n
-    plot(t(1:end-1),sigma(i,:),"Linewidth",2) %% 9, 20
-    hold on
-end
-
-
-
-
-
-
-
-
-% close(33)
-
-
-% plotea la variable bmas
-% temp = 0;
-% for i = 1:l
-%     if i == 3 || i == 6 || i == 9 || i == 12 || i == 15 || i == 18 || i == 20 || i == 21
-%         figure(32)
-%         plot(t(1:end-1),etaMas(i,:),'Color','r','LineWidth',2,'LineStyle','--') %% 9, 20
-%         hold on
-%         plot(t(1:end-1),etaMenos(i,:),'Color','r','LineWidth',2,'LineStyle','--') %% 9, 20
-%         hold on
-%         plot(t(1:end-1),epsilon(i,:),"Linewidth",2) %% 9, 20
-%         hold on
-%         grid on
-%         xlabel('Time [Sec]', 'FontSize', 14)
-%         ylabel('Error $\epsilon$', 'Interpreter', 'latex', 'FontSize', 14)
-%         for j = 1:length(etaMenos(i,:))
-%             if (epsilon(i,j) > etaMas(i,j) || epsilon(i,j) < etaMenos(i,j)) && temp ~= i
-%                 temp = i
-%             end
-%         end
-%     end
-%     if i == 3 || i == 6 || i == 9 || i == 12 || i == 15 || i == 18 || i == 20 || i == 21
-%         figure(33)
-%         plot(t(1:end-1),etaMas(i,:),'Color','r','LineWidth',2,'LineStyle','--') %% 9, 20
-%         hold on
-%         plot(t(1:end-1),etaMenos(i,:),'Color','r','LineWidth',2,'LineStyle','--') %% 9, 20
-%         hold on
-%         plot(t(1:end-1),epsilon(i,:),"Linewidth",2) %% 9, 20
-%         hold on
-%         grid on
-%         xlabel('Time [Sec]', 'FontSize', 14)
-%         ylabel('Error $\epsilon$', 'Interpreter', 'latex', 'FontSize', 14)
-%         for j = 1:length(etaMenos(i,:))
-%             if (epsilon(i,j) > etaMas(i,j) || epsilon(i,j) < etaMenos(i,j)) && temp ~= i
-%                 temp = i
-%             end
-%         end
-%         axis([1 6 -13.5 -3])
-%     end
-%     if i == 10 || i == 17
-%         figure(34)
-%         plot(t(1:end-1),etaMas(i,:),'Color','r','LineWidth',2,'LineStyle','--') %% 9, 20
-%         hold on
-%         plot(t(1:end-1),etaMenos(i,:),'Color','r','LineWidth',2,'LineStyle','--') %% 9, 20
-%         hold on
-%         plot(t(1:end-1),epsilon(i,:),"Linewidth",2) %% 9, 20
-%         hold on
-%         grid on
-%         xlabel('Time [Sec]', 'FontSize', 14)
-%         ylabel('Error $\epsilon$', 'Interpreter', 'latex', 'FontSize', 14)
-%         for j = 1:length(etaMenos(i,:))
-%             if (epsilon(i,j) > etaMas(i,j) || epsilon(i,j) < etaMenos(i,j)) && temp ~= i
-%                 temp = i
-%             end
-%         end
-%         % val_E1 = E(i,:)
-%     end
-%     if i == 1 || i == 2 || i == 4 || i == 5 || i == 7 || i == 8 || i == 11 || i == 13 || i == 14 || i == 16 || i == 19
-%         figure(35)
-%         plot(t(1:end-1),etaMas(i,:),'Color','r','LineWidth',2,'LineStyle','--') %% 9, 20
-%         hold on
-%         plot(t(1:end-1),etaMenos(i,:),'Color','r','LineWidth',2,'LineStyle','--') %% 9, 20
-%         hold on
-%         plot(t(1:end-1),epsilon(i,:),"Linewidth",2) %% 9, 20
-%         hold on
-%         grid on
-%         xlabel('Time [Sec]', 'FontSize', 14)
-%         ylabel('Error $\epsilon$', 'Interpreter', 'latex', 'FontSize', 14)
-%         for j = 1:length(etaMenos(i,:))
-%             if (epsilon(i,j) > etaMas(i,j) || epsilon(i,j) < etaMenos(i,j)) && temp ~= i
-%                 temp = i
-%             end
-%         end
-%     end
-% end

@@ -18,8 +18,8 @@ clear;
 close all;
 clc;
 % parpool(6)
-KT = 35.0;
-KS = 0.5;
+% KT = 35.0;
+KS = 5;
 KV = 0.3;
 
 MAX_ERROR_INICIAL = 1;
@@ -34,7 +34,7 @@ T = 0.01;
 m = 3;
 n = 9;
 l = 21;
-c = 0.5;
+c = 0.8;
 fin = 30;
 t = 0: T :fin;
 
@@ -68,7 +68,7 @@ q = 3*[ 1.0579+1;       1.2313+1;       -0.0123;
         1.7998+1;       1.3196+1;        2.0627;
         2.4380+1;       3.1536+1;        2.3853;
         1.1991+1;       3.3141+1;        2.1780;
-        1.2300;     3.5256; 0.6323+0.5];
+        1.2300;         3.5256;     0.6323+0.5];
 
 figure(1)
 
@@ -84,7 +84,7 @@ end
 ppf  = (PPF_INICIO-PPF_FIN)*exp(-c*t)+PPF_FIN;
 ppfp = -c*(PPF_INICIO-PPF_FIN)*exp(-c*t);
 
-V = (1.1*(ones(1,m*n)))'; % velocidad inicial
+V = (5.1*(ones(1,m*n)))'; % velocidad inicial
 
 v0 = [2*sin(0.35*t)',       2*(cos(0.35*t))',   ones(length(t),1)]'; % trayectoria
 w0 = [zeros(length(t),1), zeros(length(t),1),  zeros(length(t),1)]';
@@ -92,6 +92,7 @@ w0 = [zeros(length(t),1), zeros(length(t),1),  zeros(length(t),1)]';
 X = [q; V];
 
 Vfp = zeros(m*n, length(t)-1);
+
 qt = zeros(m*n, length(t)-1);
 e = zeros(l, length(t)-1);
 eMas = zeros(l, length(t)-1);
@@ -134,9 +135,9 @@ for i = 1:length(t)-1
         Vfp(:,i) = (Vf(:,i) - Vf(:,i-1))/T;
     end
     
-    tanH = -KT*tanh(S(:,i));
+    % tanH = -KT*tanh(S(:,i));
     
-    u = -KS*S(:,i) + Vfp(:,i) - R'*Z + tanH; 
+    u = -KS*S(:,i) - R'*Z + Vfp(:,i) ; 
     
     [tt, xx] = ode45(@systemDoubleIntegratorWithDisturbance, [t(i) t(i+1)], X(:,i), [], u(:,i), m, n);
     X(:, i+1) = xx(end, :)';
@@ -233,6 +234,8 @@ close(3:5)
 
 
 
+
+
 figure(6)
 
 % Grafica para calcular la norma de la velocidad v0 - V de cada agente
@@ -241,7 +244,7 @@ for i = 1:length(t)
     sum = 0;
     for k = 1:l
         % sum = norm(v0(:,i) - V(m*k-2:m*k, i)) + sum; % Calcula la norma de v0 - V
-        sum = norm(e(k,i));
+        sum = norm(e(k,i))+sum;
     end
     ISE(i) = sum^2;
 end
@@ -258,6 +261,7 @@ grid on
 
 
 
+
 figure(7)
 
 % Grafica para calcular la norma de la velocidad v0 - V de cada agente
@@ -266,7 +270,7 @@ for i = 1:length(t)
     sum = 0;
     for k = 1:l
         % sum = norm(v0(:,i) - V(m*k-2:m*k, i)) + sum; % Calcula la norma de v0 - V
-        sum = norm(e(k,i));
+        sum = norm(e(k,i))+sum;
     end
     ITAE(i) = sum*t(i);
 end
@@ -335,7 +339,12 @@ end
 % ylabel('Control')
 
 
-
+%% plotea la variable Z
+figure(16)
+for i = 1:l
+    plot(t(1:end-1),Z(i,:),"Linewidth",2) %%
+    hold on
+end
 
 
 

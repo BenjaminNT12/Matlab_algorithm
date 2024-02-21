@@ -1,7 +1,6 @@
 function dxdt = systemDoubleIntegratorWithDisturbance(t, x, u, m, n)
     x1p = x(m*n+1:m*n*2);
-    % x2p = u(:) + 0.5*rand(length(x1p),1);
-    x2p = u(:) + disturbance(2.6*cos(1.2*pi*t)-2.3*sin(0.2*pi*t), sin(2*pi*t) + cos(2*pi*0.5*t)*cos(t) , 0.5*sin(pi*t), length(x1p)/3);
+    x2p = u(:) + 2*disturbance(2.6*cos(1.2*pi*t)-2.3*sin(0.2*pi*t), sin(2*pi*t) + cos(2*pi*0.5*t)*cos(t) , 0.5*sin(pi*t), length(x1p)/3);
     dxdt = [x1p;x2p];
     
     function disturbanceVector = disturbance(x, y, z, l)
@@ -13,3 +12,10 @@ function dxdt = systemDoubleIntegratorWithDisturbance(t, x, u, m, n)
         end
     end
 end
+
+
+
+
+
+
+
