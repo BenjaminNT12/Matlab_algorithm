@@ -18,6 +18,9 @@ clear;
 close all;
 clc;
 
+load('errorV2.mat')
+load('vd2.mat')
+
 % Ktang = 3;
 % Ksigma = 0.1;
 % Kv = 0.15;
@@ -179,9 +182,9 @@ for i = 1:length(t)-1
     qtin = qtinVector(E, qt(:,i), 9, l, m);
     
     for k = 1: n
-        vd(k*m-2: k*m,1) = vds(:, i) + cross(wds(:, i), qtin(k*m-2:k*m,1));
+        vd(k*m-2: k*m,i) = vds(:, i) + cross(wds(:, i), qtin(k*m-2:k*m,1));
     end
-    % errorV() = 
+    errorV(:,i) = V(:,i) - vd(:,i);
     R = matrizRCubo9AgentWithLeader(p(:,i),m);
     % rango = rank(R)
     for j = 1:l
@@ -197,7 +200,7 @@ for i = 1:length(t)-1
         temp = eta;
     end
     
-    Vv(:,i) = -Kv*R'*eta'*gammaV(:,i) + vd(:,1); %%%%%%%%%%%%% control con PPC %%% SE USA
+    Vv(:,i) = -Kv*R'*eta'*gammaV(:,i) + vd(:,i); %%%%%%%%%%%%% control con PPC %%% SE USA
     sigma(:,i) = V(:,i) - Vv(:,i);
     
     if i == 1
@@ -220,24 +223,24 @@ end
 
 
 % plotea todos los agentes en 3D
-f = figure(1);
-plotAnimation(P, vds, t, p, E, f)
+% f = figure(1);
+% plotAnimation(P, vds, t, p, E, f)
 
 
-% figure(1)
-% plot3(12.08-(1/0.35)*vds(2,:)', 9.4 + (1/0.35)*vds(1,:)', 3.5*1.0+t(:),'LineStyle',"-.",'Color','red','LineWidth',2);
-% hold on
-% plot3(p(9*m-2,:), p(9*m-1,:), p(9*m,:),'LineStyle',"-",'Color','blue','LineWidth',2);
+figure(1)
+plot3(12.08-(1/0.35)*vds(2,:)', 9.4 + (1/0.35)*vds(1,:)', 3.5*1.0+t(:),'LineStyle',"-.",'Color','red','LineWidth',2);
+hold on
+plot3(p(9*m-2,:), p(9*m-1,:), p(9*m,:),'LineStyle',"-",'Color','blue','LineWidth',2);
 
 
-% [grf, points] = Framework3Dplot(p(:,i), E); 
+[grf, points] = Framework3Dplot(p(:,i), E); 
 
-% set(gca,'FontSize',14)
-% grid on
-% % view([-80,-90,45]);
-% xlabel('X-Axis [m]','FontSize',14)
-% ylabel('Y-Axis [m]','FontSize',14)
-% zlabel('Z-Axis [m]','FontSize',14)
+set(gca,'FontSize',14)
+grid on
+% view([-80,-90,45]);
+xlabel('X-Axis [m]','FontSize',14)
+ylabel('Y-Axis [m]','FontSize',14)
+zlabel('Z-Axis [m]','FontSize',14)
 
 
 
@@ -500,5 +503,40 @@ set(gca,'FontSize',14)
 xlabel('X-Axis [m]','FontSize',14)
 ylabel('Y-Axis [m]','FontSize',14)
 zlabel('Z-Axis [m]','FontSize',14)
+
+figure(15)
+
+for i = 1:l
+    plot(t(1:end-1),errorV(i,:),"Linewidth",2) %
+    hold on
+end
+
+figure(16)
+
+for i = 1:l
+    plot(t(1:end-1),errorV2(i,:),"Linewidth",2) %
+    hold on
+end
+axis([0 30 -3 3])
+
+figure(17)
+
+for i = 1:l
+    plot(t(1:end-1),vd(i,:),"Linewidth",2) %
+    hold on
+end
+
+
+
+figure(18)
+
+for i = 1:l
+    plot(t(1:end-1),vd2(i,:),"Linewidth",2) %
+    hold on
+end
+
+
+save('errorV.mat', 'errorV');
+save('vd.mat', 'vd');
 
 

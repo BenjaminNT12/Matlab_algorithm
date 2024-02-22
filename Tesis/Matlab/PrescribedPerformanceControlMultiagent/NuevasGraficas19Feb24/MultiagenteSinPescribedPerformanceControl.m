@@ -121,12 +121,12 @@ for i = 1:length(t)-1
     qtin = qtinVector(E, qt(:,i), 9, l, m);
     
     for k = 1: n
-        vd(k*m-2: k*m,1) = v0(:, i) + cross(w0(:, i), qtin(k*m-2:k*m,1));
+        vd(k*m-2: k*m,i) = v0(:, i) + cross(w0(:, i), qtin(k*m-2:k*m,1));
     end
-    
+    errorV(:,i) = V(:,i) - vd(:,i);
     R = matrizRCubo9AgentWithLeader(q(:,i),m);
     
-    Vf(:,i) = -KV*R'*Z(:,i) + vd(:,1);
+    Vf(:,i) = -KV*R'*Z(:,i) + vd(:,i);
     S(:,i) = V(:,i) - Vf(:,i);
     
     if i == 1
@@ -290,6 +290,7 @@ grid on
 
 
 
+
 figure(15)
 
 for i = 1:3*n
@@ -342,10 +343,15 @@ end
 %% plotea la variable Z
 figure(16)
 for i = 1:l
-    plot(t(1:end-1),Z(i,:),"Linewidth",2) %%
+    plot(t(1:end-1),errorV(i,:),"Linewidth",2) %%
     hold on
 end
 
+errorV2 = errorV; 
+vd2 = vd
+
+save('errorV2.mat', 'errorV2');
+save('vd2.mat', 'vd2');
 
 
 
