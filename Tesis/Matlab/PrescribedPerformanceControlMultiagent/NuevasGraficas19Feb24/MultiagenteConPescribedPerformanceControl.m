@@ -18,15 +18,12 @@ clear;
 close all;
 clc;
 
-if ~exist('parpool', 'file')
-    error('Parallel Computing Toolbox no está disponible.');
-end
 % Ktang = 3;
 % Ksigma = 0.1;
 % Kv = 0.15;
 % TAU_sigma = 3.7;
 Ktang = 16;
-Ksigma = 5;
+Ksigma = 2;
 Kv = 0.3;
 TAU_sigma = 1.9723;
 
@@ -105,24 +102,9 @@ for i = 1:l
     bmenos(i) = (2*d(i,1)*eijMenos - eijMenos^2 )/chi(1);
 end
 
-V = (1.1*(ones(1,m*n)))'; % velocidad inicial
-% V = [
-%     0.2786; 0.7190; 0.8849; 
-%     0.7418; 1.0539; 1.0164; 
-%     0.5796; 0.7611; 0.2201; 
-%     1.4793; 0.4173; 0.3381;
-%     0.6841; 0.4576; 0.8366;
-%     0.6413; 1.4371; 1.3964;
-%     0.2685; 1.1592; 0.5499;
-%     0.7497; 0.9122; 1.4256;
-%     0.7431; 1.4780; 0.5919
-% ];
+% V = (1.1*(ones(1,m*n)))'; % velocidad inicial
+
 % V = 1.09 + 0.01*rand(m*n, 1);
-
-v0 = [2*sin(0.35*t)',       2*(cos(0.35*t))',   ones(length(t),1)]'; % trayectoria
-w0 = [zeros(length(t),1), zeros(length(t),1),  zeros(length(t),1)]';
-
-X = [p; V];
 
 Vvp = zeros(m*n, length(t)-1);
 qt = zeros(m*n, length(t)-1);
@@ -142,6 +124,41 @@ P = zeros(length(t)-1, n, 3);
 epsilon = zeros(l, length(t)-1);
 etaij = zeros(l, length(t)-1);
 
+for j = 1:l
+    qt(j*m-(m-1):m*j, 1) = p(E(j,2)*m-2:E(j,2)*m, 1) - p(E(j,1)*m-2:E(j,1)*m, 1);
+end
+qtin = qtinVector(E, qt(:, 1), 9, l, m);
+
+v0 = [
+        0.2786; 0.7190; 0.8849; 
+        0.7418; 1.0539; 1.0164; 
+        0.5796; 0.7611; 0.2201; 
+        1.4793; 0.4173; 0.3381;
+        0.6841; 0.4576; 0.8366;
+        0.6413; 1.4371; 1.3964;
+        0.2685; 1.1592; 0.5499;
+        0.7497; 0.9122; 1.4256;
+        0.7431; 1.4780; 0.5919
+    ];
+
+w0 = [
+        0.7099; 1.0521; 0.4225;
+        1.1179; 0.2414; 0.5600;
+        0.2600; 0.3263; 1.2705;
+        1.1033; 0.6122; 1.4353;
+        0.2448; 0.7704; 0.6960;
+        1.1952; 1.2338; 0.4429;
+        0.8367; 0.7793; 1.0402;
+        1.1222; 1.1811; 0.5588;
+        1.0836; 1.0516; 0.4114
+    ];
+
+vds = [2*sin(0.35*t)',       2*(cos(0.35*t))',   ones(length(t),1)]'; % trayectoria
+wds = [zeros(length(t),1), zeros(length(t),1),  zeros(length(t),1)]';
+
+V = v0+w0;
+
+X = [p; V];
 
 for i = 1:length(t)-1
     for j = 1:l
@@ -151,10 +168,10 @@ for i = 1:length(t)-1
         
         eMas(j,i) = - d(j) + (d(j)^2 + bmas(j)*chi(i))^0.5;
         eMenos(j,i) = d(j) - (d(j)^2 - bmenos(j)*chi(i))^0.5;
-
+        
         etaMas(j,i) = eMas(j,i)^2 + 2*d(j)*eMas(j,i);
         etaMenos(j,i) = eMenos(j,i)^2 - 2*d(j)*eMenos(j,i);
-
+        
         zeta(j,i) = epsilon(j,i)/chi(i);
         gammaV(j,i) = 1/2 * log((bmas(j)*zeta(j,i) + bmenos(j)*bmas(j))/(bmas(j)*bmenos(j)-bmenos(j)*zeta(j,i)));
     end
@@ -162,7 +179,7 @@ for i = 1:length(t)-1
     qtin = qtinVector(E, qt(:,i), 9, l, m);
     
     for k = 1: n
-        vd(k*m-2: k*m,1) = v0(:, i) + cross(w0(:, i), qtin(k*m-2:k*m,1));
+        vd(k*m-2: k*m,1) = vds(:, i) + cross(wds(:, i), qtin(k*m-2:k*m,1));
     end
     % errorV() = 
     R = matrizRCubo9AgentWithLeader(p(:,i),m);
@@ -202,25 +219,25 @@ for i = 1:length(t)-1
 end
 
 
-% % plotea todos los agentes en 3D
-% f = figure(1);
-% plotAnimation(P, v0, t, p, E, f)
+% plotea todos los agentes en 3D
+f = figure(1);
+plotAnimation(P, vds, t, p, E, f)
 
 
-figure(1)
-plot3(12.08-(1/0.35)*v0(2,:)', 9.4 + (1/0.35)*v0(1,:)', 3.5*1.0+t(:),'LineStyle',"-.",'Color','red','LineWidth',2);
-hold on
-plot3(p(9*m-2,:), p(9*m-1,:), p(9*m,:),'LineStyle',"-",'Color','blue','LineWidth',2);
+% figure(1)
+% plot3(12.08-(1/0.35)*vds(2,:)', 9.4 + (1/0.35)*vds(1,:)', 3.5*1.0+t(:),'LineStyle',"-.",'Color','red','LineWidth',2);
+% hold on
+% plot3(p(9*m-2,:), p(9*m-1,:), p(9*m,:),'LineStyle',"-",'Color','blue','LineWidth',2);
 
 
-[grf, points] = Framework3Dplot(p(:,i), E); 
+% [grf, points] = Framework3Dplot(p(:,i), E); 
 
-set(gca,'FontSize',14)
-grid on
-% view([-80,-90,45]);
-xlabel('X-Axis [m]','FontSize',14)
-ylabel('Y-Axis [m]','FontSize',14)
-zlabel('Z-Axis [m]','FontSize',14)
+% set(gca,'FontSize',14)
+% grid on
+% % view([-80,-90,45]);
+% xlabel('X-Axis [m]','FontSize',14)
+% ylabel('Y-Axis [m]','FontSize',14)
+% zlabel('Z-Axis [m]','FontSize',14)
 
 
 
@@ -417,9 +434,9 @@ hNew = lafig3(newFig, fhv, FFM);
 
 
 
-% Grafica para calcular la norma de la velocidad v0 - V de cada agente
+% Grafica para calcular la norma de la velocidad vds - V de cada agente
 figure(12)
-% Grafica para calcular la norma de la velocidad v0 - V de cada agente
+% Grafica para calcular la norma de la velocidad vds - V de cada agente
 e(:,3001) = 0;
 for i = 1:length(t)
     sum = 0;
@@ -444,9 +461,9 @@ grid on
 
 
 
-% Grafica para calcular la norma de la velocidad v0 - V de cada agente
+% Grafica para calcular la norma de la velocidad vds - V de cada agente
 figure(13)
-% Grafica para calcular la norma de la velocidad v0 - V de cada agente
+% Grafica para calcular la norma de la velocidad vds - V de cada agente
 e(:,3001) = 0;
 for i = 1:length(t)
     sum = 0;
