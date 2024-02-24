@@ -223,24 +223,24 @@ end
 
 
 % plotea todos los agentes en 3D
-% f = figure(1);
-% plotAnimation(P, vds, t, p, E, f)
+f = figure(1);
+plotAnimation(P, vds, t, p, E, f)
 
 
-figure(1)
-plot3(12.08-(1/0.35)*vds(2,:)', 9.4 + (1/0.35)*vds(1,:)', 3.5*1.0+t(:),'LineStyle',"-.",'Color','red','LineWidth',2);
-hold on
-plot3(p(9*m-2,:), p(9*m-1,:), p(9*m,:),'LineStyle',"-",'Color','blue','LineWidth',2);
+% figure(1)
+% plot3(12.08-(1/0.35)*vds(2,:)', 9.4 + (1/0.35)*vds(1,:)', 3.5*1.0+t(:),'LineStyle',"-.",'Color','red','LineWidth',2);
+% hold on
+% plot3(p(9*m-2,:), p(9*m-1,:), p(9*m,:),'LineStyle',"-",'Color','blue','LineWidth',2);
 
 
-[grf, points] = Framework3Dplot(p(:,i), E); 
+% [grf, points] = Framework3Dplot(p(:,i), E); 
 
-set(gca,'FontSize',14)
-grid on
-% view([-80,-90,45]);
-xlabel('X-Axis [m]','FontSize',14)
-ylabel('Y-Axis [m]','FontSize',14)
-zlabel('Z-Axis [m]','FontSize',14)
+% set(gca,'FontSize',14)
+% grid on
+% % view([-80,-90,45]);
+% xlabel('X-Axis [m]','FontSize',14)
+% ylabel('Y-Axis [m]','FontSize',14)
+% zlabel('Z-Axis [m]','FontSize',14)
 
 
 
