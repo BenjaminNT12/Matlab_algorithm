@@ -30,8 +30,8 @@ Ksigma = 2;
 Kv = 0.3;
 TAU_sigma = 1.9723;
 
-DELTA_LIMITE_SUPERIOR = 3*1.3;
-DELTA_LIMITE_INFERIOR = 3*1;
+DELTA_LIMITE_SUPERIOR = 4;
+DELTA_LIMITE_INFERIOR = 4;
 
 PPF_INICIO = 1;
 PPF_FIN = 0.07;
@@ -93,8 +93,10 @@ end
 chi  = (PPF_INICIO-PPF_FIN)*exp(-c*t)+PPF_FIN;
 ppfp = -c*(PPF_INICIO-PPF_FIN)*exp(-c*t);
 
-eijMas = DELTA_LIMITE_SUPERIOR*chi(1);
-eijMenos = DELTA_LIMITE_INFERIOR*chi(1);
+% eijMas = DELTA_LIMITE_SUPERIOR*chi(1);
+% eijMenos = DELTA_LIMITE_INFERIOR*chi(1);
+eijMas = DELTA_LIMITE_SUPERIOR;
+eijMenos = DELTA_LIMITE_INFERIOR;
 
 bmas = zeros(l,1);
 bmenos = zeros(l,1);
@@ -223,24 +225,24 @@ end
 
 
 % plotea todos los agentes en 3D
-f = figure(1);
-plotAnimation(P, vds, t, p, E, f)
+% f = figure(1);
+% plotAnimation(P, vds, t, p, E, f)
 
 
-% figure(1)
-% plot3(12.08-(1/0.35)*vds(2,:)', 9.4 + (1/0.35)*vds(1,:)', 3.5*1.0+t(:),'LineStyle',"-.",'Color','red','LineWidth',2);
-% hold on
-% plot3(p(9*m-2,:), p(9*m-1,:), p(9*m,:),'LineStyle',"-",'Color','blue','LineWidth',2);
+figure(1)
+plot3(12.08-(1/0.35)*vds(2,:)', 9.4 + (1/0.35)*vds(1,:)', 3.5*1.0+t(:),'LineStyle',"-.",'Color','red','LineWidth',2);
+hold on
+plot3(p(9*m-2,:), p(9*m-1,:), p(9*m,:),'LineStyle',"-",'Color','blue','LineWidth',2);
 
 
-% [grf, points] = Framework3Dplot(p(:,i), E); 
+[grf, points] = Framework3Dplot(p(:,i), E); 
 
-% set(gca,'FontSize',14)
-% grid on
-% % view([-80,-90,45]);
-% xlabel('X-Axis [m]','FontSize',14)
-% ylabel('Y-Axis [m]','FontSize',14)
-% zlabel('Z-Axis [m]','FontSize',14)
+set(gca,'FontSize',14)
+grid on
+% view([-80,-90,45]);
+xlabel('X-Axis [m]','FontSize',14)
+ylabel('Y-Axis [m]','FontSize',14)
+zlabel('Z-Axis [m]','FontSize',14)
 
 
 
@@ -280,7 +282,7 @@ for i = 1:l
                 temp = i
             end
         end
-        axis([0.8 5 -1.5 0.1])
+        axis([0 5 -2.1 0.1])
     end
     if i == 10 || i == 17
         figure(34)
@@ -320,174 +322,13 @@ for i = 1:l
 end
 
 FFM = [0 0 1 1;
-0.38 0.57 0.55 0.35;];
+0.38 0.602 0.55 0.35;];
 fhv = [32:33];
 newFig = 202;
 hNew = lafig3(newFig, fhv, FFM);
 
+close(32:33)
 
-
-
-% temp = 0;
-% % plotea la variable bmas
-% for i = 1:l
-%     if i == 3 || i == 6 || i == 9 || i == 12 || i == 15 || i == 18 || i == 20 || i == 21
-%         figure(29)
-%         plot(t(1:end-1),eMas(i,:),'Color','r','LineWidth',2,'LineStyle','--') %% 9, 20
-%         hold on
-%         plot(t(1:end-1),-eMenos(i,:),'Color','r','LineWidth',2,'LineStyle','--') %% 9, 20
-%         hold on
-%         plot(t(1:end-1), e(i,:),"Linewidth",2) %% 9, 20
-%         hold on
-%         for j = 1:length(eMas(i,:))
-%             if (e(i,j) > eMas(i,j) || e(i,j) < -eMenos(i,j)) && temp ~= i
-%                 temp = i
-%             end
-%         end
-%         grid on
-%     end
-%     if i == 10 || i == 17
-%         figure(30)
-%         plot(t(1:end-1),eMas(i,:),'Color','r','LineWidth',2,'LineStyle','--') %% 9, 20
-%         hold on
-%         plot(t(1:end-1),-eMenos(i,:),'Color','r','LineWidth',2,'LineStyle','--') %% 9, 20
-%         hold on
-%         plot(t(1:end-1), e(i,:),"Linewidth",2) %% 9, 20
-%         hold on
-%         for j = 1:length(eMas(i,:))
-%             if (e(i,j) > eMas(i,j) || e(i,j) < -eMenos(i,j)) && temp ~= i
-%                 temp = i
-%             end
-%         end
-%         grid on
-%     end
-%     if i == 1 || i == 2 || i == 4 || i == 5 || i == 7 || i == 8 || i == 11 || i == 13 || i == 14 || i == 16 || i == 19
-%         figure(31)
-%         plot(t(1:end-1),eMas(i,:),'Color','r','LineWidth',2,'LineStyle','--') %% 9, 20
-%         hold on
-%         plot(t(1:end-1),-eMenos(i,:),'Color','r','LineWidth',2,'LineStyle','--') %% 9, 20
-%         hold on
-%         plot(t(1:end-1), e(i,:),"Linewidth",2) %% 9, 20
-%         hold on
-%         grid on
-%         for j = 1:length(eMas(i,:))
-%             if (e(i,j) > eMas(i,j) || e(i,j) < -eMenos(i,j)) && temp ~= i
-%                 temp = i
-%             end
-%         end
-%     end
-% end
-
-% figure(3)
-
-% for i = 1:l
-%     plot(t(1:end-1),e(i,:),"Linewidth",2) %
-%     hold on
-% end
-% plot(t(1:end-1),eMas(1,1:end),'Color','r','LineWidth',2,'LineStyle','--')
-% hold on
-% plot(t(1:end-1),-eMenos(1,1:end),'Color','r','LineWidth',2,'LineStyle','--')
-% hold on
-% grid on
-% % title('Errores de distancia entre agentes')
-% set(gca,'FontSize',14)
-% xlabel('Time [sec]')
-% ylabel('Distance errors e_{ij} [m]')
-
-
-% figure(4)
-
-% for i = 1:l
-%     plot(t(1:end-1),e(i,:),"Linewidth",2) % 
-%     hold on
-% end
-% plot(t(1:end-1),eMas(1,1:end),'Color','r','LineWidth',2,'LineStyle','--')
-% hold on
-% plot(t(1:end-1),-eMenos(1,1:end),'Color','r','LineWidth',2,'LineStyle','--')
-% hold on
-% grid on
-% axis([0 5 0 4])
-% set(gca,'FontSize',14)
-
-% figure(5)
-
-% for i = 1:l
-%     plot(t(1:end-1),e(i,:),"Linewidth",2) %
-%     hold on
-% end
-% plot(t(1:end-1),eMas(1,1:end),'Color','r','LineWidth',2,'LineStyle','--')
-% hold on
-% plot(t(1:end-1),-eMenos(1,1:end),'Color','r','LineWidth',2,'LineStyle','--')
-% hold on
-% grid on
-% axis([0 5 -3 0])
-% set(gca,'FontSize',14)
-
-
-% FFM = [0 0 1 1;
-%        0.55 0.58 0.35 0.35;
-%        0.55 0.11 0.35 0.35;];
-% fhv = [3:5];
-% newFig = 102;
-% hNew = lafig3(newFig, fhv, FFM);
-% close(3:5)
-
-
-
-
-
-
-% Grafica para calcular la norma de la velocidad vds - V de cada agente
-figure(12)
-% Grafica para calcular la norma de la velocidad vds - V de cada agente
-e(:,3001) = 0;
-for i = 1:length(t)
-    sum = 0;
-    for k = 1:l
-        sum = norm(e(k,i))+sum;
-    end
-    ISE(i) = sum^2;
-end
-semilogy(t, ISE, 'Linewidth',2)
-
-fileID = fopen('ISE_datos.txt','r');
-formatSpec = '%f';
-ISE2 = fscanf(fileID,formatSpec);
-hold on
-semilogy(t, ISE2, 'Linewidth',2)
-
-
-set(gca,'FontSize',14)
-xlabel('Time [sec]');
-ylabel({'\fontsize{14}{21}$\sum^{N}_{i=1}||e_{ij}||^2$'},'Interpreter','latex');
-grid on
-
-
-
-% Grafica para calcular la norma de la velocidad vds - V de cada agente
-figure(13)
-% Grafica para calcular la norma de la velocidad vds - V de cada agente
-e(:,3001) = 0;
-for i = 1:length(t)
-    sum = 0;
-    for k = 1:l
-        sum = norm(e(k,i))+sum;
-    end
-    ITAE(i) = sum*t(i);
-end
-semilogy(t, ITAE, 'Linewidth',2)
-
-fileID = fopen('ITAE_datos.txt','r');
-formatSpec = '%f';
-ITAE2 = fscanf(fileID,formatSpec);
-hold on
-semilogy(t, ITAE2, 'Linewidth',2)
-
-
-set(gca,'FontSize',14)
-xlabel('Time [sec]');
-ylabel({'\fontsize{14}{21}$\sum^{N}_{i=1}||e_{ij}||t(i)$'},'Interpreter','latex');
-grid on
 
 
 
@@ -504,39 +345,5 @@ xlabel('X-Axis [m]','FontSize',14)
 ylabel('Y-Axis [m]','FontSize',14)
 zlabel('Z-Axis [m]','FontSize',14)
 
-figure(15)
-
-for i = 1:l
-    plot(t(1:end-1),errorV(i,:),"Linewidth",2) %
-    hold on
-end
-
-figure(16)
-
-for i = 1:l
-    plot(t(1:end-1),errorV2(i,:),"Linewidth",2) %
-    hold on
-end
-axis([0 30 -3 3])
-
-figure(17)
-
-for i = 1:l
-    plot(t(1:end-1),vd(i,:),"Linewidth",2) %
-    hold on
-end
-
-
-
-figure(18)
-
-for i = 1:l
-    plot(t(1:end-1),vd2(i,:),"Linewidth",2) %
-    hold on
-end
-
-
 save('errorV.mat', 'errorV');
 save('vd.mat', 'vd');
-
-

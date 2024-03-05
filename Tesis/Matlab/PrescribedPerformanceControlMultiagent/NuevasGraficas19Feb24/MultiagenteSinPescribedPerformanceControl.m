@@ -84,10 +84,35 @@ end
 ppf  = (PPF_INICIO-PPF_FIN)*exp(-c*t)+PPF_FIN;
 ppfp = -c*(PPF_INICIO-PPF_FIN)*exp(-c*t);
 
-V = (5.1*(ones(1,m*n)))'; % velocidad inicial
 
-v0 = [2*sin(0.35*t)',       2*(cos(0.35*t))',   ones(length(t),1)]'; % trayectoria
-w0 = [zeros(length(t),1), zeros(length(t),1),  zeros(length(t),1)]';
+vds = [2*sin(0.35*t)',       2*(cos(0.35*t))',   ones(length(t),1)]'; % trayectoria
+wds = [zeros(length(t),1), zeros(length(t),1),  zeros(length(t),1)]';
+
+v0 = [
+        0.2786; 0.7190; 0.8849; 
+        0.7418; 1.0539; 1.0164; 
+        0.5796; 0.7611; 0.2201; 
+        1.4793; 0.4173; 0.3381;
+        0.6841; 0.4576; 0.8366;
+        0.6413; 1.4371; 1.3964;
+        0.2685; 1.1592; 0.5499;
+        0.7497; 0.9122; 1.4256;
+        0.7431; 1.4780; 0.5919
+    ];
+
+w0 = [
+        0.7099; 1.0521; 0.4225;
+        1.1179; 0.2414; 0.5600;
+        0.2600; 0.3263; 1.2705;
+        1.1033; 0.6122; 1.4353;
+        0.2448; 0.7704; 0.6960;
+        1.1952; 1.2338; 0.4429;
+        0.8367; 0.7793; 1.0402;
+        1.1222; 1.1811; 0.5588;
+        1.0836; 1.0516; 0.4114
+    ];
+
+V = v0+w0;
 
 X = [q; V];
 
@@ -121,7 +146,7 @@ for i = 1:length(t)-1
     qtin = qtinVector(E, qt(:,i), 9, l, m);
     
     for k = 1: n
-        vd(k*m-2: k*m,i) = v0(:, i) + cross(w0(:, i), qtin(k*m-2:k*m,1));
+        vd(k*m-2: k*m,i) = vds(:, i) + cross(wds(:, i), qtin(k*m-2:k*m,1));
     end
     errorV(:,i) = V(:,i) - vd(:,i);
     R = matrizRCubo9AgentWithLeader(q(:,i),m);
@@ -152,7 +177,7 @@ end
 
 
 figure(1)
-plot3(12.28-(1/0.35)*v0(2,:)', 9.25 + (1/0.35)*v0(1,:)', 3*1.23+t(:),'LineStyle',"-.",'Color','red','LineWidth',2);
+plot3(12.28-(1/0.35)*vds(2,:)', 9.25 + (1/0.35)*vds(1,:)', 3*1.23+t(:),'LineStyle',"-.",'Color','red','LineWidth',2);
 hold on
 plot3(q(9*m-2,:), q(9*m-1,:), q(9*m,:),'LineStyle',"-",'Color','blue','LineWidth',2);
 
@@ -238,12 +263,12 @@ close(3:5)
 
 figure(6)
 
-% Grafica para calcular la norma de la velocidad v0 - V de cada agente
+% Grafica para calcular la norma de la velocidad vds - V de cada agente
 e(:,3001) = 0;
 for i = 1:length(t)
     sum = 0;
     for k = 1:l
-        % sum = norm(v0(:,i) - V(m*k-2:m*k, i)) + sum; % Calcula la norma de v0 - V
+        % sum = norm(vds(:,i) - V(m*k-2:m*k, i)) + sum; % Calcula la norma de vds - V
         sum = norm(e(k,i))+sum;
     end
     ISE(i) = sum^2;
@@ -264,12 +289,12 @@ grid on
 
 figure(7)
 
-% Grafica para calcular la norma de la velocidad v0 - V de cada agente
+% Grafica para calcular la norma de la velocidad vds - V de cada agente
 e(:,3001) = 0;
 for i = 1:length(t)
     sum = 0;
     for k = 1:l
-        % sum = norm(v0(:,i) - V(m*k-2:m*k, i)) + sum; % Calcula la norma de v0 - V
+        % sum = norm(vds(:,i) - V(m*k-2:m*k, i)) + sum; % Calcula la norma de vds - V
         sum = norm(e(k,i))+sum;
     end
     ITAE(i) = sum*t(i);

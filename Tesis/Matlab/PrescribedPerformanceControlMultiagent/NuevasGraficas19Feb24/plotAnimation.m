@@ -37,3 +37,9 @@ function plotAnimation(P, v0, t, p, E, f)
     ylabel('Eje-Y','FontSize',14)
     zlabel('Eje-Z','FontSize',14)
 end
+
+
+
+
+
+

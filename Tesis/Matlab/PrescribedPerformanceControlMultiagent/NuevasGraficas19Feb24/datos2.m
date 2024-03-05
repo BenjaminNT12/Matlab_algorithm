@@ -1,3 +1,7 @@
+clear
+clc
+close all
+
 load('errorV.mat')
 load('vd.mat')
 load('errorV2.mat')
@@ -10,8 +14,15 @@ for i=1: 3000
     v(i) = norm(errorV2(:,i));
 end
 
-plot(t,vPPC, t,v)
+plot(t,vPPC, t,v,'Linewidth',2)
 legend('PPC', 'Vd')
 
-semilogy(t,vPPC, t,v)
-legend('PPC, semilogy', 'Vd, semilogy')
+semilogy(t,vPPC, t,v,'Linewidth',2)
+
+
+legend('Control proposed with PPF', 'Control without PPF')
+
+set(gca,'FontSize',14)
+xlabel('Time [sec]');
+ylabel({'\fontsize{14}{21}$||eV_{ij}||$'},'Interpreter','latex');
+grid on
