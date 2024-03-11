@@ -23,8 +23,8 @@ function plotAnimation(P, v0, t, p, E, f)
         addpoints(trajectory,12.08-(1/0.35)*v0(2,i)', 9.4 + (1/0.35)*v0(1,i)', 3.5*1.0+t(i));
 
         [grf, points, num] = Framework3Dplot(p(:,i), E);
-        drawnow limitrate;
-        frames(i) = getframe();
+        drawnow;
+        % frames(i) = getframe();
         if i < length(P(:,1,1))
             delete(grf);
             delete(points);
