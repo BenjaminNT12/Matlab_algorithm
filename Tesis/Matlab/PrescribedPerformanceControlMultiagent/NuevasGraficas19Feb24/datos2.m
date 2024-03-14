@@ -24,5 +24,5 @@ legend('Control proposed with PPF', 'Control without PPF')
 
 set(gca,'FontSize',14)
 xlabel('Time [sec]');
-ylabel({'\fontsize{14}{21}$||eV_{ij}||$'},'Interpreter','latex');
+ylabel({'\fontsize{14}{21}$||\sigma_{ij}||$'},'Interpreter','latex');
 grid on
