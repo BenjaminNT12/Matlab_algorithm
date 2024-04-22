@@ -1,18 +1,8 @@
-%Super-Twisting Sliding Mode Control (ST-SMC) es una variante avanzada del Sliding Mode Control
-%que permite un mejor rendimiento y una mayor precisión en el control de sistemas no lineales.
-
-%function dzdt = ModeloSMC(z1, z1_dot, z2, z1d, z1d_dot, z1d_ddot, psi, theta, phi, beta, xi, t, u)
 function dxdt = quadCopterModel2Order(t , X, U)
 
     % Parámetros de control
         m = 1.4;           %masa del UAS
-        g = 9.81;          %fuerza gravitatoria (9.81 m/s^2) 
-    
-        xi = (0.5)*cos(t); %perturbaciones e incertidumbres del modelo
-    
-        IX = 0.00029;
-        Iyy = 0.00038;
-        Izz = 0.00079;
+        g = 9.81;          %fuerza gravitatoria (9.;
     
         x = X(1:2,1);
         y = X(3:4,1);
@@ -28,23 +18,15 @@ function dxdt = quadCopterModel2Order(t , X, U)
         utheta = U(5,1);
         uphi = U(6,1);
         
-        ux = 0;
-        uy = 0;
-        upsi = 0;
-        utheta = 0;
-        uphi = 0;
-
-
-
 
         x1p = x(2,1);
-        x2p = ux*(sin(phi(1,1))*sin(psi(1,1))+cos(phi(1,1))*cos(psi(1,1))*sin(theta(1,1)))/m;
+        x2p = -ux*(cosd(psi(1,1))*sind(theta(1,1))*cosd(phi(1,1)) + sind(psi(1,1))*sind(phi(1,1)))/m;
     
         y1p = y(2,1);
-        y2p = uy*(cos(phi(1,1))*sin(theta(1,1))*sin(psi(1,1))-cos(psi(1,1))*sin(phi(1,1)))/m;
+        y2p = -uy*(sind(psi(1,1))*sind(theta(1,1))*cosd(phi(1,1)) - cosd(psi(1,1))*sind(phi(1,1)))/m;
     
         z1p = z(2,1);
-        z2p = ((cos(theta(1,1))*cos(phi(1,1)))/m)*uz - g;
+        z2p = -uz*(cosd(theta(1,1))*cosd(phi(1,1)))/m + g;
     
         psi1p = psi(2,1);
         psi2p = upsi;
