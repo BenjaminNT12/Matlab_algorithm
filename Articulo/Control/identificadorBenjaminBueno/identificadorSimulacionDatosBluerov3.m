@@ -91,7 +91,7 @@ subplot(4, 1, 1);
 plot(t, Z(1,:))
 hold on
 plot(t, Zg(1,:))
-title('POSICIÓN, Z 1 and Zg 1');
+title('POSITION, Z 1 and Zg 1');
 
 subplot(4, 1, 2);
 % plot(t, yawVel(:))
@@ -99,13 +99,13 @@ subplot(4, 1, 2);
 plot(t, Z(2,:))
 hold on
 plot(t, Zg(2,:))
-title('VELOCIDAD, Z 2 and Zg 2');
+title('SPEED, Z 2 and Zg 2');
 
 subplot(4, 1, 3);
 plot(t, Wg(1,:));
 hold on
 plot(t, Wg(2,:));
-title('PESOS, Wg 1 and Wg 2');
+title('WEIGHTS, Wg 1 and Wg 2');
 
 % plot de s
 subplot(4, 1, 4);
@@ -122,13 +122,13 @@ figure(3)
 plot(t, Z(2,:))
 hold on
 plot(t, Zg(2,:))
-title('VELOCIDAD, Z 2 and Zg 2');
+title('SPEED, Z 2 and Zg 2');
 
 figure(4)
 plot(t, Z(1,:))
 hold on
 plot(t, Zg(1,:))
-title('POSICIÓN, Z 1 and Zg 1');
+title('POSITION, Z 1 and Zg 1');
 
 figure(5)
 plot(t, s(:));

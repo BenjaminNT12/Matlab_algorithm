@@ -1,10 +1,11 @@
 clear all;
 clear axis;
+close all;
 clc;
 cla
 format long;
 
-nOrder = 5;
+nOrder = 1;
 
 %x = [3.924 4.218 4.905 5.886 6.572 7 8 9 10];
 x = [654 546 465 404 357 322 291 247 216];
@@ -44,7 +45,11 @@ for j =1:l
 end
 plot(t,Out,'b');
 hold on;
-plot(x,y,'r');
+for i = 1: length(x)
+    plot(x(i),y(i),'x');
+    hold on;
+end
+% plot(x,y,'r');
 hold on;
 vecABC
 
