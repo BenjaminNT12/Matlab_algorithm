@@ -10,7 +10,8 @@ T = 0:0.1:500;
 % yawDesired=(180/pi)*(1.2*sin(0.1*T)- 1.9*cos(0.15*T));
 % yawDesired=(180/pi)*(sin(0.2*T)+ 0.9*cos(0.1*T));
 
-yawDesired=( (180/pi)*     (0.4*(sin(0.1*T) + 0.9*cos(0.07*T)))     ) + 790;
+yawDesired=( (180/pi)*( 0.4*( sin(0.1*T) + 0.9*cos(0.07*T) ) ) ) + 790;
+            % (180/math.pi)*(0.4*np.sin(0.1*_time) + 0.9*np.cos(0.07*_time))+790
             % 0.7*(math.degrees(0.4*math.sin(0.15*_time) + 0.9*math.cos(0.1*_time))) + 790
 
 % Crear la gráfica
